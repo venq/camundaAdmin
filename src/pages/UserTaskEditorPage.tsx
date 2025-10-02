@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppStore } from '@/store';
-import { Save, Plus, Trash2, ChevronRight, Eye, EyeOff, GripVertical, X } from 'lucide-react';
+import { Save, Plus, Trash2, EyeOff, GripVertical, X } from 'lucide-react';
 import type { UserTaskConfig } from '@/types';
 import { PresetCard } from '@/components/PresetCard';
 import {
@@ -128,11 +128,11 @@ export function UserTaskEditorPage() {
           taskDefinitionKey: taskKey!,
           version: 1,
           metadata: {
-            stage: 'На проверке',
             title: bpmnTask?.name || taskKey!,
             description: `Автоматически созданная конфигурация для ${taskKey}`,
-            executorGroup: 'creditOfficers',
-            managerGroup: 'creditManagers'
+            assignee: '',
+            executorGroups: ['CREDIT_ANALYST'],
+            managerGroups: ['CREDIT_ANALYST_MANAGER']
           },
           decisions: defaultPreset.content.decisions || [],
           leftPanel: defaultPreset.content.leftPanel || [],

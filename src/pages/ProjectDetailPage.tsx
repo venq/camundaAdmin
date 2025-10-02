@@ -8,7 +8,7 @@ import './ProjectDetailPage.css';
 export function ProjectDetailPage() {
   const { tenantId, projectId } = useParams<{ tenantId: string; projectId: string }>();
   const navigate = useNavigate();
-  const { projects, bpmnProcesses, tenants, selectedEnvironment, user, setSelectedTenant } = useAppStore();
+  const { projects, bpmnProcesses, tenants, selectedEnvironment, setSelectedTenant } = useAppStore();
   const [searchTerm, setSearchTerm] = useState('');
 
   // Устанавливаем выбранный тенант

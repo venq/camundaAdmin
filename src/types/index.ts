@@ -81,11 +81,11 @@ export interface UserTaskConfig {
 }
 
 export interface UserTaskMetadata {
-  stage?: string;
   title: string;
   description: string;
-  executorGroup: string;
-  managerGroup: string;
+  assignee?: string;
+  executorGroups: string[];
+  managerGroups: string[];
 }
 
 export interface Decision {
@@ -179,6 +179,8 @@ export interface RegistryItem {
   itemId: string;
   label: string;
   value: any;
+  code?: string;
+  name?: string;
   properties?: Record<string, any>;
 }
 

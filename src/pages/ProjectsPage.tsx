@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/store';
-import { Plus, FileText, Settings, Trash2, Database, Layers, Rocket, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Plus, FileText, Settings, Trash2, Database, Layers, CheckCircle2, AlertCircle } from 'lucide-react';
 import { pluralizeBpmnProcesses, pluralizeTasks } from '@/utils/pluralize';
 import './ProjectsPage.css';
 

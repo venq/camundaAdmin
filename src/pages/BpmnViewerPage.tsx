@@ -15,7 +15,7 @@ export function BpmnViewerPage() {
     processId: string;
   }>();
   const navigate = useNavigate();
-  const { bpmnProcesses, projects, tenants, selectedEnvironment, setSelectedTenant } = useAppStore();
+  const { bpmnProcesses, projects, selectedEnvironment, setSelectedTenant } = useAppStore();
   const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
   const [viewerError, setViewerError] = useState<string | null>(null);
   const [viewerLoaded, setViewerLoaded] = useState(false);
@@ -23,7 +23,6 @@ export function BpmnViewerPage() {
   const viewerInstance = useRef<BpmnViewer | null>(null);
   const sidebarRef = useRef<HTMLDivElement>(null);
 
-  const tenant = tenants.find((t) => t.id === tenantId);
   const project = projects.find((p) => p.id === projectId);
   const bpmnProcess = bpmnProcesses.find((bp) => bp.id === processId);
 
