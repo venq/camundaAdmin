@@ -90,14 +90,28 @@ export interface UserTaskMetadata {
   decision?: string;
 }
 
+export interface DecisionPermission {
+  readRole: string;
+  authorMask?: string;
+}
+
+export interface DecisionComment {
+  visible: boolean;
+  readonly: boolean;
+  require: boolean;
+  permissions?: DecisionPermission[];
+}
+
 export interface Decision {
   decisionId: string;
   title: string;
-  decisionType?: 'accept' | 'reject' | 'rework' | 'custom';
+  type: 'ACCEPT' | 'REJECT' | 'REWORK';
   validate: boolean;
-  commentPolicy?: 'required' | 'optional' | 'hidden';
-  permissions?: string[];
-  properties?: Record<string, any>;
+  comment?: DecisionComment;
+  properties?: {
+    transient?: boolean;
+    [key: string]: any;
+  };
 }
 
 export interface TabGroup {

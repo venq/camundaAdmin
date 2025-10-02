@@ -653,18 +653,38 @@ export function UserTaskEditorPage() {
                     <div className="decision-properties">
                       <div className="property-row">
                         <span className="property-label">Тип:</span>
-                        <span className={`badge badge-${decision.decisionType === 'accept' ? 'success' : decision.decisionType === 'reject' ? 'danger' : 'warning'}`}>
-                          {decision.decisionType}
+                        <span className={`badge badge-${decision.type === 'ACCEPT' ? 'success' : decision.type === 'REJECT' ? 'danger' : 'warning'}`}>
+                          {decision.type}
                         </span>
                       </div>
                       <div className="property-row">
                         <span className="property-label">Валидация:</span>
                         <span>{decision.validate ? 'Да' : 'Нет'}</span>
                       </div>
-                      <div className="property-row">
-                        <span className="property-label">Комментарии:</span>
-                        <span>{decision.commentPolicy || 'optional'}</span>
-                      </div>
+                      {decision.comment && (
+                        <>
+                          <div className="property-row">
+                            <span className="property-label">Комментарий:</span>
+                            <span>
+                              {decision.comment.visible ? 'Видимый' : 'Скрытый'}
+                              {decision.comment.require && ', обязательный'}
+                              {decision.comment.readonly && ', только чтение'}
+                            </span>
+                          </div>
+                          {decision.comment.permissions && decision.comment.permissions.length > 0 && (
+                            <div className="property-row">
+                              <span className="property-label">Права на комментарий:</span>
+                              <span>{decision.comment.permissions.map(p => p.readRole).join(', ')}</span>
+                            </div>
+                          )}
+                        </>
+                      )}
+                      {decision.properties?.transient && (
+                        <div className="property-row">
+                          <span className="property-label">Transient:</span>
+                          <span>Да</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

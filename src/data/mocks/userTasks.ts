@@ -17,23 +17,43 @@ export const mockUserTaskConfig: UserTaskConfig = {
     {
       decisionId: 'approve',
       title: 'Одобрить',
-      decisionType: 'accept',
+      type: 'ACCEPT',
       validate: true,
-      commentPolicy: 'optional'
+      comment: {
+        visible: true,
+        readonly: false,
+        require: false
+      }
     },
     {
       decisionId: 'reject',
       title: 'Отклонить',
-      decisionType: 'reject',
+      type: 'REJECT',
       validate: true,
-      commentPolicy: 'required'
+      comment: {
+        visible: true,
+        readonly: false,
+        require: true,
+        permissions: [
+          {
+            readRole: 'CREDIT_ANALYST_MANAGER'
+          }
+        ]
+      }
     },
     {
       decisionId: 'sendToRework',
       title: 'На доработку',
-      decisionType: 'rework',
+      type: 'REWORK',
       validate: false,
-      commentPolicy: 'required'
+      comment: {
+        visible: true,
+        readonly: false,
+        require: true
+      },
+      properties: {
+        transient: true
+      }
     }
   ],
   leftPanel: [

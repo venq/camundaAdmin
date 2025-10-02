@@ -16,15 +16,24 @@ export const mockPresets: Preset[] = [
         {
           decisionId: 'approve',
           title: 'Согласовать',
-          decisionType: 'accept',
-          validate: true
+          type: 'ACCEPT',
+          validate: true,
+          comment: {
+            visible: true,
+            readonly: false,
+            require: false
+          }
         },
         {
           decisionId: 'reject',
           title: 'Отклонить',
-          decisionType: 'reject',
+          type: 'REJECT',
           validate: true,
-          commentPolicy: 'required'
+          comment: {
+            visible: true,
+            readonly: false,
+            require: true
+          }
         }
       ],
       tabGroups: [
