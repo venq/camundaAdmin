@@ -93,6 +93,9 @@ export function UserTaskEditorPage() {
   const [showLeftPanelComponentModal, setShowLeftPanelComponentModal] = useState(false);
   const [selectedTabForComponents, setSelectedTabForComponents] = useState<{ groupId: string; tabId: string } | null>(null);
   const [showRolePopup, setShowRolePopup] = useState<{ type: 'executor' | 'manager' | 'workgroup'; show: boolean }>({ type: 'executor', show: false });
+  const [editingDecision, setEditingDecision] = useState<any | null>(null);
+  const [showDecisionModal, setShowDecisionModal] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState<{ show: boolean; decisionId: string; decisionTitle: string } | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -370,6 +373,61 @@ export function UserTaskEditorPage() {
     });
   };
 
+  // Функции для работы с решениями
+  const openDecisionModal = (decision?: any) => {
+    if (decision) {
+      setEditingDecision({ ...decision });
+    } else {
+      setEditingDecision({
+        decisionId: '',
+        title: '',
+        type: 'ACCEPT',
+        validate: true,
+        comment: {
+          visible: true,
+          readonly: false,
+          require: false
+        }
+      });
+    }
+    setShowDecisionModal(true);
+  };
+
+  const saveDecision = () => {
+    if (!config || !editingDecision) return;
+
+    const existingIndex = config.decisions.findIndex(d => d.decisionId === editingDecision.decisionId);
+
+    if (existingIndex >= 0) {
+      // Обновляем существующее решение
+      const updatedDecisions = [...config.decisions];
+      updatedDecisions[existingIndex] = editingDecision;
+      setConfig({
+        ...config,
+        decisions: updatedDecisions
+      });
+    } else {
+      // Добавляем новое решение
+      setConfig({
+        ...config,
+        decisions: [...config.decisions, editingDecision]
+      });
+    }
+
+    setShowDecisionModal(false);
+    setEditingDecision(null);
+  };
+
+  const confirmDeleteDecision = () => {
+    if (!config || !deleteConfirmation) return;
+
+    setConfig({
+      ...config,
+      decisions: config.decisions.filter(d => d.decisionId !== deleteConfirmation.decisionId)
+    });
+    setDeleteConfirmation(null);
+  };
+
   const handleLeftPanelDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (!config || !over || active.id === over.id) return;
@@ -629,7 +687,7 @@ export function UserTaskEditorPage() {
               <div className="section-header">
                 <h2 className="section-title">Решения</h2>
                 {isEditAllowed && (
-                  <button className="btn btn-sm btn-primary">
+                  <button className="btn btn-sm btn-primary" onClick={() => openDecisionModal()}>
                     <Plus size={16} />
                     Добавить решение
                   </button>
@@ -639,52 +697,73 @@ export function UserTaskEditorPage() {
               <div className="decisions-list">
                 {config.decisions.map((decision) => (
                   <div key={decision.decisionId} className="decision-card card">
-                    <div className="decision-header">
-                      <div className="decision-info">
-                        <h3 className="decision-title">{decision.title}</h3>
-                        <code className="decision-id">{decision.decisionId}</code>
-                      </div>
+                    <div className="decision-card-header">
                       {isEditAllowed && (
-                        <button className="btn-icon btn-danger">
-                          <Trash2 size={16} />
-                        </button>
+                        <div className="decision-actions">
+                          <button
+                            className="btn-icon"
+                            onClick={() => openDecisionModal(decision)}
+                            title="Редактировать решение"
+                          >
+                            <Save size={16} />
+                          </button>
+                          <button
+                            className="btn-icon btn-danger"
+                            onClick={() => setDeleteConfirmation({ show: true, decisionId: decision.decisionId, decisionTitle: decision.title })}
+                            title="Удалить решение"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       )}
                     </div>
-                    <div className="decision-properties">
-                      <div className="property-row">
-                        <span className="property-label">Тип:</span>
-                        <span className={`badge badge-${decision.type === 'ACCEPT' ? 'success' : decision.type === 'REJECT' ? 'danger' : 'warning'}`}>
-                          {decision.type}
-                        </span>
+                    <div className="decision-content">
+                      <div className="decision-main">
+                        <div className="decision-info">
+                          <h3 className="decision-title">{decision.title}</h3>
+                          <code className="decision-id">{decision.decisionId}</code>
+                        </div>
+                        <div className="property-row">
+                          <span className="property-label">Тип:</span>
+                          <span className={`badge badge-${decision.type === 'ACCEPT' ? 'success' : decision.type === 'REJECT' ? 'danger' : 'warning'}`}>
+                            {decision.type}
+                          </span>
+                        </div>
                       </div>
-                      <div className="property-row">
-                        <span className="property-label">Валидация:</span>
-                        <span>{decision.validate ? 'Да' : 'Нет'}</span>
-                      </div>
-                      {decision.comment && (
-                        <>
-                          <div className="property-row">
-                            <span className="property-label">Комментарий:</span>
-                            <span>
-                              {decision.comment.visible ? 'Видимый' : 'Скрытый'}
-                              {decision.comment.require && ', обязательный'}
-                              {decision.comment.readonly && ', только чтение'}
-                            </span>
+                      <div className="decision-settings">
+                        <div className="settings-section">
+                          <h5 className="settings-title">Настройки комментария</h5>
+                          <div className="setting-item">
+                            <input type="checkbox" checked={decision.comment?.visible ?? false} disabled readOnly />
+                            <span>Комментарий видимый</span>
                           </div>
-                          {decision.comment.permissions && decision.comment.permissions.length > 0 && (
-                            <div className="property-row">
-                              <span className="property-label">Права на комментарий:</span>
+                          <div className="setting-item">
+                            <input type="checkbox" checked={decision.comment?.require ?? false} disabled readOnly />
+                            <span>Комментарий обязателен</span>
+                          </div>
+                          <div className="setting-item">
+                            <input type="checkbox" checked={decision.comment?.readonly ?? false} disabled readOnly />
+                            <span>Только для чтения</span>
+                          </div>
+                          <div className="setting-item">
+                            <input type="checkbox" checked={decision.validate} disabled readOnly />
+                            <span>Валидация формы перед отправкой решения</span>
+                          </div>
+                          {decision.comment?.permissions && decision.comment.permissions.length > 0 && (
+                            <div className="setting-item-full">
+                              <span className="setting-label">Права на комментарий:</span>
                               <span>{decision.comment.permissions.map(p => p.readRole).join(', ')}</span>
                             </div>
                           )}
-                        </>
-                      )}
-                      {decision.properties?.transient && (
-                        <div className="property-row">
-                          <span className="property-label">Transient:</span>
-                          <span>Да</span>
                         </div>
-                      )}
+                        <div className="settings-section">
+                          <h5 className="settings-title">Свойства</h5>
+                          <div className="setting-item">
+                            <input type="checkbox" checked={decision.properties?.transient ?? false} disabled readOnly />
+                            <span>Временное решение</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -1093,6 +1172,179 @@ export function UserTaskEditorPage() {
                   );
                 })}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Модальное окно редактирования решения */}
+      {showDecisionModal && editingDecision && (
+        <div className="modal-overlay" onClick={() => setShowDecisionModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>{editingDecision.decisionId ? 'Редактировать решение' : 'Добавить решение'}</h3>
+              <button className="btn-icon" onClick={() => setShowDecisionModal(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="form-grid">
+                <div className="form-field">
+                  <label>ID решения *</label>
+                  <input
+                    type="text"
+                    className="input"
+                    value={editingDecision.decisionId}
+                    onChange={(e) => setEditingDecision({ ...editingDecision, decisionId: e.target.value })}
+                    placeholder="approve"
+                  />
+                </div>
+                <div className="form-field">
+                  <label>Тип решения *</label>
+                  <select
+                    className="input"
+                    value={editingDecision.type}
+                    onChange={(e) => setEditingDecision({ ...editingDecision, type: e.target.value as 'ACCEPT' | 'REJECT' | 'REWORK' })}
+                  >
+                    <option value="ACCEPT">ACCEPT</option>
+                    <option value="REJECT">REJECT</option>
+                    <option value="REWORK">REWORK</option>
+                  </select>
+                </div>
+                <div className="form-field full-width">
+                  <label>Название *</label>
+                  <input
+                    type="text"
+                    className="input"
+                    value={editingDecision.title}
+                    onChange={(e) => setEditingDecision({ ...editingDecision, title: e.target.value })}
+                    placeholder="Одобрить"
+                  />
+                </div>
+
+                <div className="form-section full-width" style={{ marginTop: '16px' }}>
+                  <h4>Настройки комментария</h4>
+                  <div className="form-field">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={editingDecision.comment?.visible ?? true}
+                        onChange={(e) => {
+                          const isVisible = e.target.checked;
+                          setEditingDecision({
+                            ...editingDecision,
+                            comment: {
+                              ...(editingDecision.comment || { readonly: false, require: false }),
+                              visible: isVisible,
+                              require: isVisible ? (editingDecision.comment?.require ?? false) : false
+                            }
+                          });
+                        }}
+                        style={{ marginRight: '8px' }}
+                      />
+                      Комментарий видимый
+                    </label>
+                  </div>
+                  <div className="form-field">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={editingDecision.comment?.require ?? false}
+                        disabled={!editingDecision.comment?.visible}
+                        onChange={(e) => setEditingDecision({
+                          ...editingDecision,
+                          comment: { ...(editingDecision.comment || { visible: true, readonly: false }), require: e.target.checked }
+                        })}
+                        style={{ marginRight: '8px' }}
+                      />
+                      Комментарий обязателен
+                    </label>
+                  </div>
+                  <div className="form-field">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={editingDecision.comment?.readonly ?? false}
+                        onChange={(e) => setEditingDecision({
+                          ...editingDecision,
+                          comment: { ...(editingDecision.comment || { visible: true, require: false }), readonly: e.target.checked }
+                        })}
+                        style={{ marginRight: '8px' }}
+                      />
+                      Только для чтения
+                    </label>
+                  </div>
+                  <div className="form-field">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={editingDecision.validate}
+                        onChange={(e) => setEditingDecision({ ...editingDecision, validate: e.target.checked })}
+                        style={{ marginRight: '8px' }}
+                      />
+                      Валидация формы
+                    </label>
+                  </div>
+                </div>
+
+                <div className="form-section full-width" style={{ marginTop: '16px' }}>
+                  <h4>Свойства</h4>
+                  <div className="form-field">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={editingDecision.properties?.transient ?? false}
+                        onChange={(e) => setEditingDecision({
+                          ...editingDecision,
+                          properties: { ...(editingDecision.properties || {}), transient: e.target.checked }
+                        })}
+                        style={{ marginRight: '8px' }}
+                      />
+                      Временное решение
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setShowDecisionModal(false)}>
+                Отмена
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={saveDecision}
+                disabled={!editingDecision.decisionId || !editingDecision.title}
+              >
+                Сохранить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Popup подтверждения удаления решения */}
+      {deleteConfirmation && (
+        <div className="modal-overlay" onClick={() => setDeleteConfirmation(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '400px' }}>
+            <div className="modal-header">
+              <h3>Удаление решения</h3>
+              <button className="btn-icon" onClick={() => setDeleteConfirmation(null)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <p>Вы уверены, что хотите удалить решение <strong>"{deleteConfirmation.decisionTitle}"</strong>?</p>
+              <p style={{ marginTop: '12px', color: 'var(--text-secondary)', fontSize: '14px' }}>
+                Это действие нельзя отменить.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setDeleteConfirmation(null)}>
+                Отмена
+              </button>
+              <button className="btn btn-danger" onClick={confirmDeleteDecision}>
+                Удалить
+              </button>
             </div>
           </div>
         </div>

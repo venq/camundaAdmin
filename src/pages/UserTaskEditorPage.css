@@ -98,6 +98,7 @@
 
 .decision-card {
   padding: 16px;
+  position: relative;
 }
 
 .decision-header {
@@ -105,6 +106,17 @@
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 12px;
+}
+
+.decision-actions {
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.decision-card:hover .decision-actions {
+  opacity: 1;
 }
 
 .decision-info {
@@ -125,10 +137,75 @@
   color: var(--text-secondary);
 }
 
-.decision-properties {
+.decision-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.decision-main {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.decision-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-left: 20px;
+  border-left: 2px solid var(--border-color);
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 4px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.setting-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  padding: 4px 0;
+}
+
+.setting-item input[type="checkbox"] {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.setting-item span {
+  color: var(--text-secondary);
+}
+
+.setting-item-full {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+  padding: 4px 0;
+  margin-top: 8px;
+}
+
+.setting-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.setting-item-full > span:last-child {
+  color: var(--text-primary);
+  padding-left: 0;
 }
 
 .property-row {
@@ -689,4 +766,20 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-secondary);
+}
+
+.form-section h4 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 12px 0;
 }
