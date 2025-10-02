@@ -1,0 +1,15 @@
+BACK_OFFICE_ROLE Сотрудник Бэк-офиса
+BACK_OFFICE_MANAGER_ROLE Руководитель Бэк-офиса
+CLIENT Клиент
+CLIENT_DEPARTMENT_ROLE Клиентский менеджер
+CLIENT_DEPARTMENT_MANAGER_ROLE Руководитель клиентского менеджера
+CREDIT_ANALYST_ROLE Специалист кредитного анализа
+CREDIT_ANALYST_MANAGER_ROLE Руководитель кредитного анализа
+CREDIT_RISK_ROLE Кредитные риски
+CREDIT_RISK_MANAGER_ROLE Руководитель кредитных рисков
+CREDIT_VERIFICATOR_ROLE Кредитный верификатор
+CREDIT_VERIFICATOR_MANAGER_ROLE Руководитель кредитного верификатора
+ECONOMIC_SECURITY_ROLE Экономическая безопасность
+LEGAL_DEPARTMENT_ROLE Юридическая служба
+LEGAL_DEPARTMENT_MANAGER_ROLE Руководитель Юридической службы
+PLEDGE_SERVICE_ROLE Залоговый сервис

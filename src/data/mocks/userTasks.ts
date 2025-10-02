@@ -9,7 +9,9 @@ export const mockUserTaskConfig: UserTaskConfig = {
     description: 'Необходимо проверить документы заявителя и первичную информацию',
     assignee: '',
     executorGroups: ['CREDIT_ANALYST'],
-    managerGroups: ['CREDIT_ANALYST_MANAGER']
+    managerGroups: ['CREDIT_ANALYST_MANAGER'],
+    workGroups: ['CREDIT_ANALYST_ROLE', 'LEGAL_DEPARTMENT_ROLE'],
+    decision: 'reviewApplication'
   },
   decisions: [
     {

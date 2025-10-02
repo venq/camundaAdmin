@@ -141,7 +141,7 @@ export function RegistriesPage() {
                   <table>
                     <thead>
                       <tr>
-                        {activeRegistry.registryId === 'roles' ? (
+                        {(activeRegistry.registryId === 'roles' || activeRegistry.registryId === 'managerRoles' || activeRegistry.registryId === 'workgroups') ? (
                           <>
                             <th>Код роли</th>
                             <th>Название</th>
@@ -159,7 +159,7 @@ export function RegistriesPage() {
                     <tbody>
                       {activeRegistry.items.map((item) => (
                         <tr key={item.itemId}>
-                          {activeRegistry.registryId === 'roles' ? (
+                          {(activeRegistry.registryId === 'roles' || activeRegistry.registryId === 'managerRoles' || activeRegistry.registryId === 'workgroups') ? (
                             <>
                               <td>
                                 <code>{item.code || item.itemId}</code>

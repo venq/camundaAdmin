@@ -86,6 +86,8 @@ export interface UserTaskMetadata {
   assignee?: string;
   executorGroups: string[];
   managerGroups: string[];
+  workGroups: string[];
+  decision?: string;
 }
 
 export interface Decision {

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/store';
 import { Save, Plus, Trash2, EyeOff, GripVertical, X } from 'lucide-react';
 import type { UserTaskConfig } from '@/types';
@@ -78,8 +78,9 @@ export function UserTaskEditorPage() {
     projectId: string;
     taskKey: string;
   }>();
+  const navigate = useNavigate();
 
-  const { userTaskConfigs, selectedEnvironment, presets, addUserTaskConfig, bpmnProcesses, setSelectedTenant, registries } = useAppStore();
+  const { userTaskConfigs, selectedEnvironment, presets, addUserTaskConfig, bpmnProcesses, projects, setSelectedTenant, registries } = useAppStore();
   const [config, setConfig] = useState<UserTaskConfig | null>(
     userTaskConfigs.find((c) => c.taskDefinitionKey === taskKey) || null
   );
@@ -91,6 +92,7 @@ export function UserTaskEditorPage() {
   const [showComponentModal, setShowComponentModal] = useState(false);
   const [showLeftPanelComponentModal, setShowLeftPanelComponentModal] = useState(false);
   const [selectedTabForComponents, setSelectedTabForComponents] = useState<{ groupId: string; tabId: string } | null>(null);
+  const [showRolePopup, setShowRolePopup] = useState<{ type: 'executor' | 'manager' | 'workgroup'; show: boolean }>({ type: 'executor', show: false });
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -99,9 +101,31 @@ export function UserTaskEditorPage() {
     })
   );
 
+  // Получаем данные для breadcrumb
+  const project = projects.find((p) => p.id === projectId);
+  // Находим BPMN процесс, в котором есть эта задача
+  const bpmnProcess = bpmnProcesses.find((bp) =>
+    bp.projectId === projectId &&
+    (bp.userTasks.some(ut => ut.taskDefinitionKey === taskKey) ||
+     bp.serviceTasks.some(st => st.serviceTaskKey === taskKey))
+  );
+  const processId = bpmnProcess?.id;
+
   // Получаем реестр ролей
   const userRolesRegistry = registries.find((r) => r.tenantId === tenantId && r.registryId === 'roles');
-  const availableRoles = userRolesRegistry?.items || [];
+  const userRoles = userRolesRegistry?.items || [];
+
+  // Получаем реестр ролей руководителей
+  const managerRolesRegistry = registries.find((r) => r.tenantId === tenantId && r.registryId === 'managerRoles');
+  const managerRoles = managerRolesRegistry?.items || [];
+
+  // Для группы исполнителей объединяем оба реестра
+  const availableExecutorRoles = [...userRoles, ...managerRoles];
+  const availableManagerRoles = managerRoles;
+
+  // Получаем реестр рабочих групп
+  const workGroupsRegistry = registries.find((r) => r.tenantId === tenantId && r.registryId === 'workgroups');
+  const availableWorkGroups = workGroupsRegistry?.items || [];
 
   // Устанавливаем selectedTenant для отображения левого меню
   useEffect(() => {
@@ -131,8 +155,10 @@ export function UserTaskEditorPage() {
             title: bpmnTask?.name || taskKey!,
             description: `Автоматически созданная конфигурация для ${taskKey}`,
             assignee: '',
-            executorGroups: ['CREDIT_ANALYST'],
-            managerGroups: ['CREDIT_ANALYST_MANAGER']
+            executorGroups: [],
+            managerGroups: [],
+            workGroups: [],
+            decision: taskKey!.split('.').pop()
           },
           decisions: defaultPreset.content.decisions || [],
           leftPanel: defaultPreset.content.leftPanel || [],
@@ -391,7 +417,21 @@ export function UserTaskEditorPage() {
     <div className="page editor-page">
       <div className="page-header">
         <div>
-          <h1 className="page-title">UserTask: {config.metadata.title}</h1>
+          <h1 className="page-title">
+            <span className="breadcrumb-link" onClick={() => navigate(`/tenants/${tenantId}/projects`)}>
+              Процессы
+            </span>
+            {' / '}
+            <span className="breadcrumb-link" onClick={() => navigate(`/tenants/${tenantId}/projects/${projectId}`)}>
+              {project?.name}
+            </span>
+            {' / '}
+            <span className="breadcrumb-link" onClick={() => navigate(`/tenants/${tenantId}/projects/${projectId}/bpmn/${processId}`)}>
+              {bpmnProcess?.name}
+            </span>
+            {' / '}
+            <span>{config.metadata.title}</span>
+          </h1>
           <p className="page-description">
             {config.taskDefinitionKey} (версия {config.version})
           </p>
@@ -470,10 +510,21 @@ export function UserTaskEditorPage() {
                   </small>
                 </div>
                 <div className="form-field full-width">
-                  <label>Группа исполнителей</label>
+                  <label>
+                    Группа исполнителей
+                    {isEditAllowed && (
+                      <button
+                        className="btn-icon-small"
+                        onClick={() => setShowRolePopup({ type: 'executor', show: true })}
+                        style={{ marginLeft: '8px' }}
+                      >
+                        <Plus size={16} />
+                      </button>
+                    )}
+                  </label>
                   <div className="group-selector">
                     {(config.metadata.executorGroups || []).map((groupCode: string, index: number) => {
-                      const role = availableRoles.find((r: any) => r.code === groupCode || r.itemId === groupCode);
+                      const role = availableExecutorRoles.find((r: any) => r.code === groupCode || r.itemId === groupCode);
                       return (
                         <div key={index} className="group-tag">
                           <span className="group-code">{groupCode}</span>
@@ -484,42 +535,33 @@ export function UserTaskEditorPage() {
                               onClick={() => {
                                 const newGroups = [...(config.metadata.executorGroups || [])];
                                 newGroups.splice(index, 1);
-                                // TODO: обновить config.metadata.executorGroups
+                                setConfig({ ...config, metadata: { ...config.metadata, executorGroups: newGroups } });
                               }}
                             >
-                              <X size={14} />
+                              <Trash2 size={14} />
                             </button>
                           )}
                         </div>
                       );
                     })}
-                    {isEditAllowed && (
-                      <div className="group-add">
-                        <select
-                          className="select"
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              // TODO: добавить группу в config.metadata.executorGroups
-                              e.target.value = '';
-                            }
-                          }}
-                        >
-                          <option value="">Добавить роль...</option>
-                          {availableRoles.map((role: any) => (
-                            <option key={role.code || role.itemId} value={role.code || role.itemId}>
-                              {role.code || role.itemId} - {role.name || role.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
                   </div>
                 </div>
                 <div className="form-field full-width">
-                  <label>Группа руководителей</label>
+                  <label>
+                    Группа руководителей
+                    {isEditAllowed && (
+                      <button
+                        className="btn-icon-small"
+                        onClick={() => setShowRolePopup({ type: 'manager', show: true })}
+                        style={{ marginLeft: '8px' }}
+                      >
+                        <Plus size={16} />
+                      </button>
+                    )}
+                  </label>
                   <div className="group-selector">
                     {(config.metadata.managerGroups || []).map((groupCode: string, index: number) => {
-                      const role = availableRoles.find((r: any) => r.code === groupCode || r.itemId === groupCode);
+                      const role = availableManagerRoles.find((r: any) => r.code === groupCode || r.itemId === groupCode);
                       return (
                         <div key={index} className="group-tag">
                           <span className="group-code">{groupCode}</span>
@@ -530,35 +572,52 @@ export function UserTaskEditorPage() {
                               onClick={() => {
                                 const newGroups = [...(config.metadata.managerGroups || [])];
                                 newGroups.splice(index, 1);
-                                // TODO: обновить config.metadata.managerGroups
+                                setConfig({ ...config, metadata: { ...config.metadata, managerGroups: newGroups } });
                               }}
                             >
-                              <X size={14} />
+                              <Trash2 size={14} />
                             </button>
                           )}
                         </div>
                       );
                     })}
+                  </div>
+                </div>
+                <div className="form-field full-width">
+                  <label>
+                    Рабочая группа
                     {isEditAllowed && (
-                      <div className="group-add">
-                        <select
-                          className="select"
-                          onChange={(e) => {
-                            if (e.target.value) {
-                              // TODO: добавить группу в config.metadata.managerGroups
-                              e.target.value = '';
-                            }
-                          }}
-                        >
-                          <option value="">Добавить роль...</option>
-                          {availableRoles.map((role: any) => (
-                            <option key={role.code || role.itemId} value={role.code || role.itemId}>
-                              {role.code || role.itemId} - {role.name || role.label}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                      <button
+                        className="btn-icon-small"
+                        onClick={() => setShowRolePopup({ type: 'workgroup', show: true })}
+                        style={{ marginLeft: '8px' }}
+                      >
+                        <Plus size={16} />
+                      </button>
                     )}
+                  </label>
+                  <div className="group-selector">
+                    {(config.metadata.workGroups || []).map((groupCode: string, index: number) => {
+                      const workGroup = availableWorkGroups.find((wg: any) => wg.code === groupCode || wg.itemId === groupCode);
+                      return (
+                        <div key={index} className="group-tag">
+                          <span className="group-code">{groupCode}</span>
+                          {workGroup && <span className="group-name"> - {workGroup.name || workGroup.label}</span>}
+                          {isEditAllowed && (
+                            <button
+                              className="btn-icon-small"
+                              onClick={() => {
+                                const newGroups = [...(config.metadata.workGroups || [])];
+                                newGroups.splice(index, 1);
+                                setConfig({ ...config, metadata: { ...config.metadata, workGroups: newGroups } });
+                              }}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
@@ -609,6 +668,30 @@ export function UserTaskEditorPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              <div className="form-section" style={{ marginTop: '24px' }}>
+                <div className="form-field full-width">
+                  <label>Решение по задаче</label>
+                  <input
+                    type="text"
+                    className="input"
+                    value={config.metadata.decision || ''}
+                    placeholder={taskKey?.split('.').pop() || ''}
+                    onChange={(e) => {
+                      if (isEditAllowed) {
+                        setConfig({
+                          ...config,
+                          metadata: { ...config.metadata, decision: e.target.value }
+                        });
+                      }
+                    }}
+                    disabled={!isEditAllowed}
+                  />
+                  <small className="field-hint">
+                    По умолчанию используется последняя часть ID задачи: {taskKey?.split('.').pop()}
+                  </small>
+                </div>
               </div>
             </div>
           )}
@@ -918,6 +1001,77 @@ export function UserTaskEditorPage() {
                       />
                     </div>
                   ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Попап выбора роли */}
+      {showRolePopup.show && (
+        <div className="modal-overlay" onClick={() => setShowRolePopup({ ...showRolePopup, show: false })}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>
+                {showRolePopup.type === 'executor' && 'Добавить группу исполнителей'}
+                {showRolePopup.type === 'manager' && 'Добавить группу руководителей'}
+                {showRolePopup.type === 'workgroup' && 'Добавить рабочую группу'}
+              </h3>
+              <button className="btn-icon" onClick={() => setShowRolePopup({ ...showRolePopup, show: false })}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="role-list">
+                {(showRolePopup.type === 'workgroup' ? availableWorkGroups :
+                  showRolePopup.type === 'manager' ? availableManagerRoles :
+                  availableExecutorRoles)
+                  .sort((a: any, b: any) => {
+                    const codeA = a.code || a.itemId;
+                    const codeB = b.code || b.itemId;
+                    return codeA.localeCompare(codeB);
+                  })
+                  .map((role: any) => {
+                  const roleCode = role.code || role.itemId;
+                  const isSelected =
+                    showRolePopup.type === 'executor' ? config?.metadata.executorGroups?.includes(roleCode) :
+                    showRolePopup.type === 'manager' ? config?.metadata.managerGroups?.includes(roleCode) :
+                    config?.metadata.workGroups?.includes(roleCode);
+
+                  return (
+                    <div
+                      key={roleCode}
+                      className={`role-item ${isSelected ? 'selected' : ''}`}
+                      onClick={() => {
+                        if (!config) return;
+
+                        if (showRolePopup.type === 'executor') {
+                          const newGroups = [...(config.metadata.executorGroups || [])];
+                          if (!newGroups.includes(roleCode)) {
+                            newGroups.push(roleCode);
+                            setConfig({ ...config, metadata: { ...config.metadata, executorGroups: newGroups } });
+                          }
+                        } else if (showRolePopup.type === 'manager') {
+                          const newGroups = [...(config.metadata.managerGroups || [])];
+                          if (!newGroups.includes(roleCode)) {
+                            newGroups.push(roleCode);
+                            setConfig({ ...config, metadata: { ...config.metadata, managerGroups: newGroups } });
+                          }
+                        } else {
+                          const newGroups = [...(config.metadata.workGroups || [])];
+                          if (!newGroups.includes(roleCode)) {
+                            newGroups.push(roleCode);
+                            setConfig({ ...config, metadata: { ...config.metadata, workGroups: newGroups } });
+                          }
+                        }
+                        setShowRolePopup({ ...showRolePopup, show: false });
+                      }}
+                    >
+                      <code>{roleCode}</code>
+                      <span> - {role.name || role.label}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
