@@ -141,22 +141,42 @@ export function RegistriesPage() {
                   <table>
                     <thead>
                       <tr>
-                        <th>Item ID</th>
-                        <th>Название</th>
-                        <th>Значение</th>
+                        {activeRegistry.registryId === 'roles' ? (
+                          <>
+                            <th>Код роли</th>
+                            <th>Название</th>
+                          </>
+                        ) : (
+                          <>
+                            <th>Item ID</th>
+                            <th>Название</th>
+                            <th>Значение</th>
+                          </>
+                        )}
                         {isEditAllowed && <th style={{ width: '100px' }}>Действия</th>}
                       </tr>
                     </thead>
                     <tbody>
                       {activeRegistry.items.map((item) => (
                         <tr key={item.itemId}>
-                          <td>
-                            <code>{item.itemId}</code>
-                          </td>
-                          <td>{item.label}</td>
-                          <td>
-                            <code>{String(item.value)}</code>
-                          </td>
+                          {activeRegistry.registryId === 'roles' ? (
+                            <>
+                              <td>
+                                <code>{item.code || item.itemId}</code>
+                              </td>
+                              <td>{item.name || item.label}</td>
+                            </>
+                          ) : (
+                            <>
+                              <td>
+                                <code>{item.itemId}</code>
+                              </td>
+                              <td>{item.label}</td>
+                              <td>
+                                <code>{String(item.value)}</code>
+                              </td>
+                            </>
+                          )}
                           {isEditAllowed && (
                             <td>
                               <div className="table-actions">

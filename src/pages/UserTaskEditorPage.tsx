@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useAppStore } from '@/store';
-import { Save, Plus, Trash2, ChevronRight, Eye, EyeOff, GripVertical } from 'lucide-react';
+import { Save, Plus, Trash2, ChevronRight, Eye, EyeOff, GripVertical, X } from 'lucide-react';
 import type { UserTaskConfig } from '@/types';
 import { PresetCard } from '@/components/PresetCard';
 import {
@@ -79,7 +79,7 @@ export function UserTaskEditorPage() {
     taskKey: string;
   }>();
 
-  const { userTaskConfigs, selectedEnvironment, presets, addUserTaskConfig, bpmnProcesses, setSelectedTenant } = useAppStore();
+  const { userTaskConfigs, selectedEnvironment, presets, addUserTaskConfig, bpmnProcesses, setSelectedTenant, registries } = useAppStore();
   const [config, setConfig] = useState<UserTaskConfig | null>(
     userTaskConfigs.find((c) => c.taskDefinitionKey === taskKey) || null
   );
@@ -98,6 +98,10 @@ export function UserTaskEditorPage() {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  // Получаем реестр ролей
+  const userRolesRegistry = registries.find((r) => r.tenantId === tenantId && r.registryId === 'roles');
+  const availableRoles = userRolesRegistry?.items || [];
 
   // Устанавливаем selectedTenant для отображения левого меню
   useEffect(() => {
@@ -452,19 +456,110 @@ export function UserTaskEditorPage() {
                     disabled={!isEditAllowed}
                   />
                 </div>
-                <div className="form-field">
-                  <label>Группа исполнителей</label>
-                  <select className="select" value={config.metadata.executorGroup} disabled={!isEditAllowed}>
-                    <option value="creditOfficers">Кредитные специалисты</option>
-                    <option value="creditManagers">Руководители кредитного отдела</option>
-                  </select>
+                <div className="form-field full-width">
+                  <label>Assignee</label>
+                  <input
+                    type="text"
+                    className="input"
+                    value={config.metadata.assignee || ''}
+                    placeholder="Login или FEEL expression (например: =initiator.login)"
+                    disabled={!isEditAllowed}
+                  />
+                  <small className="field-hint">
+                    Введите login ответственного или FEEL expression (начинается с "=")
+                  </small>
                 </div>
-                <div className="form-field">
+                <div className="form-field full-width">
+                  <label>Группа исполнителей</label>
+                  <div className="group-selector">
+                    {(config.metadata.executorGroups || []).map((groupCode: string, index: number) => {
+                      const role = availableRoles.find((r: any) => r.code === groupCode || r.itemId === groupCode);
+                      return (
+                        <div key={index} className="group-tag">
+                          <span className="group-code">{groupCode}</span>
+                          {role && <span className="group-name"> - {role.name || role.label}</span>}
+                          {isEditAllowed && (
+                            <button
+                              className="btn-icon-small"
+                              onClick={() => {
+                                const newGroups = [...(config.metadata.executorGroups || [])];
+                                newGroups.splice(index, 1);
+                                // TODO: обновить config.metadata.executorGroups
+                              }}
+                            >
+                              <X size={14} />
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                    {isEditAllowed && (
+                      <div className="group-add">
+                        <select
+                          className="select"
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              // TODO: добавить группу в config.metadata.executorGroups
+                              e.target.value = '';
+                            }
+                          }}
+                        >
+                          <option value="">Добавить роль...</option>
+                          {availableRoles.map((role: any) => (
+                            <option key={role.code || role.itemId} value={role.code || role.itemId}>
+                              {role.code || role.itemId} - {role.name || role.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <div className="form-field full-width">
                   <label>Группа руководителей</label>
-                  <select className="select" value={config.metadata.managerGroup} disabled={!isEditAllowed}>
-                    <option value="creditManagers">Руководители кредитного отдела</option>
-                    <option value="riskAnalysts">Аналитики рисков</option>
-                  </select>
+                  <div className="group-selector">
+                    {(config.metadata.managerGroups || []).map((groupCode: string, index: number) => {
+                      const role = availableRoles.find((r: any) => r.code === groupCode || r.itemId === groupCode);
+                      return (
+                        <div key={index} className="group-tag">
+                          <span className="group-code">{groupCode}</span>
+                          {role && <span className="group-name"> - {role.name || role.label}</span>}
+                          {isEditAllowed && (
+                            <button
+                              className="btn-icon-small"
+                              onClick={() => {
+                                const newGroups = [...(config.metadata.managerGroups || [])];
+                                newGroups.splice(index, 1);
+                                // TODO: обновить config.metadata.managerGroups
+                              }}
+                            >
+                              <X size={14} />
+                            </button>
+                          )}
+                        </div>
+                      );
+                    })}
+                    {isEditAllowed && (
+                      <div className="group-add">
+                        <select
+                          className="select"
+                          onChange={(e) => {
+                            if (e.target.value) {
+                              // TODO: добавить группу в config.metadata.managerGroups
+                              e.target.value = '';
+                            }
+                          }}
+                        >
+                          <option value="">Добавить роль...</option>
+                          {availableRoles.map((role: any) => (
+                            <option key={role.code || role.itemId} value={role.code || role.itemId}>
+                              {role.code || role.itemId} - {role.name || role.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

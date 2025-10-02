@@ -419,11 +419,11 @@ export const mockUserTaskConfig: UserTaskConfig = {
   taskDefinitionKey: 'creditProcess.reviewApplication',
   version: 3,
   metadata: {
-    stage: 'Проверка',
     title: 'Проверка кредитной заявки',
     description: 'Необходимо проверить документы заявителя и первичную информацию',
-    executorGroup: 'creditOfficers',
-    managerGroup: 'creditManagers'
+    assignee: '',
+    executorGroups: ['CREDIT_ANALYST'],
+    managerGroups: ['CREDIT_ANALYST_MANAGER']
   },
   decisions: [
     {
@@ -564,9 +564,21 @@ export const mockRegistries: Registry[] = [
     description: 'Справочник ролей для назначения задач',
     version: 5,
     items: [
-      { itemId: 'creditOfficers', label: 'Кредитные специалисты', value: 'creditOfficers' },
-      { itemId: 'creditManagers', label: 'Руководители кредитного отдела', value: 'creditManagers' },
-      { itemId: 'riskAnalysts', label: 'Аналитики рисков', value: 'riskAnalysts' }
+      { itemId: 'BACK_OFFICE', code: 'BACK_OFFICE', name: 'Сотрудник Бэк-офиса', label: 'Сотрудник Бэк-офиса', value: 'BACK_OFFICE' },
+      { itemId: 'BACK_OFFICE_MANAGER', code: 'BACK_OFFICE_MANAGER', name: 'Руководитель Бэк-офиса', label: 'Руководитель Бэк-офиса', value: 'BACK_OFFICE_MANAGER' },
+      { itemId: 'CLIENT', code: 'CLIENT', name: 'Клиент', label: 'Клиент', value: 'CLIENT' },
+      { itemId: 'CLIENT_DEPARTMENT', code: 'CLIENT_DEPARTMENT', name: 'Клиентский менеджер', label: 'Клиентский менеджер', value: 'CLIENT_DEPARTMENT' },
+      { itemId: 'CLIENT_DEPARTMENT_MANAGER', code: 'CLIENT_DEPARTMENT_MANAGER', name: 'Руководитель клиентского менеджера', label: 'Руководитель клиентского менеджера', value: 'CLIENT_DEPARTMENT_MANAGER' },
+      { itemId: 'CREDIT_ANALYST', code: 'CREDIT_ANALYST', name: 'Специалист кредитного анализа', label: 'Специалист кредитного анализа', value: 'CREDIT_ANALYST' },
+      { itemId: 'CREDIT_ANALYST_MANAGER', code: 'CREDIT_ANALYST_MANAGER', name: 'Руководитель кредитного анализа', label: 'Руководитель кредитного анализа', value: 'CREDIT_ANALYST_MANAGER' },
+      { itemId: 'CREDIT_RISK', code: 'CREDIT_RISK', name: 'Кредитные риски', label: 'Кредитные риски', value: 'CREDIT_RISK' },
+      { itemId: 'CREDIT_RISK_MANAGER', code: 'CREDIT_RISK_MANAGER', name: 'Руководитель кредитных рисков', label: 'Руководитель кредитных рисков', value: 'CREDIT_RISK_MANAGER' },
+      { itemId: 'CREDIT_VERIFICATOR', code: 'CREDIT_VERIFICATOR', name: 'Кредитный верификатор', label: 'Кредитный верификатор', value: 'CREDIT_VERIFICATOR' },
+      { itemId: 'CREDIT_VERIFICATOR_MANAGER', code: 'CREDIT_VERIFICATOR_MANAGER', name: 'Руководитель кредитного верификатора', label: 'Руководитель кредитного верификатора', value: 'CREDIT_VERIFICATOR_MANAGER' },
+      { itemId: 'ECONOMIC_SECURITY', code: 'ECONOMIC_SECURITY', name: 'Экономическая безопасность', label: 'Экономическая безопасность', value: 'ECONOMIC_SECURITY' },
+      { itemId: 'LEGAL_DEPARTMENT', code: 'LEGAL_DEPARTMENT', name: 'Юридическая служба', label: 'Юридическая служба', value: 'LEGAL_DEPARTMENT' },
+      { itemId: 'LEGAL_DEPARTMENT_MANAGER', code: 'LEGAL_DEPARTMENT_MANAGER', name: 'Руководитель Юридической службы', label: 'Руководитель Юридической службы', value: 'LEGAL_DEPARTMENT_MANAGER' },
+      { itemId: 'PLEDGE_SERVICE', code: 'PLEDGE_SERVICE', name: 'Залоговый сервис', label: 'Залоговый сервис', value: 'PLEDGE_SERVICE' }
     ],
     createdAt: '2025-03-15T09:00:00Z',
     updatedAt: '2025-09-20T10:15:00Z',

@@ -1,0 +1,15 @@
+BACK_OFFICE Сотрудник Бэк-офиса
+BACK_OFFICE_MANAGER Руководитель Бэк-офиса
+CLIENT Клиент
+CLIENT_DEPARTMENT Клиентский менеджер
+CLIENT_DEPARTMENT_MANAGER Руководитель клиентского менеджера
+CREDIT_ANALYST Специалист кредитного анализа
+CREDIT_ANALYST_MANAGER Руководитель кредитного анализа
+CREDIT_RISK Кредитные риски
+CREDIT_RISK_MANAGER Руководитель кредитных рисков
+CREDIT_VERIFICATOR Кредитный верификатор
+CREDIT_VERIFICATOR_MANAGER Руководитель кредитного верификатора
+ECONOMIC_SECURITY Экономическая безопасность
+LEGAL_DEPARTMENT Юридическая служба
+LEGAL_DEPARTMENT_MANAGER Руководитель Юридической службы
+PLEDGE_SERVICE Залоговый сервис

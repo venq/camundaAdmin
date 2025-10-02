@@ -539,3 +539,62 @@
 .components-list::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
 }
+
+.group-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.group-tag {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.group-tag span {
+  color: var(--text-primary);
+}
+
+.btn-icon-small {
+  padding: 2px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon-small:hover {
+  background-color: var(--bg-tertiary);
+  color: var(--danger-color);
+}
+
+.group-add {
+  flex: 0 0 auto;
+}
+
+.group-add .input {
+  min-width: 250px;
+}
+
+.group-code {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.group-name {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
