@@ -1,8 +1,0 @@
-{
-  "type": "buhReportSummary",
-  "title": "Бухгалтерская отчетность",
-  "uiType": "@farzoom/banana-ui-components:BuhReportSummary",
-  "readonly": false,
-  "collapse": true,
-  "required": false
-}

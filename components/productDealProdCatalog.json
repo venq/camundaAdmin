@@ -1,8 +1,0 @@
-{
-  "type": "productDealProdCatalog",
-  "uiType": "@farzoom/banana-ui-components:CharacteristicsListOffering",
-  "title": "Параметры продукта",
-  "readonly": true,
-  "visible": true,
-  "collapse": false
-}

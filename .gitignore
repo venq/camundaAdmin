@@ -22,3 +22,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Import directory (BPMN and components)
+import/
+
+# Claude Code directory
+.claude/

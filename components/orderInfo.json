@@ -1,7 +1,0 @@
-{
-  "title": "Заявка на БГ",
-  "type": "creditOrderInfo",
-  "visible": true,
-  "readonly": true,
-  "collapse": true
-}
