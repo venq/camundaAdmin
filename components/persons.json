@@ -1,0 +1,143 @@
+{
+  "type": "persons",
+  "title": "Физ. лица",
+  "collapse": false,
+  "readonly": true,
+  "visible": true,
+  "passportRecognition": true,
+  "identityDocumentTypeCodes": [
+    {
+      "code": "21",
+      "name": "Паспорт гражданина Российской Федерации"
+    },
+    {
+      "code": "31",
+      "name": "Паспорт иностранного гражданина либо иной документ, установленный законодательством Российской Федерации или признаваемый в соответствии с международным договором Российской Федерации в качестве документа, удостоверяющего личность иностранного гражданина"
+    }
+  ],
+  "fields": {
+    "spouse": {
+      "refs": {
+        "status": "spouceStatusRef"
+      },
+      "visible": true,
+      "readonly": false,
+      "required": false,
+      "fields": {
+        "pd": {
+          "visible": true,
+          "readonly": false,
+          "endDate": {
+            "visible": true,
+            "defaultPeriod": "P6M"
+          }
+        },
+        "bki": {
+          "visible": true,
+          "readonly": false,
+          "endDate": {
+            "visible": true,
+            "defaultPeriod": "P6M"
+          }
+        }
+      }
+    },
+    "dependents": {
+      "visible": true,
+      "readonly": false
+    },
+    "pd": {
+      "visible": true,
+      "readonly": true,
+      "endDate": {
+        "visible": true,
+        "defaultPeriod": "P6M"
+      }
+    },
+    "bki": {
+      "visible": true,
+      "readonly": true,
+      "endDate": {
+        "visible": true,
+        "defaultPeriod": "P6M"
+      }
+    }
+  },
+  "documents": {
+    "type": "documents",
+    "title": "Документы физ.лица",
+    "collapse": false,
+    "readonly": false,
+    "types": [
+      {
+        "docType": "charter",
+        "title": "Устав",
+        "required": true
+      },
+      {
+        "docType": "dulHead",
+        "title": "Паспорт",
+        "required": true
+      }
+    ]
+  },
+  "relations": {
+    "companyHead": {
+      "title": "Руководитель",
+      "documents": {
+        "type": "documents",
+        "title": "Документы руководителя",
+        "collapse": false,
+        "readonly": false,
+        "types": [
+          {
+            "docType": "charter",
+            "title": "Устав",
+            "required": true
+          },
+          {
+            "docType": "dulHead",
+            "title": "Паспорт",
+            "required": true
+          }
+        ]
+      }
+    },
+    "signer": {
+      "title": "Подписант",
+      "documents": {
+        "type": "documents",
+        "title": "Документы подписанта",
+        "collapse": false,
+        "readonly": false,
+        "types": [
+          {
+            "docType": "charter",
+            "title": "Устав",
+            "required": true
+          },
+          {
+            "docType": "dulHead",
+            "title": "Паспорт",
+            "required": true
+          }
+        ]
+      }
+    },
+    "founder": {
+      "title": "Учредитель"
+    },
+    "beneficiary": {
+      "title": "Бенефициар"
+    },
+    "disposer": {
+      "title": "Распорядитель"
+    },
+    "collegialExecutiveBody": {
+      "title": "Член коллегиального органа"
+    },
+    "supervisoryBoard": {
+      "title": "Член наблюдательного совета"
+    }
+  }
+}

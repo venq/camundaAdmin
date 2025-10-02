@@ -1,0 +1,18 @@
+{
+  "title": "Текст ошибки",
+  "type": "genparams",
+  "entityType": "order",
+  "visible": true,
+  "collapse": false,
+  "readonly": true,
+  "attributes": {
+    "crmIntegrationErrorMessage": {
+      "pos": 1,
+      "title": "Текст ошибки",
+      "type": "string",
+      "format": "text",
+      "visible": "true",
+      "readonly": "true"
+    }
+  }
+}

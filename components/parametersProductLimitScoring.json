@@ -1,0 +1,11 @@
+{
+  "type": "scoringList",
+  "entityType": "company",
+  "visible": true,
+  "readonly": true,
+  "collapse": false,
+  "revaluation": true,
+  "scoringTypes": [
+    "check-parameters-product-limit"
+  ]
+}

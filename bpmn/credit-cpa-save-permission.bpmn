@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1ivquwo" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.24.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <bpmn:process id="credit-cpa-save-permission" name="Сохранение согласий" isExecutable="true">
+    <bpmn:serviceTask id="Activity_1c7zlac" name="Сохранить согласия БКИ">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="avocc-credit-cpa-main.ServiceTaskSaveAttributeValueMap" />
+        <zeebe:ioMapping>
+          <zeebe:input source="={&#10;  &#34;nkkConsentDate&#34;: {&#10;    &#34;type&#34;: &#34;date&#34;,&#10;    &#34;value&#34;: today()&#10;  },&#10;  &#34;nkkConsentEndDate&#34;: {&#10;    &#34;type&#34;: &#34;date&#34;,&#10;    &#34;value&#34;: today() + duration(&#34;P6M&#34;)&#10;  }&#10;}" target="attributeValueMap" />
+          <zeebe:input source="=orderMember.id" target="entityId" />
+          <zeebe:input source="=orderMember.type" target="entityType" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0abl63w</bpmn:incoming>
+      <bpmn:outgoing>Flow_0jercd0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_1kuxrfk">
+      <bpmn:incoming>Flow_141g09w</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mto0yj</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1kfdkee</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_17cz321">
+      <bpmn:incoming>Flow_1y9sq34</bpmn:incoming>
+      <bpmn:incoming>Flow_1wrc4ff</bpmn:incoming>
+      <bpmn:outgoing>Flow_1slcg8t</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Activity_1kjslgl" name="Запись согласия компании">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="PATCH /api/company/company/{businessId}" />
+        <zeebe:ioMapping>
+          <zeebe:input source="={&#10;  &#34;businessId&#34;: orderMember.id,&#10;  &#34;permissionsInfo&#34;: {&#10;    &#34;activeFrom&#34;: today(),&#10;    &#34;activeTill&#34;: today() + duration(&#34;P6M&#34;)&#10;  }&#10;}" target="body" />
+          <zeebe:input source="=orderMember.id" target="businessId" />
+          <zeebe:output source="=&#34;_&#34;" target="ignored" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0mto0yj</bpmn:incoming>
+      <bpmn:outgoing>Flow_1y9sq34</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_0sxs666" name="Запись согласия персона">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="PATCH /api/company/person/business/{businessId}" />
+        <zeebe:ioMapping>
+          <zeebe:input source="={&#10;  &#34;businessId&#34;: orderMember.id,&#10;  &#34;bkiActiveFrom&#34;: today(),&#10;  &#34;bkiActiveTill&#34;: today() + duration(&#34;P6M&#34;)&#10;}" target="body" />
+          <zeebe:input source="=orderMember.id" target="businessId" />
+          <zeebe:output source="=&#34;_&#34;" target="ignored" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1kfdkee</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wrc4ff</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0jercd0" sourceRef="Activity_1c7zlac" targetRef="Gateway_1wxsx4e" />
+    <bpmn:sequenceFlow id="Flow_0mto0yj" sourceRef="Gateway_1kuxrfk" targetRef="Activity_1kjslgl">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=orderMember.type="company"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1kfdkee" sourceRef="Gateway_1kuxrfk" targetRef="Activity_0sxs666">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=orderMember.type="person"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1y9sq34" sourceRef="Activity_1kjslgl" targetRef="Gateway_17cz321" />
+    <bpmn:sequenceFlow id="Flow_1wrc4ff" sourceRef="Activity_0sxs666" targetRef="Gateway_17cz321" />
+    <bpmn:endEvent id="Event_1w8i5tj">
+      <bpmn:incoming>Flow_0kvq9hy</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1slcg8t" sourceRef="Gateway_17cz321" targetRef="Gateway_1wxsx4e" />
+    <bpmn:startEvent id="Event_0vwqxiz">
+      <bpmn:outgoing>Flow_10fbwfw</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_10fbwfw" sourceRef="Event_0vwqxiz" targetRef="Gateway_13d7hjr" />
+    <bpmn:sequenceFlow id="Flow_1gfgpa6" sourceRef="Activity_19gd45l" targetRef="Gateway_1wxsx4e" />
+    <bpmn:serviceTask id="Activity_19gd45l" name="Сохранить согласия БКИ в рамках текущей заявки">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="avocc-credit-cpa-main.ServiceTaskSaveAttributeValueMap" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=orderId + &#34;~&#34; + orderMember.id" target="entityId" />
+          <zeebe:input source="=&#34;orderCompany&#34;" target="entityType" />
+          <zeebe:input source="={&#10;  &#34;nkkConsentPresent&#34;: {&#10;    &#34;type&#34;: &#34;boolean&#34;,&#10;    &#34;value&#34;: true&#10;  },&#10;  &#34;anketaTypeSigning&#34;: {&#10;    &#34;type&#34;: &#34;select&#34;,&#10;    &#34;value&#34;: &#34;noSignature&#34;&#10;  },&#10;  &#34;anketaOrderMemberTypeSigning&#34;: {&#10;    &#34;type&#34;: &#34;select&#34;,&#10;    &#34;value&#34;: &#34;noSignature&#34;&#10;  }&#10;}" target="attributeValueMap" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0si8zka</bpmn:incoming>
+      <bpmn:outgoing>Flow_1gfgpa6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0abl63w" sourceRef="Gateway_13d7hjr" targetRef="Activity_1c7zlac" />
+    <bpmn:parallelGateway id="Gateway_13d7hjr">
+      <bpmn:incoming>Flow_10fbwfw</bpmn:incoming>
+      <bpmn:outgoing>Flow_0abl63w</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0si8zka</bpmn:outgoing>
+      <bpmn:outgoing>Flow_141g09w</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_0kvq9hy" sourceRef="Gateway_1wxsx4e" targetRef="Event_1w8i5tj" />
+    <bpmn:parallelGateway id="Gateway_1wxsx4e">
+      <bpmn:incoming>Flow_1slcg8t</bpmn:incoming>
+      <bpmn:incoming>Flow_0jercd0</bpmn:incoming>
+      <bpmn:incoming>Flow_1gfgpa6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0kvq9hy</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:sequenceFlow id="Flow_0si8zka" sourceRef="Gateway_13d7hjr" targetRef="Activity_19gd45l" />
+    <bpmn:sequenceFlow id="Flow_141g09w" sourceRef="Gateway_13d7hjr" targetRef="Gateway_1kuxrfk" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="credit-cpa-save-permission">
+      <bpmndi:BPMNShape id="BPMNShape_0mso8w7" bpmnElement="Activity_1c7zlac">
+        <dc:Bounds x="490" y="80" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0bbjup1" bpmnElement="Gateway_1kuxrfk" isMarkerVisible="true">
+        <dc:Bounds x="375" y="375" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0p0grup" bpmnElement="Gateway_17cz321" isMarkerVisible="true">
+        <dc:Bounds x="655" y="375" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_19kjxav" bpmnElement="Activity_1kjslgl">
+        <dc:Bounds x="490" y="256" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0d5mx0c" bpmnElement="Activity_0sxs666">
+        <dc:Bounds x="490" y="456" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1w8i5tj_di" bpmnElement="Event_1w8i5tj">
+        <dc:Bounds x="842" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0vwqxiz_di" bpmnElement="Event_0vwqxiz">
+        <dc:Bounds x="152" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1h6mopk_di" bpmnElement="Activity_19gd45l">
+        <dc:Bounds x="490" y="590" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1xi79fg_di" bpmnElement="Gateway_13d7hjr">
+        <dc:Bounds x="275" y="375" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1xvp2x1_di" bpmnElement="Gateway_1wxsx4e">
+        <dc:Bounds x="735" y="375" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0jercd0_di" bpmnElement="Flow_0jercd0">
+        <di:waypoint x="590" y="120" />
+        <di:waypoint x="760" y="120" />
+        <di:waypoint x="760" y="375" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1lgnydr" bpmnElement="Flow_0mto0yj">
+        <di:waypoint x="400" y="375" />
+        <di:waypoint x="400" y="296" />
+        <di:waypoint x="490" y="296" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1kbjt2m" bpmnElement="Flow_1kfdkee">
+        <di:waypoint x="400" y="425" />
+        <di:waypoint x="400" y="496" />
+        <di:waypoint x="490" y="496" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1y9sq34_di" bpmnElement="Flow_1y9sq34">
+        <di:waypoint x="590" y="296" />
+        <di:waypoint x="680" y="296" />
+        <di:waypoint x="680" y="375" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wrc4ff_di" bpmnElement="Flow_1wrc4ff">
+        <di:waypoint x="590" y="496" />
+        <di:waypoint x="680" y="496" />
+        <di:waypoint x="680" y="425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1slcg8t_di" bpmnElement="Flow_1slcg8t">
+        <di:waypoint x="705" y="400" />
+        <di:waypoint x="735" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10fbwfw_di" bpmnElement="Flow_10fbwfw">
+        <di:waypoint x="188" y="400" />
+        <di:waypoint x="275" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1gfgpa6_di" bpmnElement="Flow_1gfgpa6">
+        <di:waypoint x="590" y="630" />
+        <di:waypoint x="760" y="630" />
+        <di:waypoint x="760" y="425" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0abl63w_di" bpmnElement="Flow_0abl63w">
+        <di:waypoint x="300" y="375" />
+        <di:waypoint x="300" y="120" />
+        <di:waypoint x="490" y="120" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0kvq9hy_di" bpmnElement="Flow_0kvq9hy">
+        <di:waypoint x="785" y="400" />
+        <di:waypoint x="842" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0si8zka_di" bpmnElement="Flow_0si8zka">
+        <di:waypoint x="300" y="425" />
+        <di:waypoint x="300" y="630" />
+        <di:waypoint x="490" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_141g09w_di" bpmnElement="Flow_141g09w">
+        <di:waypoint x="325" y="400" />
+        <di:waypoint x="375" y="400" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

@@ -1,0 +1,116 @@
+{
+  "type": "documents",
+  "title": "Документы",
+  "readonly": false,
+  "collapse": false,
+  "types": [
+    {
+      "docType": "dulHead",
+      "title": "Паспорт исполнительного органа Клиента /лица, действующего по доверенности, а также паспортов каждого бенефициарного владельца",
+      "required": true,
+      "remove": true,
+      "sign": false,
+      "load": true,
+      "multiple": true
+    },
+    {
+      "docType": "warranty",
+      "title": "Доверенность лица, действующего по доверенности, в случае если подписантом будет выступать не единоличный исполнительный орган",
+      "required": false,
+      "remove": true,
+      "sign": false,
+      "load": true,
+      "multiple": true
+    },
+    {
+      "docType": "docNonres",
+      "title": "Документы, подтверждающие законное право ЕИО -физ.лица, не являющегося гражданином РФ, на нахождение / пребывание на территории РФ (Миграционная карта, вид на жительство и иные документы подтверждающие такое право",
+      "required": false,
+      "remove": true,
+      "sign": false,
+      "load": true,
+      "multiple": true
+    },
+    {
+      "docType": "charter",
+      "title": "Устав юридического лица",
+      "required": true,
+      "remove": true,
+      "sign": false,
+      "load": true,
+      "multiple": true
+    },
+    {
+      "docType": "executiveBody",
+      "title": "Решение и/или приказ о назначении на должность ЕИО (директора, ген.директора, президента компании и пр.)",
+      "required": true,
+      "remove": true,
+      "sign": false,
+      "load": true,
+      "multiple": true
+    },
+    {
+      "docType": "egrulExtract",
+      "title": "Выписка из ЕГРЮЛ",
+      "required": false,
+      "remove": false,
+      "sign": false,
+      "load": false,
+      "multiple": false
+    },
+    {
+      "docType": "finReportYear",
+      "title": "Бухгалтерская отчетность (Форма 1 и 2) с отметкой ИФНС за последний завершенный год",
+      "required": false,
+      "remove": true,
+      "sign": false,
+      "load": true,
+      "multiple": true
+    },
+    {
+      "docType": "finReportQ",
+      "title": "Бухгалтерская отчетность (Форма 1 и 2) с отметкой ИФНС за последний завершенный квартал",
+      "required": false,
+      "remove": true,
+      "sign": false,
+      "load": true,
+      "multiple": true
+    },
+    {
+      "docType": "account62",
+      "title": "Карточка 62 счёта",
+      "required": true,
+      "remove": true,
+      "sign": false,
+      "load": true,
+      "multiple": true
+    },
+    {
+      "docType": "account51",
+      "title": "Карточка 51 счёта (выписка из банка в формате excel)",
+      "required": true,
+      "remove": true,
+      "sign": false,
+      "load": true,
+      "multiple": true
+    },
+    {
+      "docType": "otherClientDocs",
+      "title": "Прочие документы поставщика",
+      "required": true,
+      "remove": true,
+      "sign": false,
+      "load": true,
+      "multiple": true
+    },
+    {
+      "docType": "otherOrderDocs",
+      "title": "Прочие документы по сделке",
+      "required": false,
+      "remove": true,
+      "sign": false,
+      "load": true,
+      "multiple": true
+    }
+  ]
+}

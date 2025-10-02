@@ -1,0 +1,78 @@
+{
+  "title": " ",
+  "readonly": true,
+  "visible": true,
+  "collapse": false,
+  "type": "transactionAggregations",
+  "uiType": "unitable",
+  "aggregationNames": [
+    "accountAnalysis"
+  ],
+  "uiConfig": {
+    "datasource": {
+      "type": "model",
+      "property": "aggregations.accountAnalysis.accounts"
+    },
+    "indexColumn": {
+      "enabled": true,
+      "title": "№п/п"
+    },
+    "columns": [
+      {
+        "header": "№ счета",
+        "field": "accountNumber",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "text",
+        "required": false
+      },
+      {
+        "header": "Начальный остаток, руб.",
+        "field": "transactStartSum",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "money",
+        "required": false
+      },
+      {
+        "header": "Поступило, руб.",
+        "field": "transactSumDt",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "money",
+        "required": false
+      },
+      {
+        "header": "Списано, руб.",
+        "field": "transactSumKt",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "money",
+        "required": false
+      },
+      {
+        "header": "Конечный остаток, руб.",
+        "field": "transactOutSum",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "money",
+        "required": false
+      }
+    ]
+  }
+}

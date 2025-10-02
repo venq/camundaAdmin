@@ -1,0 +1,21 @@
+{
+  "_processors": [
+    "fillRequiredPeriodsProcessor"
+  ],
+  "type": "buhReport",
+  "uiType": "@farzoom/banana-ui-components:BuhReport",
+  "title": "Бухгалтерская отчетность",
+  "readonly": false,
+  "buhRecognition": true,
+  "hideTaxationType": true,
+  "collapse": true,
+  "required": false,
+  "requiredPeriodsTemplate": [
+    {"beginMonthDay": "--04-10", "endMonthDay": "--05-09", "periodsTemplate": [{"yearsToAdd": -1, "month": 12},   {"yearsToAdd":  -2, "month": 12}]},
+    {"beginMonthDay": "--05-10", "endMonthDay": "--08-09", "periodsTemplate": [{"yearsToAdd": -1, "month": 12},   {"yearsToAdd":  0, "month": 3}]},
+    {"beginMonthDay": "--08-10", "endMonthDay": "--11-09", "periodsTemplate": [{"yearsToAdd": -1, "month": 12},   {"yearsToAdd":  0, "month": 6}]},
+    {"beginMonthDay": "--11-10", "endMonthDay": "--12-31", "periodsTemplate": [{"yearsToAdd": -1, "month": 12},   {"yearsToAdd":  0, "month": 9}]},
+    {"beginMonthDay": "--01-01", "endMonthDay": "--04-09", "periodsTemplate": [{"yearsToAdd": -1, "month": 12},   {"yearsToAdd":  0, "month": 9}]}
+  ],
+  "requiredPeriods": []
+}

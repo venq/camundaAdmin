@@ -1,0 +1,154 @@
+{
+  "type": "commonExpertise",
+  "title": "Дозапрос документов",
+  "readonly": false,
+  "visible": true,
+  "cacheModel": false,
+  "entityType": "task",
+  "expertises": [
+    {
+      "type": "additionalReqDoc",
+      "group": "additionalReqDoc",
+      "docTypeConclusion": "expertiseResult"
+    }
+  ],
+  "columns": {
+    "groups": {
+      "pos": 0,
+      "type": "group",
+      "title": "Группа",
+      "refKey": "groups",
+      "levelTree": 1
+    },
+    "type": {
+      "pos": 1,
+      "type": "text",
+      "title": "Вид",
+      "groupedBy": [
+        "type",
+        "department"
+      ],
+      "colspanWith": "groups",
+      "refKey": "expertiseTypes",
+      "levelTree": 2
+    },
+    "executorName": {
+      "pos": 4,
+      "type": "text",
+      "title": "Исполнитель"
+    },
+    "startDate": {
+      "pos": 5,
+      "type": "dateTime",
+      "title": "Дата создания"
+    },
+    "status": {
+      "pos": 7,
+      "type": "text",
+      "title": "Статус",
+      "refKey": "statuses"
+    },
+    "conclusionFile": {
+      "pos": 9,
+      "type": "expertiseDocument",
+      "tooltip": {
+        "placement": "bottom",
+        "values": [
+          {
+            "type": "text",
+            "value": "Скачать заключение"
+          }
+        ]
+      }
+    },
+    "finishedDate": {
+      "pos": 10,
+      "type": "dateTime",
+      "title": "Дата завершения"
+    },
+    "action": {
+      "pos": 11,
+      "type": "expertiseAction",
+      "refKey": "actions"
+    }
+  },
+  "refs": {
+    "departments": {
+      "RISK_DEPARTMENT": "Риски",
+      "LEGAL_DEPARTMENT": "Юридическая",
+      "CREDIT_DEPARTMENT": "Кредитная",
+      "ECONOMIC_SECURITY": "ЭБ",
+      "ENGINEERING": "Инжиниринг",
+      "PLEDGE_SERVICE": "Залоговая",
+      "BANK": "Банк"
+    },
+    "expertiseTypes": {
+      "additionalReqDoc": "Дозапрос документов"
+    },
+    "statuses": {
+      "started": "Запущена",
+      "endorse": "Согласование",
+      "rework": "Доработка",
+      "completed": "Завершена",
+      "revoked": "Отозвана",
+      "planned": "Запланирована",
+      "new": ""
+    },
+    "groups": {
+      "additionalReqDoc": "Дозапрос документов"
+    },
+    "processes": {
+      "additionalReqDoc": "credit-expertise-cpa-additional-request-docs"
+    },
+    "actions": [
+      {
+        "id": "start",
+        "title": "Запустить",
+        "visibleBy": {
+          "operator": "AND",
+          "conditions": [
+            {
+              "key": "status",
+              "values": [
+                "completed",
+                "revoked",
+                "new"
+              ]
+            },
+            {
+              "key": "readonly",
+              "values": [
+                "false"
+              ]
+            }
+          ]
+        },
+        "color": "green",
+        "modals": [
+          {
+            "visibleBy": {
+              "operator": "AND",
+              "conditions": [
+                {
+                  "key": "type",
+                  "values": [
+                    "additionalReqDoc"
+                  ]
+                }
+              ]
+            },
+            "fields": [
+              {
+                "name": "request",
+                "type": "textarea",
+                "label": "Комментарий",
+                "required": true,
+                "visible": true
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

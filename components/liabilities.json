@@ -1,0 +1,202 @@
+{
+  "type": "liabilities",
+  "title": "Сведения об обязательствах за последние 3 года",
+  "entityType": "company",
+  "readonly": false,
+  "visible": true,
+  "collapse": true,
+  "uiType": "unitable",
+  "uiConfig": {
+    "actions": [
+      {
+        "action": "add",
+        "type": "top-action",
+        "title": "Добавить обязательство"
+      },
+      {
+        "action": "edit",
+        "type": "row-action",
+        "visible": true
+      },
+      {
+        "action": "remove",
+        "type": "row-action",
+        "visible": true
+      }
+    ],
+    "datasource": {
+      "type": "model",
+      "property": "items"
+    },
+    "indexColumn": {
+      "enabled": false
+    },
+    "columns": [
+      {
+        "header": "Контрагент",
+        "field": "lenderName",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": false,
+        "type": "text",
+        "required": true
+      },
+      {
+        "header": "Вид",
+        "field": "type",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": false,
+        "type": "select",
+        "disabled": true,
+        "required": true,
+        "options": [
+          {
+            "key": "Займ",
+            "value": "Займ"
+          },
+          {
+            "key": "Лизинг",
+            "value": "Лизинг"
+          },
+          {
+            "key": "Гарантия",
+            "value": "Гарантия"
+          },
+          {
+            "key": "Аккредитив",
+            "value": "Аккредитив"
+          }
+        ]
+      },
+      {
+        "header": "Сумма",
+        "field": "amount",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": false,
+        "type": "money",
+        "required": true
+      },
+      {
+        "header": "Валюта",
+        "field": "currency",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": false,
+        "type": "select",
+        "disabled": true,
+        "required": true,
+        "options": [
+          {
+            "value": "RUB",
+            "key": "РУБ"
+          }
+        ]
+      },
+      {
+        "header": "Остаток",
+        "field": "balanceOwed",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": false,
+        "type": "money",
+        "required": true
+      },
+      {
+        "header": "Дата начала",
+        "field": "lendDate",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": false,
+        "type": "date",
+        "format": "DD.MM.YYYY",
+        "required": true
+      },
+      {
+        "header": "Дата окончания",
+        "field": "maturityDate",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": false,
+        "type": "date",
+        "format": "DD.MM.YYYY",
+        "required": false
+      },
+      {
+        "header": "Ставка, %",
+        "field": "percentRate",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": false,
+        "type": "number",
+        "required": true
+      },
+      {
+        "header": "Ежемесячный платеж",
+        "field": "monthlyPayment",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": false,
+        "type": "money",
+        "required": true
+      },
+      {
+        "header": "Обеспечение",
+        "field": "contractProvision",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": false,
+        "type": "select",
+        "disabled": true,
+        "required": true,
+        "options": [
+          {
+            "key": "pledge",
+            "value": "Залог"
+          },
+          {
+            "key": "guarantee",
+            "value": "Поручительство"
+          },
+          {
+            "key": "no",
+            "value": "Отсутствует"
+          }
+        ]
+      },
+      {
+        "header": "Просрочки и пролонгации",
+        "field": "extensions",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": false,
+        "type": "switch",
+        "disabled": true,
+        "required": true
+      }
+    ]
+  }
+}

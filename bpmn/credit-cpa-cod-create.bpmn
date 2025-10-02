@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_19ath4a" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.37.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <bpmn:collaboration id="Collaboration_1v1ycjn">
+    <bpmn:participant id="Participant_0xbvh2i" name="Формирование КОД" processRef="credit-cpa-cod-create" />
+    <bpmn:textAnnotation id="TextAnnotation_1tchjn4">
+      <bpmn:text>Сопровождение</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1gfld5i">
+      <bpmn:text>Верификация, при необходимости корректировка</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_05f27d3">
+      <bpmn:text>ЮД</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0d6b5br">
+      <bpmn:text>Согласование, при необходимости корректировка. Если корректировки внесены - независимо от решения возвращаем на верификацию. Циклы согласования при необходимости</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_13xdlyw">
+      <bpmn:text>Клиент</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_01v1s8j">
+      <bpmn:text>Допустимы только замечания в формате комментария</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0gwwom6">
+      <bpmn:text>Формирование КОД</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0jalq81" associationDirection="None" sourceRef="Activity_1r3azoo" targetRef="TextAnnotation_0gwwom6" />
+    <bpmn:association id="Association_0dff6px" sourceRef="credit-cpa-cod-create.UserTaskVerificationCod" targetRef="TextAnnotation_1tchjn4" />
+    <bpmn:association id="Association_0e781by" sourceRef="credit-cpa-cod-create.UserTaskVerificationCod" targetRef="TextAnnotation_1gfld5i" />
+    <bpmn:association id="Association_1259h55" sourceRef="credit-cpa-cod-create.UserTaskAgreementCod" targetRef="TextAnnotation_05f27d3" />
+    <bpmn:association id="Association_0l5idin" sourceRef="credit-cpa-cod-create.UserTaskAgreementCod" targetRef="TextAnnotation_0d6b5br" />
+    <bpmn:association id="Association_1k0ucr7" associationDirection="None" sourceRef="TextAnnotation_13xdlyw" targetRef="credit-cpa-cod-create.UserTaskClientAgreementCod" />
+    <bpmn:association id="Association_0vfii44" associationDirection="None" sourceRef="TextAnnotation_01v1s8j" targetRef="credit-cpa-cod-create.UserTaskClientAgreementCod" />
+  </bpmn:collaboration>
+  <bpmn:process id="credit-cpa-cod-create" name="Формирование КОД" isExecutable="true">
+    <bpmn:startEvent id="Event_0en9akk">
+      <bpmn:outgoing>Flow_1kigrft</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_1r3azoo" name="Установить статус заявки">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="common-cpa-main.ServiceTaskUpdateStatus" retries="0" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;contractPrepare&#34;" target="code" />
+          <zeebe:input source="=orderId" target="orderId" />
+          <zeebe:input source="=90" target="percent" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1kigrft</bpmn:incoming>
+      <bpmn:outgoing>Flow_1e7qjqj</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1kigrft" sourceRef="Event_0en9akk" targetRef="Activity_1r3azoo" />
+    <bpmn:sequenceFlow id="Flow_1l3yoy2" sourceRef="credit-cpa-cod-create.UserTaskVerificationCod" targetRef="Gateway_1xvesb3" />
+    <bpmn:sequenceFlow id="Flow_17l4lar" sourceRef="Gateway_1xvesb3" targetRef="credit-cpa-cod-create.UserTaskAgreementCod" />
+    <bpmn:sequenceFlow id="Flow_1oi5sxe" name="Типовая сделка" sourceRef="Gateway_1xvesb3" targetRef="Gateway_0keo5qk">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=isTypicalOrder != null and isTypicalOrder = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1oxonet" sourceRef="Gateway_1htt7pv" targetRef="Event_1w4ummp" />
+    <bpmn:sequenceFlow id="Flow_1e7pqxa" sourceRef="credit-cpa-cod-create.UserTaskAgreementCod" targetRef="Gateway_1xi4gxo" />
+    <bpmn:sequenceFlow id="Flow_1wi7871" name="На доработку от ЮД" sourceRef="Gateway_1xi4gxo" targetRef="Gateway_0g76t2m">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=UserTaskAgreementCodResult = "rework"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0a6mew4" sourceRef="Gateway_1xi4gxo" targetRef="Gateway_0keo5qk" />
+    <bpmn:sequenceFlow id="Flow_1vf8pdt" sourceRef="Gateway_0keo5qk" targetRef="credit-cpa-cod-create.UserTaskClientAgreementCod">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1e7qjqj" sourceRef="Activity_1r3azoo" targetRef="Activity_15zxese" />
+    <bpmn:sequenceFlow id="Flow_1t81u6t" sourceRef="Gateway_0g76t2m" targetRef="credit-cpa-cod-create.UserTaskVerificationCod" />
+    <bpmn:sequenceFlow id="Flow_1na7ueu" sourceRef="credit-cpa-cod-create.UserTaskClientAgreementCod" targetRef="Gateway_1htt7pv" />
+    <bpmn:exclusiveGateway id="Gateway_1xvesb3" default="Flow_17l4lar">
+      <bpmn:incoming>Flow_1l3yoy2</bpmn:incoming>
+      <bpmn:outgoing>Flow_17l4lar</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1oi5sxe</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_1xi4gxo" default="Flow_0a6mew4">
+      <bpmn:incoming>Flow_1e7pqxa</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wi7871</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0a6mew4</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="credit-cpa-cod-create.UserTaskVerificationCod" name="Верификация КОД">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;BACK_OFFICE&#34;]" target="AssignGroups" />
+          <zeebe:input source="=[&#34;BACK_OFFICE_MANAGER&#34;]" target="ManagerGroups" />
+          <zeebe:input source="=&#34;BACK_OFFICE_ROLE&#34;" target="WorkGroupRole" />
+          <zeebe:output source="=decisionId" target="UserTaskVerificationCodResult" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="name" value="Верификация КОД" />
+        </zeebe:taskHeaders>
+        <zeebe:assignmentDefinition candidateGroups="=[&#34;BACK_OFFICE&#34;, &#34;BACK_OFFICE_MANAGER&#34;]" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1t81u6t</bpmn:incoming>
+      <bpmn:incoming>Flow_02o6cfz</bpmn:incoming>
+      <bpmn:outgoing>Flow_1l3yoy2</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="credit-cpa-cod-create.UserTaskAgreementCod" name="Согласование КОД">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;LEGAL_DEPARTMENT&#34;]" target="AssignGroups" />
+          <zeebe:input source="=[&#34;LEGAL_DEPARTMENT_MANAGER&#34;]" target="ManagerGroups" />
+          <zeebe:input source="=&#34;LEGAL_DEPARTMENT_ROLE&#34;" target="WorkGroupRole" />
+          <zeebe:output source="=decisionId" target="UserTaskAgreementCodResult" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="name" value="Согласование КОД" />
+        </zeebe:taskHeaders>
+        <zeebe:assignmentDefinition candidateGroups="=[&#34;LEGAL_DEPARTMENT&#34;, &#34;LEGAL_DEPARTMENT_MANAGER&#34;]" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_17l4lar</bpmn:incoming>
+      <bpmn:outgoing>Flow_1e7pqxa</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_0g76t2m">
+      <bpmn:incoming>Flow_1wi7871</bpmn:incoming>
+      <bpmn:outgoing>Flow_1t81u6t</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_0keo5qk" default="Flow_02jhely">
+      <bpmn:incoming>Flow_1oi5sxe</bpmn:incoming>
+      <bpmn:incoming>Flow_0a6mew4</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vf8pdt</bpmn:outgoing>
+      <bpmn:outgoing>Flow_02jhely</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="credit-cpa-cod-create.UserTaskClientAgreementCod" name="Согласование КОД">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;CLIENT&#34;]" target="AssignGroups" />
+          <zeebe:input source="=&#34;CLIENT_ROLE&#34;" target="WorkGroupRole" />
+          <zeebe:input source="=&#34;CLIENT_MANAGER&#34;" target="ManagerGroups" />
+          <zeebe:output source="=decisionId" target="UserTaskClientAgreementCodResult" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="name" value="Согласование КОД" />
+        </zeebe:taskHeaders>
+        <zeebe:assignmentDefinition candidateGroups="=[&#34;CLIENT&#34;]" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1vf8pdt</bpmn:incoming>
+      <bpmn:outgoing>Flow_1na7ueu</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_1htt7pv">
+      <bpmn:incoming>Flow_1na7ueu</bpmn:incoming>
+      <bpmn:incoming>Flow_02jhely</bpmn:incoming>
+      <bpmn:outgoing>Flow_1oxonet</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_1w4ummp">
+      <bpmn:incoming>Flow_1oxonet</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_0g2ensi" name="Получение участников сделки">
+      <bpmn:documentation>input:
+String orderId; requi
+
+output:
+OrderMembers orderMembers;</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="avocadocc-api-enricher/order/{orderId}/order-members" retries="0" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=orderId" target="orderId" />
+          <zeebe:input source="=[&#34;guarantor&#34;]" target="orderMemberRoles" />
+          <zeebe:output source="=for memberEntry in get entries(members)&#10;return {&#10;  &#34;businessId&#34;: memberEntry.key,&#10;  &#34;type&#34;: memberEntry.value.info.type,&#10;  &#34;roles&#34;: memberEntry.value.roles,&#10;  &#34;inn&#34;: memberEntry.value.info.memberInn&#10;}" target="personCompanyDtoList" />
+        </zeebe:ioMapping>
+        <zeebe:properties>
+          <zeebe:property name="camundaModeler:exampleOutputJson" value="{&#10;  &#34;members&#34;: {&#10;    &#34;additionalProp1&#34;: {&#10;      &#34;dataSource&#34;: {&#10;        &#34;additionalProp1&#34;: &#34;string&#34;,&#10;        &#34;additionalProp2&#34;: &#34;string&#34;,&#10;        &#34;additionalProp3&#34;: &#34;string&#34;&#10;      },&#10;      &#34;info&#34;: {&#10;        &#34;companyId&#34;: &#34;string&#34;,&#10;        &#34;companyInn&#34;: &#34;string&#34;,&#10;        &#34;companyName&#34;: &#34;string&#34;,&#10;        &#34;companyOgrn&#34;: &#34;string&#34;,&#10;        &#34;memberInn&#34;: &#34;string&#34;,&#10;        &#34;memberName&#34;: &#34;string&#34;,&#10;        &#34;memberOgrn&#34;: &#34;string&#34;,&#10;        &#34;passportNumber&#34;: &#34;string&#34;,&#10;        &#34;passportSeria&#34;: &#34;string&#34;,&#10;        &#34;type&#34;: &#34;string&#34;&#10;      },&#10;      &#34;roles&#34;: [&#10;        &#34;string&#34;&#10;      ]&#10;    },&#10;    &#34;additionalProp2&#34;: {&#10;      &#34;dataSource&#34;: {&#10;        &#34;additionalProp1&#34;: &#34;string&#34;,&#10;        &#34;additionalProp2&#34;: &#34;string&#34;,&#10;        &#34;additionalProp3&#34;: &#34;string&#34;&#10;      },&#10;      &#34;info&#34;: {&#10;        &#34;companyId&#34;: &#34;string&#34;,&#10;        &#34;companyInn&#34;: &#34;string&#34;,&#10;        &#34;companyName&#34;: &#34;string&#34;,&#10;        &#34;companyOgrn&#34;: &#34;string&#34;,&#10;        &#34;memberInn&#34;: &#34;string&#34;,&#10;        &#34;memberName&#34;: &#34;string&#34;,&#10;        &#34;memberOgrn&#34;: &#34;string&#34;,&#10;        &#34;passportNumber&#34;: &#34;string&#34;,&#10;        &#34;passportSeria&#34;: &#34;string&#34;,&#10;        &#34;type&#34;: &#34;string&#34;&#10;      },&#10;      &#34;roles&#34;: [&#10;        &#34;string&#34;&#10;      ]&#10;    },&#10;    &#34;additionalProp3&#34;: {&#10;      &#34;dataSource&#34;: {&#10;        &#34;additionalProp1&#34;: &#34;string&#34;,&#10;        &#34;additionalProp2&#34;: &#34;string&#34;,&#10;        &#34;additionalProp3&#34;: &#34;string&#34;&#10;      },&#10;      &#34;info&#34;: {&#10;        &#34;companyId&#34;: &#34;string&#34;,&#10;        &#34;companyInn&#34;: &#34;string&#34;,&#10;        &#34;companyName&#34;: &#34;string&#34;,&#10;        &#34;companyOgrn&#34;: &#34;string&#34;,&#10;        &#34;memberInn&#34;: &#34;string&#34;,&#10;        &#34;memberName&#34;: &#34;string&#34;,&#10;        &#34;memberOgrn&#34;: &#34;string&#34;,&#10;        &#34;passportNumber&#34;: &#34;string&#34;,&#10;        &#34;passportSeria&#34;: &#34;string&#34;,&#10;        &#34;type&#34;: &#34;string&#34;&#10;      },&#10;      &#34;roles&#34;: [&#10;        &#34;string&#34;&#10;      ]&#10;    }&#10;  }&#10;}" />
+        </zeebe:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0otob7u</bpmn:incoming>
+      <bpmn:outgoing>Flow_1e8o0xs</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_07wv67e" name="Генерация договора поручительства">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="credit-api-doc-template.ServiceTaskGenerateDocs" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=if personCompanyDto.type = &#34;person&#34;&#10;then &#34;guarantor_person_contract&#34;&#10;else if string length(personCompanyDto.inn) = 12&#10;then &#34;guarantor_individual_contract&#34;&#10;else &#34;guarantor_company_contract&#34;" target="templateName" />
+          <zeebe:input source="=if personCompanyDto.type = &#34;person&#34;&#10;then &#34;guarantorPersonContract&#34;&#10;else &#34;guarantorCompanyContract&#34;" target="docType" />
+          <zeebe:input source="=personCompanyDto.businessId" target="entityId" />
+          <zeebe:input source="=personCompanyDto.businessId" target="guarantorId" />
+          <zeebe:output source="=&#34;_&#34;" target="ignored" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1e8o0xs</bpmn:incoming>
+      <bpmn:outgoing>Flow_02o6cfz</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics>
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=personCompanyDtoList" inputElement="personCompanyDto" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_15zxese" name="Генерация кредитного договора">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="credit-api-doc-template.ServiceTaskGenerateDocs" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=if string length(provider.INN) = 12&#10;then &#34;loan_contract_light_individual&#34;&#10;else &#34;loan_contract_light&#34;" target="templateName" />
+          <zeebe:input source="=&#34;individualLoanContractTerms&#34;" target="docType" />
+          <zeebe:input source="=orderId" target="entityId" />
+          <zeebe:input source="=orderId" target="orderId" />
+          <zeebe:output source="=&#34;_&#34;" target="ignored" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1e7qjqj</bpmn:incoming>
+      <bpmn:outgoing>Flow_0otob7u</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0otob7u" sourceRef="Activity_15zxese" targetRef="Activity_0g2ensi" />
+    <bpmn:sequenceFlow id="Flow_1e8o0xs" sourceRef="Activity_0g2ensi" targetRef="Activity_07wv67e" />
+    <bpmn:sequenceFlow id="Flow_02o6cfz" sourceRef="Activity_07wv67e" targetRef="credit-cpa-cod-create.UserTaskVerificationCod" />
+    <bpmn:sequenceFlow id="Flow_02jhely" sourceRef="Gateway_0keo5qk" targetRef="Gateway_1htt7pv">
+      <bpmn:documentation>временный обход</bpmn:documentation>
+    </bpmn:sequenceFlow>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1v1ycjn">
+      <bpmndi:BPMNShape id="Participant_0xbvh2i_di" bpmnElement="Participant_0xbvh2i" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="1900" height="580" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1d08s8y" bpmnElement="Event_0en9akk" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="230" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1eub5lv" bpmnElement="Activity_1r3azoo" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="320" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ai4gn1" bpmnElement="Gateway_1xvesb3" isMarkerVisible="true">
+        <dc:Bounds x="1115" y="375" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0k1ftjs" bpmnElement="Gateway_1xi4gxo" isMarkerVisible="true">
+        <dc:Bounds x="1415" y="375" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ldf26w" bpmnElement="credit-cpa-cod-create.UserTaskVerificationCod" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="960" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1qlmxd3" bpmnElement="credit-cpa-cod-create.UserTaskAgreementCod" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="1230" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1kuh1cm" bpmnElement="Gateway_0g76t2m" isMarkerVisible="true" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="985" y="245" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1lhzt8p" bpmnElement="Gateway_0keo5qk" isMarkerVisible="true">
+        <dc:Bounds x="1545" y="375" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1iep8iq" bpmnElement="credit-cpa-cod-create.UserTaskClientAgreementCod" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="1670" y="360" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0lwqniz" bpmnElement="Gateway_1htt7pv" isMarkerVisible="true">
+        <dc:Bounds x="1835" y="375" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1faiwrm" bpmnElement="Event_1w4ummp" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="1952" y="382" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1qi90u2" bpmnElement="Activity_0g2ensi" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="640" y="360" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1bhu0qw" bpmnElement="Activity_07wv67e" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="800" y="360" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ujzvx5" bpmnElement="Activity_15zxese" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="480" y="360" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_0ns4i5v" bpmnElement="Flow_1kigrft" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="266" y="400" />
+        <di:waypoint x="320" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1qaa7mu" bpmnElement="Flow_1l3yoy2" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1060" y="400" />
+        <di:waypoint x="1115" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1qc8fit" bpmnElement="Flow_17l4lar" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1165" y="400" />
+        <di:waypoint x="1230" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1tc4hr5" bpmnElement="Flow_1oi5sxe" bioc:stroke="#1e88e5" color:border-color="#1e88e5">
+        <di:waypoint x="1140" y="425" />
+        <di:waypoint x="1140" y="570" />
+        <di:waypoint x="1570" y="570" />
+        <di:waypoint x="1570" y="425" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1150" y="552" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1jb92hc" bpmnElement="Flow_1oxonet" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1885" y="400" />
+        <di:waypoint x="1952" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_182kgsn" bpmnElement="Flow_1e7pqxa" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1330" y="400" />
+        <di:waypoint x="1415" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_012htxx" bpmnElement="Flow_1wi7871" bioc:stroke="#fb8c00" color:border-color="#fb8c00">
+        <di:waypoint x="1440" y="375" />
+        <di:waypoint x="1440" y="270" />
+        <di:waypoint x="1035" y="270" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1348" y="271" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_14mvnj2" bpmnElement="Flow_0a6mew4" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1465" y="400" />
+        <di:waypoint x="1545" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1brvt9b" bpmnElement="Flow_1vf8pdt" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1595" y="400" />
+        <di:waypoint x="1670" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1x837xp" bpmnElement="Flow_1e7qjqj" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="420" y="400" />
+        <di:waypoint x="480" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1dyic67" bpmnElement="Flow_1t81u6t" bioc:stroke="#fb8c00" color:border-color="#fb8c00">
+        <di:waypoint x="1010" y="295" />
+        <di:waypoint x="1010" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0rszyf4" bpmnElement="Flow_1na7ueu" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1770" y="400" />
+        <di:waypoint x="1835" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1qt092n" bpmnElement="Flow_0otob7u" bioc:stroke="#205022" color:border-color="#205022">
+        <di:waypoint x="580" y="400" />
+        <di:waypoint x="640" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1wtqjr6" bpmnElement="Flow_1e8o0xs" bioc:stroke="#205022" color:border-color="#205022">
+        <di:waypoint x="740" y="400" />
+        <di:waypoint x="800" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02o6cfz_di" bpmnElement="Flow_02o6cfz" bioc:stroke="#205022" color:border-color="#205022">
+        <di:waypoint x="900" y="400" />
+        <di:waypoint x="960" y="400" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02jhely_di" bpmnElement="Flow_02jhely">
+        <di:waypoint x="1570" y="375" />
+        <di:waypoint x="1570" y="240" />
+        <di:waypoint x="1860" y="240" />
+        <di:waypoint x="1860" y="375" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_0llh8at" bpmnElement="TextAnnotation_1tchjn4">
+        <dc:Bounds x="880" y="310" width="120" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0gycgz4" bpmnElement="TextAnnotation_1gfld5i">
+        <dc:Bounds x="920" y="460" width="120" height="64" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1eo7hgj" bpmnElement="TextAnnotation_05f27d3">
+        <dc:Bounds x="1220" y="320" width="60" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0j9i3yi" bpmnElement="TextAnnotation_0d6b5br">
+        <dc:Bounds x="1190" y="460" width="340" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1nks5sm" bpmnElement="TextAnnotation_13xdlyw">
+        <dc:Bounds x="1620" y="320" width="60" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_015b19u" bpmnElement="TextAnnotation_01v1s8j">
+        <dc:Bounds x="1700" y="260" width="100" height="83" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1xmrsr6" bpmnElement="TextAnnotation_0gwwom6">
+        <dc:Bounds x="300" y="300" width="100" height="40" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_167lcqn" bpmnElement="Association_0jalq81">
+        <di:waypoint x="360" y="360" />
+        <di:waypoint x="355" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0o9afn7" bpmnElement="Association_0dff6px">
+        <di:waypoint x="978" y="360" />
+        <di:waypoint x="962" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1hvx85q" bpmnElement="Association_0e781by">
+        <di:waypoint x="1010" y="440" />
+        <di:waypoint x="1010" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_095kide" bpmnElement="Association_1259h55">
+        <di:waypoint x="1256" y="360" />
+        <di:waypoint x="1250" y="350" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0eywdf3" bpmnElement="Association_0l5idin">
+        <di:waypoint x="1281" y="440" />
+        <di:waypoint x="1223" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1wfcvdu" bpmnElement="Association_1k0ucr7">
+        <di:waypoint x="1680" y="342" />
+        <di:waypoint x="1706" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0aosshk" bpmnElement="Association_0vfii44">
+        <di:waypoint x="1738" y="343" />
+        <di:waypoint x="1733" y="360" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

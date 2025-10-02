@@ -1,0 +1,85 @@
+{
+  "_processors": [
+    "turnoverCleanStarterValuesProcessor"
+  ],
+  "type": "genparams",
+  "title": "Настройка параметров анализа транзакций",
+  "visible": true,
+  "readonly": false,
+  "collapse": false,
+  "entityType": "product",
+  "attributes": {
+    "creditStartDateYearMonth": {
+      "pos": 5,
+      "type": "date",
+      "format": "YYYY-MM",
+      "visible": "true",
+      "required": "true",
+      "readonly": "false",
+      "title": "Месяц начала поступлений",
+      "tooltip": "Месяц начала поступлений"
+    },
+    "startDateYearMonth": {
+      "pos": 6,
+      "type": "date",
+      "format": "YYYY-MM",
+      "visible": "true",
+      "required": "true",
+      "readonly": "false",
+      "title": "Месяц начала периода анализа",
+      "tooltip": "Месяц начала периода анализа"
+    },
+    "endDateYearMonth": {
+      "pos": 7,
+      "type": "date",
+      "format": "YYYY-MM",
+      "visible": "true",
+      "required": "true",
+      "readonly": "false",
+      "title": "Месяц конца периода анализа",
+      "tooltip": "Месяц конца периода анализа"
+    },
+    "exceptionAccounts": {
+      "pos": 8,
+      "type": "select",
+      "format": "multiple",
+      "visible": "true",
+      "required": "false",
+      "readonly": "false",
+      "title": "Счета-исключения",
+      "tooltip": "Счета-исключения",
+      "values": []
+    },
+    "exceptionCounterparties": {
+      "pos": 9,
+      "type": "select",
+      "format": "multiple",
+      "visible": "true",
+      "required": "false",
+      "readonly": "false",
+      "title": "Контрагенты-исключения",
+      "tooltip": "Контрагенты-исключения",
+      "values": []
+    },
+    "exceptionWords": {
+      "pos": 10,
+      "type": "tags",
+      "format": "tags",
+      "visible": "true",
+      "required": "false",
+      "readonly": "false",
+      "title": "Слова-исключения",
+      "tooltip": "Слова-исключения"
+    },
+    "counterExceptionWords": {
+      "pos": 11,
+      "type": "tags",
+      "format": "tags",
+      "visible": "true",
+      "required": "false",
+      "readonly": "false",
+      "title": "Слова-контрисключения",
+      "tooltip": "Слова-контрисключения"
+    }
+  }
+}

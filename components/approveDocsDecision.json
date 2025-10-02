@@ -1,0 +1,51 @@
+{
+  "type": "uni",
+  "uiType": "uniform",
+  "visible": true,
+  "readonly": false,
+  "collapse": false,
+  "blocks": [
+    {
+      "id": "decisionBlock",
+      "uiType": "wrapper",
+      "visible": true,
+      "readonly": false,
+      "fields": [
+        {
+          "type": "select",
+          "name": "decision",
+          "label": "Заключение",
+          "visible": true,
+          "readonly": false,
+          "disabled": "false",
+          "required": true,
+          "col": 24,
+          "responsive": {
+            "xs": 24,
+            "sm": 24,
+            "md": 24,
+            "lg": 24,
+            "xl": 24,
+            "xxl": 24
+          },
+          "properties": {
+            "options": [
+              {
+                "key" : "accept",
+                "value" : "БГ согласован Клиентом"
+              },
+              {
+                "key" : "rework",
+                "value" : "БГ с правками Клиента"
+              },
+              {
+                "key" : "reject",
+                "value" : "Отказ от БГ"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

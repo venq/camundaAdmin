@@ -1,0 +1,7 @@
+{
+  "type": "taskDescription",
+  "title": "Ваша задача",
+  "visible": true,
+  "readonly": true,
+  "collapse": false
+}

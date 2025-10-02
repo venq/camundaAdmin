@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_10x5it3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.27.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <bpmn:collaboration id="Collaboration_0mj9tb9">
+    <bpmn:participant id="Participant_1a6vq51" name="Акцепт клиента" processRef="credit-cpa-client-accept" />
+    <bpmn:textAnnotation id="TextAnnotation_0jhlkzj">
+      <bpmn:text>Согласовать
+Предоставить согласия
+Скорректировать дату подписания и его способ</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0omaz6r">
+      <bpmn:text>Клиент</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1fjx6k7">
+      <bpmn:text>КлМ</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_05bkmcu">
+      <bpmn:text>Акцепт клиента</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1my8cir">
+      <bpmn:text>1. Выбрать канал
+2. Если здесь, заполнить параметры и выбрать решение
+3. Определить дополнительные параметры (согласия участников, крупная сделка, ...)
+4. Выбор типа подписания (очно, укэп) для всех участников
+5. Для очного подписания указать дату, время и место</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0ooltia" sourceRef="credit-cpa-client-accept.UserTaskClientAgreement" targetRef="TextAnnotation_0omaz6r" />
+    <bpmn:association id="Association_0pkra9m" associationDirection="None" sourceRef="credit-cpa-client-accept.UserTaskBankClientAgreement" targetRef="TextAnnotation_1my8cir" />
+    <bpmn:association id="Association_0uszcjt" sourceRef="credit-cpa-client-accept.UserTaskClientAgreement" targetRef="TextAnnotation_0jhlkzj" />
+  </bpmn:collaboration>
+  <bpmn:process id="credit-cpa-client-accept" name="Согласование параметров сделки" isExecutable="true">
+    <bpmn:exclusiveGateway id="Gateway_0hdqeuw" default="Flow_1mj70ge">
+      <bpmn:incoming>Flow_1fs0zus</bpmn:incoming>
+      <bpmn:incoming>Flow_0aonzi7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vqjop8</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1p3j4ri</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1mj70ge</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="credit-cpa-client-accept.UserTaskClientAgreement" name="Согласовать параметры сделки">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;CLIENT&#34;]" target="AssignGroups" />
+          <zeebe:input source="=&#34;CLIENT_ROLE&#34;" target="WorkGroupRole" />
+          <zeebe:input source="=&#34;CLIENT_MANAGER&#34;" target="ManagerGroups" />
+          <zeebe:output source="=decisionId" target="UserTaskClientAgreementResult" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="name" value="Согласовать параметры сделки" />
+        </zeebe:taskHeaders>
+        <zeebe:assignmentDefinition candidateGroups="=[&#34;CLIENT&#34;]" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_12fa4fh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0aonzi7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_16oxca7" default="Flow_1fs0zus">
+      <bpmn:incoming>Flow_1c83adx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0mswlqz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1fs0zus</bpmn:outgoing>
+      <bpmn:outgoing>Flow_12fa4fh</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0v85wvj</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_0mp6i6t">
+      <bpmn:incoming>Flow_1mj70ge</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_1h9vj1c" sourceRef="Event_1r3bru5" targetRef="Activity_1h4enid" />
+    <bpmn:sequenceFlow id="Flow_1vqjop8" sourceRef="Gateway_0hdqeuw" targetRef="Event_1bkqzt6">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=UserTaskClientAgreementResult != null and UserTaskClientAgreementResult = "clientReject"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0mswlqz" sourceRef="Gateway_16oxca7" targetRef="Event_0vj96dy">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=UserTaskBankClientAgreementResult = "clientReject"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1fs0zus" name="Согласование выполнено  в других каналах" sourceRef="Gateway_16oxca7" targetRef="Gateway_0hdqeuw">
+      <bpmn:documentation>hasClientAccept != null and hasClientAccept = true (вернуть потом?)</bpmn:documentation>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0aonzi7" sourceRef="credit-cpa-client-accept.UserTaskClientAgreement" targetRef="Gateway_0hdqeuw" />
+    <bpmn:sequenceFlow id="Flow_1p3j4ri" name="На доработку от клиента" sourceRef="Gateway_0hdqeuw" targetRef="credit-cpa-client-accept.UserTaskBankClientAgreement">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=UserTaskClientAgreementResult != null and UserTaskClientAgreementResult = "rework"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1mj70ge" sourceRef="Gateway_0hdqeuw" targetRef="Event_0mp6i6t" />
+    <bpmn:sequenceFlow id="Flow_12fa4fh" sourceRef="Gateway_16oxca7" targetRef="credit-cpa-client-accept.UserTaskClientAgreement">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_1s4pexx" sourceRef="Activity_1h4enid" targetRef="credit-cpa-client-accept.UserTaskBankClientAgreement" />
+    <bpmn:sequenceFlow id="Flow_1c83adx" sourceRef="credit-cpa-client-accept.UserTaskBankClientAgreement" targetRef="Gateway_16oxca7" />
+    <bpmn:sequenceFlow id="Flow_0v85wvj" sourceRef="Gateway_16oxca7" targetRef="Event_1vmjpm3">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=UserTaskBankClientAgreementResult = "rework"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:endEvent id="Event_1bkqzt6" name="Отказ клиента">
+      <bpmn:incoming>Flow_1vqjop8</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0yujl94" errorRef="Error_0uhd42r" />
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_1h4enid" name="Установить статус заявки">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="common-cpa-main.ServiceTaskUpdateStatus" retries="0" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;clientAcceptance&#34;" target="code" />
+          <zeebe:input source="=orderId" target="orderId" />
+          <zeebe:input source="=82" target="percent" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1h9vj1c</bpmn:incoming>
+      <bpmn:outgoing>Flow_1s4pexx</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:startEvent id="Event_1r3bru5">
+      <bpmn:outgoing>Flow_1h9vj1c</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_1vmjpm3" name="На анализ&#10;TO_ANALYZE_ORDER">
+      <bpmn:incoming>Flow_0v85wvj</bpmn:incoming>
+      <bpmn:escalationEventDefinition id="EscalationEventDefinition_08xwzox" escalationRef="Escalation_0rkrnv3" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_0vj96dy" name="Отказ клиента">
+      <bpmn:incoming>Flow_0mswlqz</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0xoorep" errorRef="Error_0uhd42r" />
+    </bpmn:endEvent>
+    <bpmn:userTask id="credit-cpa-client-accept.UserTaskBankClientAgreement" name="Согласование параметров сделки с клиентом">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;CLIENT_DEPARTMENT&#34;]" target="AssignGroups" />
+          <zeebe:input source="=[&#34;CLIENT_DEPARTMENT_MANAGER&#34;]" target="ManagerGroups" />
+          <zeebe:input source="=&#34;CLIENT_DEPARTMENT_ROLE&#34;" target="WorkGroupRole" />
+          <zeebe:output source="=decisionId" target="UserTaskBankClientAgreementResult" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="name" value="Согласование параметров сделки с клиентом" />
+        </zeebe:taskHeaders>
+        <zeebe:assignmentDefinition candidateGroups="=[&#34;CLIENT_DEPARTMENT&#34;, &#34;CLIENT_DEPARTMENT_MANAGER&#34;]" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1p3j4ri</bpmn:incoming>
+      <bpmn:incoming>Flow_1s4pexx</bpmn:incoming>
+      <bpmn:outgoing>Flow_1c83adx</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:association id="Association_0wnkurl" associationDirection="None" sourceRef="Activity_1h4enid" targetRef="TextAnnotation_05bkmcu" />
+    <bpmn:association id="Association_0gc2drc" sourceRef="credit-cpa-client-accept.UserTaskBankClientAgreement" targetRef="TextAnnotation_1fjx6k7" />
+  </bpmn:process>
+  <bpmn:escalation id="Escalation_0c2m1l0" name="REJECT" escalationCode="REJECT" />
+  <bpmn:escalation id="Escalation_17qp7t4" name="TO_VERIFICATION" escalationCode="TO_VERIFICATION" />
+  <bpmn:error id="Error_0uhd42r" name="CLIENT_REJECT" errorCode="CLIENT_REJECT" />
+  <bpmn:escalation id="Escalation_0rkrnv3" name="TO_ANALYZE_ORDER" escalationCode="TO_ANALYZE_ORDER" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_0mj9tb9">
+      <bpmndi:BPMNShape id="Participant_1a6vq51_di" bpmnElement="Participant_1a6vq51" isHorizontal="true">
+        <dc:Bounds x="130" y="80" width="1070" height="600" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0xfohvv" bpmnElement="Gateway_0hdqeuw" isMarkerVisible="true">
+        <dc:Bounds x="955" y="327" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1jb9his" bpmnElement="credit-cpa-client-accept.UserTaskClientAgreement">
+        <dc:Bounds x="779" y="312" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1bgj6an" bpmnElement="Gateway_16oxca7" isMarkerVisible="true">
+        <dc:Bounds x="634" y="327" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1m0jevn" bpmnElement="Event_0mp6i6t" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="1072" y="334" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1gsrjkq_di" bpmnElement="Event_1bkqzt6" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="962" y="458" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="944" y="501" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_00n5fsw" bpmnElement="Activity_1h4enid" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="330" y="312" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1gxl9vm" bpmnElement="Event_1r3bru5" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="232" y="334" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1js6xdg_di" bpmnElement="Event_1vmjpm3" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="641" y="184" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="621" y="140" width="77" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_10y9oc3_di" bpmnElement="Event_0vj96dy" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="641" y="458" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="622" y="501" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1xq7fov" bpmnElement="credit-cpa-client-accept.UserTaskBankClientAgreement">
+        <dc:Bounds x="480" y="312" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_0w16kms" bpmnElement="Flow_1h9vj1c" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="268" y="352" />
+        <di:waypoint x="330" y="352" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0lqi0sa" bpmnElement="Flow_1vqjop8" bioc:stroke="#e53935" color:border-color="#e53935">
+        <di:waypoint x="980" y="377" />
+        <di:waypoint x="980" y="458" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1vult37" bpmnElement="Flow_0mswlqz" bioc:stroke="#e53935" color:border-color="#e53935">
+        <di:waypoint x="659" y="377" />
+        <di:waypoint x="659" y="458" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="622" y="505" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0tw39z0" bpmnElement="Flow_1fs0zus" bioc:stroke="#1e88e5" color:border-color="#1e88e5">
+        <di:waypoint x="667" y="335" />
+        <di:waypoint x="729" y="202" />
+        <di:waypoint x="980" y="202" />
+        <di:waypoint x="980" y="327" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="887" y="210" width="87" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0k8s9v7" bpmnElement="Flow_0aonzi7" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="879" y="352" />
+        <di:waypoint x="955" y="352" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0miidtw" bpmnElement="Flow_1p3j4ri" bioc:stroke="#fb8c00" color:border-color="#fb8c00">
+        <di:waypoint x="972" y="369" />
+        <di:waypoint x="900" y="572" />
+        <di:waypoint x="530" y="572" />
+        <di:waypoint x="530" y="392" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="818" y="538" width="84" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0jtwyyy" bpmnElement="Flow_1mj70ge" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1005" y="352" />
+        <di:waypoint x="1072" y="352" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_158l05t" bpmnElement="Flow_12fa4fh" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="684" y="352" />
+        <di:waypoint x="779" y="352" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0c5e1rn" bpmnElement="Flow_1s4pexx" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="430" y="352" />
+        <di:waypoint x="480" y="352" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0itj7dd" bpmnElement="Flow_1c83adx" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="580" y="352" />
+        <di:waypoint x="634" y="352" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0hbkee8" bpmnElement="Flow_0v85wvj" bioc:stroke="#fb8c00" color:border-color="#fb8c00">
+        <di:waypoint x="659" y="327" />
+        <di:waypoint x="659" y="220" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_15n88xt" bpmnElement="Association_0wnkurl">
+        <di:waypoint x="381" y="312" />
+        <di:waypoint x="383" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1b0rhr3" bpmnElement="Association_0gc2drc">
+        <di:waypoint x="544" y="312" />
+        <di:waypoint x="535" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_09raz7i" bpmnElement="TextAnnotation_0jhlkzj">
+        <dc:Bounds x="700" y="400" width="230" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0yfns0d" bpmnElement="TextAnnotation_0omaz6r">
+        <dc:Bounds x="765" y="270" width="100" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_17kaw7f" bpmnElement="TextAnnotation_1fjx6k7">
+        <dc:Bounds x="490" y="270" width="50" height="30" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1rivbql" bpmnElement="TextAnnotation_05bkmcu">
+        <dc:Bounds x="330" y="250" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1hcilfy" bpmnElement="TextAnnotation_1my8cir">
+        <dc:Bounds x="220" y="420" width="300" height="140" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_1dxnecf" bpmnElement="Association_0ooltia">
+        <di:waypoint x="820" y="312" />
+        <di:waypoint x="818" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1i6g0yy" bpmnElement="Association_0pkra9m">
+        <di:waypoint x="504" y="392" />
+        <di:waypoint x="472" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1tebgyo" bpmnElement="Association_0uszcjt">
+        <di:waypoint x="829" y="412" />
+        <di:waypoint x="829" y="400" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

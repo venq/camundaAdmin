@@ -1,0 +1,8 @@
+{
+  "type": "documents",
+  "title": "Документы результата экспертизы",
+  "visible": true,
+  "collapse": true,
+  "readonly": false,
+  "entityType": "expertise"
+}

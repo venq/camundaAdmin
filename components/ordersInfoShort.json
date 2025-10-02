@@ -1,0 +1,191 @@
+{
+  "type": "otherOrdersInfo",
+  "title": "Прочие заявки и действующие договора заемщика",
+  "visible": true,
+  "readonly": false,
+  "collapse": false,
+  "uiType": "unitable",
+  "uiConfig": {
+    "actions": [
+      {
+        "action": "api",
+        "id": "orderCancel",
+        "type": "row-action",
+        "title": "Отменить заявку"
+      }
+    ],
+    "datasource": {
+      "type": "model",
+      "property": "items"
+    },
+    "indexColumn": {
+      "enabled": true
+    },
+    "columns": [
+      {
+        "header": "cftCode",
+        "field": "cftCode",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "text",
+        "required": false,
+        "visible": false
+      },
+      {
+        "header": "cftSumma",
+        "field": "cftSumma",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "text",
+        "required": false,
+        "visible": false
+      },
+      {
+        "header": "cftKind",
+        "field": "cftKind",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "text",
+        "required": false,
+        "visible": false
+      },
+      {
+        "header": "Id заявки",
+        "field": "orderId",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "text",
+        "required": false,
+        "visible": false
+      },
+      {
+        "header": "Номер заявки",
+        "field": "number",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "link",
+        "urlData": "/orders/{orderId}",
+        "required": false
+      },
+      {
+        "header": "Продукт",
+        "field": "product",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "text",
+        "required": false
+      },
+      {
+        "header": "Статус",
+        "field": "status",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "text",
+        "required": false
+      },
+      {
+        "header": "Источник",
+        "field": "source",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "text",
+        "required": false
+      },
+      {
+        "header": "Ответственный",
+        "field": "initiator",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "text",
+        "required": false
+      },
+      {
+        "header": "Обновлено",
+        "field": "changedAt",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "date",
+        "format": "DD.MM.YYYY",
+        "required": false
+      },
+      {
+        "header": "Срок продукта",
+        "field": "endAt",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "date",
+        "format": "DD.MM.YYYY",
+        "required": false,
+        "visible": false
+      },
+      {
+        "header": "Дата создания",
+        "field": "createdAt",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "date",
+        "format": "DD.MM.YYYY",
+        "required": false
+      },
+      {
+        "header": "Дата действия решения",
+        "field": "positiveDecisionTerm",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "date",
+        "format": "DD.MM.YYYY",
+        "required": false
+      },
+      {
+        "header": "Учитывать в лимите",
+        "field": "takeIntoLimit",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "type": "switch",
+        "required": false,
+        "readonlyExp": "!component?.positiveDecisionTerm"
+      }
+    ]
+  }
+}

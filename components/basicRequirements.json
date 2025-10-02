@@ -1,0 +1,416 @@
+{
+  "type": "repeatableList",
+  "title": "Базовые требования",
+  "uiType": "vertical",
+  "readonly": false,
+  "visible": true,
+  "collapse": false,
+  "component": {
+    "type": "componentsGroup",
+    "uiType": "vertical",
+    "readonly": false,
+    "collapse": false,
+    "visible": true,
+    "components": {
+      "orderMemberShort": {
+        "type": "orderMemberShort",
+        "pos": 1,
+        "collapse": false,
+        "readonly": true,
+        "visible": true,
+        "person": {
+          "config": {
+            "identityDocumentTypeCodes": [
+              {
+                "code": "21",
+                "name": "Паспорт гражданина Российской Федерации"
+              },
+              {
+                "code": "31",
+                "name": "Паспорт иностранного гражданина либо иной документ, установленный законодательством Российской Федерации или признаваемый в соответствии с международным договором Российской Федерации в качестве документа, удостоверяющего личность иностранного гражданина"
+              }
+            ],
+            "addToPreview": [
+              "birthdayDate"
+            ],
+            "fields": {
+              "creditHistoryStatus": {
+                "visible": true,
+                "config": {
+                  "PKI_PLUS": {
+                    "color": "green",
+                    "name": "ПКИ+"
+                  },
+                  "PKI": {
+                    "color": "green",
+                    "name": "ПКИ"
+                  },
+                  "NKI": {
+                    "color": "red",
+                    "name": "НКИ"
+                  },
+                  "ND": {
+                    "color": "grey",
+                    "name": "Н/Д"
+                  },
+                  "NEUT": {
+                    "color": "grey",
+                    "name": "НЕЙТ"
+                  }
+                }
+              }
+            },
+            "roles": {
+              "title": "Роли по заявке",
+              "items": [
+                {
+                  "id": "pledger",
+                  "name": "Залогодатель",
+                  "visible": false,
+                  "readonly": false
+                },
+                {
+                  "id": "guarantor",
+                  "name": "Поручитель",
+                  "visible": true,
+                  "readonly": false
+                },
+                {
+                  "id": "seller",
+                  "name": "Продавец",
+                  "visible": false,
+                  "readonly": false
+                },
+                {
+                  "id": "otherRole",
+                  "name": "Прочая роль",
+                  "visible": true,
+                  "readonly": true
+                }
+              ]
+            }
+          }
+        },
+        "company": {
+          "config": {
+            "fields": {
+              "creditHistoryStatus": {
+                "visible": true,
+                "config": {
+                  "PKI_PLUS": {
+                    "color": "green",
+                    "name": "ПКИ+"
+                  },
+                  "PKI": {
+                    "color": "green",
+                    "name": "ПКИ"
+                  },
+                  "NKI": {
+                    "color": "red",
+                    "name": "НКИ"
+                  },
+                  "ND": {
+                    "color": "grey",
+                    "name": "Н/Д"
+                  },
+                  "NEUT": {
+                    "color": "grey",
+                    "name": "НЕЙТ"
+                  }
+                }
+              }
+            },
+            "roles": {
+              "title": "Роли по заявке",
+              "items": [
+                {
+                  "id": "pledger",
+                  "name": "Залогодатель",
+                  "visible": false,
+                  "readonly": false
+                },
+                {
+                  "id": "guarantor",
+                  "name": "Поручитель",
+                  "visible": true,
+                  "readonly": false
+                },
+                {
+                  "id": "otherRole",
+                  "name": "Прочая роль",
+                  "visible": true,
+                  "readonly": true
+                },
+                {
+                  "id": "borrower",
+                  "name": "Заёмщик",
+                  "visible": true,
+                  "readonly": true
+                },
+                {
+                  "id": "seller",
+                  "name": "Продавец",
+                  "visible": false,
+                  "readonly": false
+                },
+                {
+                  "id": "fund",
+                  "name": "Фонд",
+                  "visible": false,
+                  "readonly": false
+                },
+                {
+                  "id": "beneficiary",
+                  "name": "Бенефициар",
+                  "visible": false,
+                  "readonly": false
+                }
+              ]
+            }
+          }
+        }
+      },
+      "basicRequirementsParticipants": {
+        "type": "basicRequirements",
+        "pos": 2,
+        "readonly": false,
+        "visible": true,
+        "collapse": false,
+        "fields": {
+          "comment": {
+            "col": 24,
+            "pos": 300,
+            "type": "comment",
+            "label": "Комментарий",
+            "visible": true,
+            "readonly": false,
+            "required": false,
+            "permissionGroups": ["NKK_USERS"]
+          },
+          "finalDecision": {
+            "col": 24,
+            "pos": 10,
+            "textAlign": "right",
+            "type": "select",
+            "options": [
+              {
+                "key": "R",
+                "value": "Подтверждено"
+              },
+              {
+                "key": "I",
+                "value": "Для информации"
+              },
+              {
+                "key": "A",
+                "value": "Не подтверждено"
+              },
+              {
+                "key": "F",
+                "value": "Запрос информации"
+              },
+              {
+                "key": "C",
+                "value": "Отмена проверки"
+              },
+              {
+                "key": "O",
+                "value": "Правило не отработало"
+              }
+            ],
+            "visible": true,
+            "readonly": true,
+            "colors": {
+              "A": "green",
+              "F": "orange",
+              "R": "red"
+            },
+            "required": false
+          },
+          "nameRule": {
+            "col": 24,
+            "pos": 10,
+            "type": "inputText",
+            "label": "Наименование правила",
+            "visible": true,
+            "disabled": true,
+            "readonly": true,
+            "required": false
+          },
+          "userName": {
+            "col": 8,
+            "pos": 32,
+            "type": "inputText",
+            "label": "Пользователь",
+            "visible": true,
+            "disabled": true,
+            "readonly": true,
+            "required": false
+          },
+          "decisionSOne": {
+            "col": 12,
+            "pos": 20,
+            "type": "select",
+            "label": "Решение Стратегии",
+            "options": [
+              {
+                "key": "R",
+                "value": "Отказ"
+              },
+              {
+                "key": "I",
+                "value": "Для информации"
+              },
+              {
+                "key": "A",
+                "value": "Одобрено"
+              },
+              {
+                "key": "F",
+                "value": "Запрос информации"
+              },
+              {
+                "key": "C",
+                "value": "Отмена проверки"
+              },
+              {
+                "key": "O",
+                "value": "Правило не отработало"
+              }
+            ],
+            "visible": true,
+            "disabled": true,
+            "readonly": true,
+            "required": false
+          },
+          "decisionUser": {
+            "col": 8,
+            "pos": 30,
+            "type": "select",
+            "label": "Решение пользователя",
+            "options": [
+              {
+                "key": "R",
+                "value": "Подтверждено"
+              },
+              {
+                "key": "A",
+                "value": "Не подтверждено"
+              }
+            ],
+            "visible": true,
+            "readonly": false,
+            "required": false
+          },
+          "descriptionRule": {
+            "col": 8,
+            "pos": 22,
+            "type": "inputText",
+            "label": "Расшифровка",
+            "visible": false,
+            "disabled": true,
+            "readonly": true,
+            "required": false
+          },
+          "dateDecisionUser": {
+            "col": 8,
+            "pos": 31,
+            "type": "inputDateTime",
+            "label": "Дата проверки пользователем",
+            "visible": true,
+            "disabled": true,
+            "readonly": true,
+            "required": false
+          },
+          "dateCreatedRequest": {
+            "col": 8,
+            "pos": 21,
+            "type": "inputDateTime",
+            "label": "Дата проверки стратегией",
+            "visible": true,
+            "disabled": true,
+            "readonly": true,
+            "required": false
+          }
+        },
+        "groups": [
+          {
+            "code": "waitingCheck",
+            "title": "Ожидает проверки",
+            "fields": {
+              "decisionUser": {
+                "readonly": false,
+                "required": true
+              }
+            },
+            "typeConditions": "default",
+            "conditions": {
+              "manualCheck": true,
+              "decisionSOne": [
+                "F",
+                "R",
+                "A",
+                "I"
+              ]
+            }
+          },
+          {
+            "code": "triggeredChecks",
+            "title": "Сработавшие проверки",
+            "fields": {
+              "decisionUser": {
+                "readonly": true,
+                "disabled": true
+              }
+            },
+            "typeConditions": "default",
+            "conditions": {
+              "manualCheck": false,
+              "decisionSOne": [
+                "R"
+              ]
+            }
+          },
+          {
+            "code": "failedChecks",
+            "title": "Не сработавшие проверки",
+            "fields": {
+              "decisionUser": {
+                "readonly": true,
+                "disabled": true
+              }
+            },
+            "typeConditions": "default",
+            "conditions": {
+              "manualCheck": false,
+              "decisionSOne": [
+                "A"
+              ]
+            }
+          },
+          {
+            "code": "forInformation",
+            "title": "Для информации",
+            "fields": {
+              "decisionUser": {
+                "readonly": true,
+                "disabled": true
+              }
+            },
+            "typeConditions": "default",
+            "conditions": {
+              "manualCheck": false,
+              "decisionSOne": [
+                "C",
+                "O",
+                "F"
+              ]
+            }
+          }
+        ],
+        "loadMode": "task",
+        "excludeVerificationTypes": ["SSB"]
+      }
+    }
+  }
+}

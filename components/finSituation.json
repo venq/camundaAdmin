@@ -1,0 +1,149 @@
+{
+  "_processors": [
+  ],
+  "type": "genparams",
+  "title": "Оценка финансового положения",
+  "readonly": "false",
+  "collapse": "false",
+  "entityType": "company",
+  "attributes": {
+    "isInternalCreditAssessment": {
+      "pos": 1,
+      "title": "Ссуда оценивается по критериям внутрибанковской оценки кредитоспособности (ВбОК)?",
+      "type": "boolean",
+      "format": "boolean",
+      "visible": "true",
+      "required": "true",
+      "readonly": "false"
+    },
+    "isSmallLoanSize": {
+      "pos": 2,
+      "title": "Размер ссуды и (или) общий размер кредитного риска (учитываются все кредитные продукты) на заемщика на дату оценки риска не превышает 0,5 процента от величины собственных средств (капитала) Банка",
+      "type": "boolean",
+      "format": "boolean",
+      "visible": "true",
+      "required": "true",
+      "readonly": "false"
+    },
+    "isNotProhibitedPurpose": {
+      "pos": 3,
+      "title": "Ссуда не предоставлена/ не использована полностью либо частично на цели, указанные в пунктах 3.13, 3.14 и 3.20 Положения 590-П, за исключением ссуд, указанных в пункте 3.14 Положения 590-П, в отношении которых Правлением Банка принято решение об отсутствии по ним индивидуальных признаков обесценения",
+      "type": "boolean",
+      "format": "boolean",
+      "visible": "true",
+      "required": "true",
+      "readonly": "false"
+    },
+    "hasNoPoorIndividualLoans": {
+      "pos": 4,
+      "title": "У заемщика отсутствуют ссуды, оцениваемые на индивидуальной основе и при этом по ним финансовое положение и/или качество обслуживания долга оценено хуже, чем «хорошее»",
+      "type": "boolean",
+      "format": "boolean",
+      "visible": "true",
+      "required": "true",
+      "readonly": "false"
+    },
+    "hasRealBusinessActivity": {
+      "pos": 5,
+      "title": "По заемщику нет обстоятельств, свидетельствующих о возможном отсутствии у данного заемщика реальной деятельности или осуществлении ее в незначительных объемах в денежном выражении, в соответствии с п.3.12.1. (с учетом п.3.12.2.) Положения N°590-П, за исключением ссуд по которым принято решение уполномоченного органа управления Банка о признании деятельности заемщика реальной в соответствии с п.3.12.3 Положения 590-П",
+      "type": "boolean",
+      "format": "boolean",
+      "visible": "true",
+      "required": "true",
+      "readonly": "false"
+    },
+    "meetsBasicBorrowerRequirements": {
+      "pos": 6,
+      "title": "Заемщик соответствует Базовым требования к Заемщику",
+      "type": "boolean",
+      "format": "boolean",
+      "visible": "true",
+      "required": "true",
+      "readonly": "false"
+    },
+    "meetsBasicProductConditions": {
+      "pos": 7,
+      "title": "Ссуда соответствует Базовым условиям продукта",
+      "type": "boolean",
+      "format": "boolean",
+      "visible": "true",
+      "required": "true",
+      "readonly": "false"
+    },
+    "financialPosition": {
+      "pos": 8,
+      "title": "Финансовое положение",
+      "type": "select",
+      "format": "single",
+      "visible": "true",
+      "required": "false",
+      "readonly": "false",
+      "values": [
+        {
+          "key": "good",
+          "value": "Хорошее"
+        },
+        {
+          "key": "average",
+          "value": "Среднее"
+        },
+        {
+          "key": "poor",
+          "value": "Плохое"
+        }
+      ]
+    },
+    "businessReality": {
+      "pos": 9,
+      "title": "Реальность деятельности",
+      "type": "boolean",
+      "format": "boolean",
+      "visible": "true",
+      "required": "true",
+      "readonly": "false"
+    },
+    "posName": {
+      "pos": 10,
+      "title": "Наименование ПОС",
+      "type": "select",
+      "format": "single",
+      "visible": "true",
+      "required": "false",
+      "readonly": "false",
+      "values": [
+        {
+          "key": "posUnder100mOtherBoard",
+          "value": "ПОС до 100 млн. рублей с Решением Правления (Прочие)"
+        },
+        {
+          "key": "posSmeUnder100mSecured",
+          "value": "ПОС МСП до 100 млн. рублей (Обеспеченные)"
+        },
+        {
+          "key": "posSmeUnder100mSecuredBoard",
+          "value": "ПОС МСП до 100 млн. рублей Решением Правления (Обеспеченные)"
+        },
+        {
+          "key": "posUnder100mSecured",
+          "value": "ПОС до 100 млн. рублей (Обеспеченные)"
+        },
+        {
+          "key": "posUnder100mSecuredBoard",
+          "value": "ПОС до 100 млн. рублей Решением Правления (Обеспеченные)"
+        },
+        {
+          "key": "posOver100mOther",
+          "value": "ПОС более 100 млн. рублей (Прочие)"
+        },
+        {
+          "key": "posOver100mSecured",
+          "value": "ПОС более 100 млн. рублей (Обеспеченные)"
+        },
+        {
+          "key": "individualAssessment",
+          "value": "Ссуда оценивается индивидуально"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "type": "uni",
+  "uiType": "uniform",
+  "transient": true,
+  "visible": true,
+  "readonly": true,
+  "collapse": false,
+  "blocks": [
+    {
+      "id": "executorInfoBlock",
+      "uiType": "wrapper",
+      "visible": true,
+      "readonly": true,
+      "collapse": false,
+      "fields": [
+        {
+          "col": 24,
+          "pos": 1,
+          "name": "assignedExecutor",
+          "type": "input",
+          "label": "Ответственный сотрудник",
+          "visible": true,
+          "readonly": true,
+          "required": true,
+          "responsive": { "lg": 12, "md": 24, "sm": 24, "xl": 12, "xs": 24, "xxl": 12 }
+        }
+      ]
+    }
+  ]
+}

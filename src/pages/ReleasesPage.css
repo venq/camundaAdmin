@@ -1,0 +1,281 @@
+.environment-chain {
+  padding: 24px;
+  margin-bottom: 24px;
+}
+
+.chain-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 16px 0;
+}
+
+.chain-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.chain-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.chain-env {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  background-color: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  min-width: 120px;
+}
+
+.chain-env.dev {
+  border-color: #f59e0b;
+  background-color: #fef3c7;
+}
+
+.chain-env.test {
+  border-color: #3b82f6;
+  background-color: #dbeafe;
+}
+
+.chain-env.stage {
+  border-color: #8b5cf6;
+  background-color: #ede9fe;
+}
+
+.chain-env.prod {
+  border-color: #10b981;
+  background-color: #d1fae5;
+}
+
+.env-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.env-badge {
+  font-size: 11px;
+}
+
+.chain-arrow {
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.releases-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.list-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 12px 0;
+}
+
+.release-card {
+  padding: 20px;
+}
+
+.release-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.release-info {
+  flex: 1;
+}
+
+.release-version {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin: 0 0 4px 0;
+}
+
+.release-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.release-badges {
+  display: flex;
+  gap: 8px;
+}
+
+.release-description {
+  color: var(--text-secondary);
+  font-size: 14px;
+  margin: 0 0 16px 0;
+  line-height: 1.6;
+}
+
+.release-checklist {
+  padding: 16px;
+  background-color: var(--bg-secondary);
+  border-radius: 6px;
+  margin-bottom: 16px;
+}
+
+.checklist-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+}
+
+.checklist-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.check-icon {
+  flex-shrink: 0;
+}
+
+.check-icon.passed {
+  color: var(--success-color);
+}
+
+.check-icon.failed {
+  color: var(--danger-color);
+}
+
+.check-text {
+  color: var(--text-primary);
+}
+
+.check-message {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+
+.release-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+
+.release-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.presets-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.preset-card {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.preset-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.preset-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.preset-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.preset-id {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.preset-description {
+  color: var(--text-secondary);
+  font-size: 13px;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.preset-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color);
+}
+
+.meta-row {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.meta-label {
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 80px;
+}
+
+.meta-value {
+  color: var(--text-primary);
+}
+
+.preset-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}

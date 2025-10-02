@@ -1,0 +1,159 @@
+{
+  "type": "companyReg",
+  "title": "Регистрационные данные",
+  "visible": true,
+  "collapse": false,
+  "readonly": true,
+  "required": true,
+  "fields": {
+    "fullName": {
+      "col": 24,
+      "pos": 1,
+      "type": "text",
+      "title": "Полное наименование",
+      "visible": true,
+      "readonly": true,
+      "required": false
+    },
+    "inn": {
+      "col": 4,
+      "pos": 5,
+      "type": "text",
+      "title": "ИНН",
+      "visible": true,
+      "readonly": true,
+      "required": false
+    },
+    "ogrn": {
+      "col": 4,
+      "pos": 10,
+      "type": "text",
+      "title": "ОГРН",
+      "visible": true,
+      "readonly": true,
+      "required": false
+    },
+    "kpp": {
+      "col": 4,
+      "pos": 15,
+      "type": "text",
+      "title": "КПП",
+      "visible": true,
+      "readonly": true,
+      "required": false
+    },
+    "msp": {
+      "col": 4,
+      "pos": 20,
+      "type": "select",
+      "title": "Реестр МСП",
+      "visible": true,
+      "readonly": true,
+      "required": false,
+      "options": [
+        {
+          "key": "NO",
+          "value": "Не субъект МСП"
+        },
+        {
+          "key": "MICRO",
+          "value": "Субъект МСП (сегмент 'Микро')"
+        },
+        {
+          "key": "SMALL",
+          "value": "Субъект МСП (сегмент 'Малый')"
+        },
+        {
+          "key": "MEDIUM",
+          "value": "Субъект МСП (сегмент 'Средний')"
+        }
+      ]
+    },
+    "status": {
+      "col": 4,
+      "pos": 25,
+      "type": "select",
+      "title": "Статус компании",
+      "visible": true,
+      "readonly": true,
+      "required": false,
+      "options": [
+        {
+          "key": "ACTIVE",
+          "value": "Действующее"
+        }
+      ]
+    },
+    "regDate": {
+      "col": 4,
+      "pos": 30,
+      "type": "date",
+      "title": "Дата регистрации",
+      "visible": true,
+      "readonly": true,
+      "required": false
+    },
+    "staffInfoAverageNumber": {
+      "col": 12,
+      "pos": 35,
+      "type": "inputNumber",
+      "title": "Среднесписочная численность работников, чел.",
+      "visible": true,
+      "readonly": false,
+      "requireExp": "component?.required"
+    },
+    "taxMode": {
+      "col": 12,
+      "pos": 40,
+      "type": "select",
+      "title": "Специальный налоговый режим",
+      "options": [
+        {
+          "key": "OSN",
+          "value": "Общая система налогообложения (ОСН)"
+        },
+        {
+          "key": "USN",
+          "value": "Упрощенная система налогообложения (УСН)"
+        },
+        {
+          "key": "AUSN",
+          "value": "Автоматизированная упрощенная система налогообложения (УСН)"
+        },
+        {
+          "key": "ESHN",
+          "value": "Единый сельскохозяйственный налог (ЕСХН)"
+        },
+        {
+          "key": "SRP",
+          "value": "Соглашение о разделе продукции (СРП)"
+        },
+        {
+          "key": "ENVD",
+          "value": "Единый налог на вмененный доход (ЕНВД)"
+        }
+      ],
+      "visible": true,
+      "readonly": false,
+      "requireExp": "component?.required"
+    },
+    "okvedPrimary": {
+      "col": 24,
+      "pos": 45,
+      "type": "text",
+      "title": "Основной ОКВЭД по ЕГРЮЛ",
+      "visible": true,
+      "readonly": true,
+      "required": false
+    },
+    "okvedFact": {
+      "col": 24,
+      "pos": 50,
+      "type": "select",
+      "title": "Фактический ОКВЭД",
+      "visible": true,
+      "readonly": false,
+      "required": false
+    }
+  }
+}

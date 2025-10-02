@@ -1,0 +1,73 @@
+// Скрипт для парсинга нескольких BPMN файлов
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+function parseBpmnFile(filePath) {
+  const content = fs.readFileSync(filePath, 'utf-8');
+
+  // Извлекаем Process ID и название
+  const processMatch = content.match(/<bpmn:process\s+id="([^"]+)"(?:\s+name="([^"]+)")?/);
+  const processId = processMatch ? processMatch[1] : 'unknown';
+  const processName = processMatch ? (processMatch[2] || processId) : 'Unknown Process';
+
+  const userTasks = [];
+  const serviceTasks = [];
+
+  // Регулярное выражение для userTask
+  const userTaskRegex = /<bpmn:userTask\s+id="([^"]+)"(?:\s+name="([^"]+)")?[\s\S]*?<zeebe:taskDefinition\s+type="([^"]+)"/g;
+  let match;
+
+  while ((match = userTaskRegex.exec(content)) !== null) {
+    const [, id, name, taskDefinitionKey] = match;
+    userTasks.push({
+      id,
+      name: name || id,
+      taskDefinitionKey
+    });
+  }
+
+  // Регулярное выражение для serviceTask
+  const serviceTaskRegex = /<bpmn:serviceTask\s+id="([^"]+)"(?:\s+name="([^"]+)")?[\s\S]*?<zeebe:taskDefinition\s+type="([^"]+)"/g;
+
+  while ((match = serviceTaskRegex.exec(content)) !== null) {
+    const [, id, name, type] = match;
+    serviceTasks.push({
+      id,
+      name: name || id,
+      type
+    });
+  }
+
+  return {
+    fileName: path.basename(filePath),
+    processId,
+    processName,
+    userTasksCount: userTasks.length,
+    serviceTasksCount: serviceTasks.length,
+    userTasks: userTasks.slice(0, 5), // Первые 5 для примера
+    serviceTasks: serviceTasks.slice(0, 5) // Первые 5 для примера
+  };
+}
+
+// Парсим несколько файлов
+const bpmnDir = path.join(__dirname, '../bpmn');
+const filesToParse = [
+  'credit-cpa-main.bpmn',
+  'credit-cpa-documents.bpmn',
+  'credit-cpa-decision.bpmn',
+  'credit-cpa-order-analyze.bpmn'
+];
+
+const results = filesToParse.map(file => {
+  const filePath = path.join(bpmnDir, file);
+  if (fs.existsSync(filePath)) {
+    return parseBpmnFile(filePath);
+  }
+  return null;
+}).filter(Boolean);
+
+console.log(JSON.stringify(results, null, 2));

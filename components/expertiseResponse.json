@@ -1,0 +1,11 @@
+{
+  "type": "expertiseResponse",
+  "title": "Заключение",
+  "visible": true,
+  "readonly": false,
+  "collapse": false,
+  "require": true,
+  "validateMessages": {
+    "expertiseResponse.text": "Текст ответа экспертизы должен быть заполнен"
+  }
+}

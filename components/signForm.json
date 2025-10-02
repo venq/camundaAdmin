@@ -1,0 +1,20 @@
+{
+  "type": "documents",
+  "title": "Документы",
+  "visible": true,
+  "readonly": false,
+  "collapse": false,
+  "entityType": "orders",
+  "types": [
+    {
+      "docType": "anketa",
+      "entityType": "orders",
+      "title": "Анкета",
+      "required": true,
+      "remove": false,
+      "sign": false,
+      "load": true,
+      "multiple": false
+    }
+  ]
+}

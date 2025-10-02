@@ -1,0 +1,30 @@
+{
+  "type": "guaranteePrognozResult",
+  "uiType": "uniform",
+  "visible": true,
+  "collapse": false,
+  "readonly": true,
+  "gutter": [ 16, 16 ],
+  "blocks": [
+    {
+      "pos": 1,
+      "id": "resultMessage",
+      "uiType": "wrapper",
+      "visible": true,
+      "readonly": true,
+      "collapse": false,
+      "fields": [
+        {
+          "col": 24,
+          "pos": 1,
+          "name": "resultMessage",
+          "type": "textarea",
+          "label": "Результат обработки",
+          "visible": true,
+          "readonly": true,
+          "responsive": { "lg": 24, "md": 24, "sm": 24, "xl": 24, "xs": 24, "xxl": 24 }
+        }
+      ]
+    }
+  ]
+}

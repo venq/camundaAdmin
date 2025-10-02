@@ -1,0 +1,1043 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0m8oa68" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.27.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.2.0">
+  <bpmn:process id="avocc-credit-cpa-recreate-gsz" name="Создание ГСЗ 1го уровня" isExecutable="true">
+    <bpmn:startEvent id="Event_19hliab">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=[companyId]" target="companyIdList" />
+          <zeebe:output source="=[]" target="personIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_1wwtz1p</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0tsyx5h">
+      <bpmn:incoming>Flow_0nr7ujp</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_08swr94" name="Создание связей Обмен поручительством GUARANTEE_SWAP">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="POST /relation/{relationEnrichmentType}" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;GUARANTEE_SWAP&#34;" target="relationEnrichmentType" />
+          <zeebe:input source="=distinct values(&#10;  union(&#10;       companyIdList,&#10;       personIdList&#10;  )&#10;)" target="entityIdList" />
+          <zeebe:output source="=for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;guaranteeSwapCompanyToCompany&#34;&#10;      or item.value.relationTypeRefId = &#34;guaranteeSwapCompanyToPerson&#34;)]&#10;    return relationDto.value.leftId" target="guaranteeSwapCompanyIdList" />
+          <zeebe:output source="=for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;guaranteeSwapPersonToCompany&#34;&#10;      or item.value.relationTypeRefId = &#34;guaranteeSwapPersonToPerson&#34;)]&#10;    return relationDto.value.leftId" target="guaranteeSwapPersonIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1k16oy7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1a9sut0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_17wqdva" name="Создание связей Через ГСЗ&#10;THROUGH_HOLDING">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="POST /relation/{relationEnrichmentType}" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;THROUGH_HOLDING&#34;" target="relationEnrichmentType" />
+          <zeebe:input source="=distinct values(&#10;  union(&#10;       companyIdList,&#10;       personIdList&#10;  )&#10;)" target="entityIdList" />
+          <zeebe:output source="=for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;through2LevelHoldingCompanyToCompany&#34;&#10;      or item.value.relationTypeRefId = &#34;through2LevelHoldingCompanyToPerson&#34;&#10;      or item.value.relationTypeRefId = &#34;through3LevelHoldingCompanyToCompany&#34;&#10;      or item.value.relationTypeRefId = &#34;through3LevelHoldingCompanyToPerson&#34;&#10;      or item.value.relationTypeRefId = &#34;throughHoldingOnlyCompanyToCompany&#34;&#10;      or item.value.relationTypeRefId = &#34;throughHoldingOnlyCompanyToPerson&#34;)]&#10;    return relationDto.value.leftId" target="throughHoldingCompanyIdList" />
+          <zeebe:output source="=for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;through2LevelHoldingPersonToCompany&#34;&#10;      or item.value.relationTypeRefId = &#34;through2LevelHoldingPersonToPerson&#34;&#10;      or item.value.relationTypeRefId = &#34;through3LevelHoldingPersonToCompany&#34;&#10;      or item.value.relationTypeRefId = &#34;through3LevelHoldingPersonToPerson&#34;&#10;      or item.value.relationTypeRefId = &#34;throughHoldingOnlyPersonToCompany&#34;&#10;      or item.value.relationTypeRefId = &#34;throughHoldingOnlyPersonToPerson&#34;)]&#10;    return relationDto.value.leftId" target="throughHoldingPersonIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1fer69s</bpmn:incoming>
+      <bpmn:outgoing>Flow_0q19zs6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1a9sut0" sourceRef="Activity_08swr94" targetRef="Event_0ku2xkz" />
+    <bpmn:serviceTask id="Activity_0kbklrq" name="Создание связей Отфильтрованные учредители FILTERED_FOUNDER">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="POST /relation/{relationEnrichmentType}" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;FILTERED_FOUNDER&#34;" target="relationEnrichmentType" />
+          <zeebe:input source="=distinct values(&#10;  union(&#10;       companyIdList,&#10;       personIdList&#10;  )&#10;)" target="entityIdList" />
+          <zeebe:output source="=distinct values(&#10;  union(&#10;    for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;filteredCompanyFounder&#34;&#10;        or item.value.relationTypeRefId = &#34;filteredCompanyFounderDissolved&#34; )]&#10;    return relationDto.value.leftId,&#10;    for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;filteredCompanyFounder&#34;&#10;        or item.value.relationTypeRefId = &#34;filteredPersonFounder&#34;&#10;        or item.value.relationTypeRefId = &#34;filteredCompanyFounderDissolved&#34;&#10;        or item.value.relationTypeRefId = &#34;filteredPersonFounderDissolved&#34;)]&#10;    return relationDto.value.rightId&#10;  )&#10;)" target="filteredCompanyFounderIdList" />
+          <zeebe:output source="=for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;filteredPersonFounder&#34;&#10;        or item.value.relationTypeRefId = &#34;filteredPersonFounderDissolved&#34; )]&#10;    return relationDto.value.leftId" target="filteredPersonFounderIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_174topd</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ymdgyp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateThrowEvent id="Event_10tk4nl" name="Сбор найденных компаний и персон">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=distinct values(&#10;  union(&#10;       companyIdList,&#10;       filteredCompanyFounderIdList&#10;  )&#10;)" target="companyIdList" />
+          <zeebe:output source="=distinct values(&#10;  union(&#10;       personIdList,&#10;       filteredPersonFounderIdList&#10;  )&#10;)" target="personIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1ymdgyp</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wgki7h</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:intermediateThrowEvent id="Event_0pdh92p" name="Сбор найденных персон">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=distinct values(&#10;  union(&#10;       personIdList,&#10;       personBeneficiaryIdList&#10;  )&#10;)" target="personIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_057g8e7</bpmn:incoming>
+      <bpmn:outgoing>Flow_04c5xzu</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:exclusiveGateway id="Gateway_1i87x0d" default="Flow_16ls9mz">
+      <bpmn:incoming>Flow_0qj8fj8</bpmn:incoming>
+      <bpmn:outgoing>Flow_16ls9mz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_11nxnk9</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Activity_16xa23z" name="Создание холдинга">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="POST /api/company/holding" />
+        <zeebe:ioMapping>
+          <zeebe:input source="={&#10;  &#34;name&#34;: &#34;ГСЗ 1 для &#34; + companyId,&#10;  &#34;entityId&#34;: companyId,&#10;  &#34;entityType&#34;: &#34;company&#34;,&#10;  &#34;level&#34;: &#34;1&#34;&#10;}" target="body" />
+          <zeebe:output source="=body.businessId" target="holdingBusinessId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_16ls9mz</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vq5sw3</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_16ls9mz" sourceRef="Gateway_1i87x0d" targetRef="Activity_16xa23z" />
+    <bpmn:exclusiveGateway id="Gateway_1h5hj01">
+      <bpmn:incoming>Flow_0vq5sw3</bpmn:incoming>
+      <bpmn:incoming>Flow_11nxnk9</bpmn:incoming>
+      <bpmn:outgoing>Flow_015duza</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_0vq5sw3" sourceRef="Activity_16xa23z" targetRef="Gateway_1h5hj01" />
+    <bpmn:sequenceFlow id="Flow_11nxnk9" sourceRef="Gateway_1i87x0d" targetRef="Gateway_1h5hj01">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=holdingBusinessId != null</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_1jc11x8" name="Актуализация связей с холдингом по идентификатору и идентификаторам">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="POST avocadocc-api-enricher/holding/{holdingBusinessId}/relation" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=holdingBusinessId" target="businessId" />
+          <zeebe:input source="=companyIdList" target="companyIdList" />
+          <zeebe:input source="=personIdList" target="personIdList" />
+          <zeebe:output source="=&#34;_&#34;" target="ignored" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_015duza</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nr7ujp</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_015duza" sourceRef="Gateway_1h5hj01" targetRef="Activity_1jc11x8" />
+    <bpmn:sequenceFlow id="Flow_1bf8wwh" sourceRef="Activity_136obom" targetRef="Activity_12etud7" />
+    <bpmn:serviceTask id="Activity_136obom" name="ФОКУС Обогащение Реквизиты организаций, связанных с компанией">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="POST avocadocc-api-enricher/focus/companyAffiliates/req/platform" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=companyId" target="companyId" />
+          <zeebe:output source="=&#34;_&#34;" target="ignored" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1wwtz1p</bpmn:incoming>
+      <bpmn:outgoing>Flow_1bf8wwh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_1wgki7h" sourceRef="Event_10tk4nl" targetRef="Activity_1q81x3a" />
+    <bpmn:serviceTask id="Activity_1q81x3a" name="ФОКУС Обогащение Конечные бенефициары">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="POST avocadocc-api-enricher/focus/beneficialOwners/platform" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=companyId" target="companyId" />
+          <zeebe:output source="=for relationDto in get entries(relationMap) [item.value.relationTypeRefId = &#34;personBeneficiary&#34; and number(item.value.personBeneficiary.share.percent) &#62;= 20] return relationDto.value.leftId" target="personBeneficiaryIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1wgki7h</bpmn:incoming>
+      <bpmn:outgoing>Flow_057g8e7</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateThrowEvent id="Event_0sw293r" name="Сбор найденных компаний и персон">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=distinct values(&#10;  union(&#10;       companyIdList,&#10;       throughOrderCompanyIdList&#10;  )&#10;)" target="companyIdList" />
+          <zeebe:output source="=distinct values(&#10;  union(&#10;       personIdList,&#10;       throughOrderPersonIdList&#10;  )&#10;)" target="personIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_07tv897</bpmn:incoming>
+      <bpmn:outgoing>Flow_1k16oy7</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:serviceTask id="Activity_14n5g8m" name="Создание связей Через заявку THROUGH_ORDER">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="POST /relation/{relationEnrichmentType}" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;THROUGH_ORDER&#34;" target="relationEnrichmentType" />
+          <zeebe:input source="=distinct values(&#10;  union(&#10;       companyIdList,&#10;       personIdList&#10;  )&#10;)" target="entityIdList" />
+          <zeebe:output source="=for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;throughOrderCompanyToCompany&#34;&#10;      or item.value.relationTypeRefId = &#34;throughOrderCompanyToPerson&#34;)]&#10;    return relationDto.value.leftId" target="throughOrderCompanyIdList" />
+          <zeebe:output source="=for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;throughOrderPersonToCompany&#34;&#10;      or item.value.relationTypeRefId = &#34;throughOrderPersonToPerson&#34;)]&#10;    return relationDto.value.leftId" target="throughOrderPersonIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_15tlnnd</bpmn:incoming>
+      <bpmn:outgoing>Flow_07tv897</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_07tv897" sourceRef="Activity_14n5g8m" targetRef="Event_0sw293r" />
+    <bpmn:sequenceFlow id="Flow_1k16oy7" sourceRef="Event_0sw293r" targetRef="Activity_08swr94" />
+    <bpmn:subProcess id="Activity_08z7rip" name="Обогащение новых компаний и персон">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=personCompanyDto" target="personCompanyDto" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1jlzqro</bpmn:incoming>
+      <bpmn:outgoing>Flow_075uq9v</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true">
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=distinct values(&#10;  union(&#10;    for companyId in companyIdList    &#10;    return {&#10;        &#34;businessId&#34;: companyId,&#10;        &#34;type&#34;: &#34;company&#34;&#10;    },&#10;    for personId in personIdList    &#10;    return {&#10;        &#34;businessId&#34;: personId,&#10;        &#34;type&#34;: &#34;person&#34;&#10;    }&#10;  )&#10;)" inputElement="personCompanyDto" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+      <bpmn:startEvent id="Event_0ie840b">
+        <bpmn:extensionElements />
+        <bpmn:outgoing>Flow_00lmw0s</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:serviceTask id="Activity_1cssc8a" name="Обогащение компании dadata">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="common-api-es-company-enricher.ServiceTaskEnrichCompany" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=personCompanyDto.businessId" target="companyId" />
+            <zeebe:input source="=[&#34;dadata&#34;]" target="sourceTags" />
+            <zeebe:input source="=false" target="externalEnrichmentParameters.mustEnrichBuh" />
+            <zeebe:output source="=companyId" target="daDataCompanyId" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_10740ba</bpmn:incoming>
+        <bpmn:outgoing>Flow_1eqjk7x</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:serviceTask id="Activity_05lsk23" name="Получение идентификатора компании dadata">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="common-api-es-company-enricher.ServiceTaskGetCompanyId" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=personCompanyDto.inn" target="inn" />
+            <zeebe:input source="=[&#34;dadata&#34;]" target="sourceTags" />
+            <zeebe:output source="=companyId" target="daDataCompanyId" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_01x4tit</bpmn:incoming>
+        <bpmn:outgoing>Flow_1624cnm</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:serviceTask id="Activity_11ugdry" name="Получение ИНН персоны">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="GET /api/company/person/business/{businessId}" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=personCompanyDto.businessId" target="businessId" />
+            <zeebe:output source="=body.inn" target="personCompanyDto.inn" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_06det46</bpmn:incoming>
+        <bpmn:outgoing>Flow_01x4tit</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:exclusiveGateway id="Gateway_0q6jlze">
+        <bpmn:incoming>Flow_1eqjk7x</bpmn:incoming>
+        <bpmn:incoming>Flow_1rzrx5n</bpmn:incoming>
+        <bpmn:outgoing>Flow_17d8agp</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:exclusiveGateway id="Gateway_0u9qvue" default="Flow_06det46">
+        <bpmn:incoming>Flow_00lmw0s</bpmn:incoming>
+        <bpmn:outgoing>Flow_06det46</bpmn:outgoing>
+        <bpmn:outgoing>Flow_10740ba</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:serviceTask id="Activity_1t5g51b" name="Обогащение компании dadata">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="common-api-es-company-enricher.ServiceTaskEnrichCompany" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=daDataCompanyId" target="companyId" />
+            <zeebe:input source="=[&#34;dadata&#34;]" target="sourceTags" />
+            <zeebe:input source="=false" target="externalEnrichmentParameters.mustEnrichBuh" />
+            <zeebe:output source="=&#34;_&#34;" target="ignored" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1624cnm</bpmn:incoming>
+        <bpmn:outgoing>Flow_1rzrx5n</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:boundaryEvent id="Event_15de12f" attachedToRef="Activity_05lsk23">
+        <bpmn:outgoing>Flow_1e4c9xl</bpmn:outgoing>
+        <bpmn:errorEventDefinition id="ErrorEventDefinition_1xhw4kk" errorRef="Error_0ityuc5" />
+      </bpmn:boundaryEvent>
+      <bpmn:sequenceFlow id="Flow_1eqjk7x" sourceRef="Activity_1cssc8a" targetRef="Gateway_0q6jlze" />
+      <bpmn:sequenceFlow id="Flow_01x4tit" sourceRef="Activity_11ugdry" targetRef="Activity_05lsk23" />
+      <bpmn:sequenceFlow id="Flow_1624cnm" sourceRef="Activity_05lsk23" targetRef="Activity_1t5g51b" />
+      <bpmn:sequenceFlow id="Flow_06det46" sourceRef="Gateway_0u9qvue" targetRef="Activity_11ugdry" />
+      <bpmn:sequenceFlow id="Flow_1rzrx5n" sourceRef="Activity_1t5g51b" targetRef="Gateway_0q6jlze" />
+      <bpmn:sequenceFlow id="Flow_17d8agp" sourceRef="Gateway_0q6jlze" targetRef="Event_1yi1j91" />
+      <bpmn:sequenceFlow id="Flow_10740ba" sourceRef="Gateway_0u9qvue" targetRef="Activity_1cssc8a">
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=personCompanyDto.type = "company"</bpmn:conditionExpression>
+      </bpmn:sequenceFlow>
+      <bpmn:sequenceFlow id="Flow_00lmw0s" sourceRef="Event_0ie840b" targetRef="Gateway_0u9qvue" />
+      <bpmn:exclusiveGateway id="Gateway_1xge9oc">
+        <bpmn:incoming>Flow_1e4c9xl</bpmn:incoming>
+        <bpmn:incoming>Flow_1kctizk</bpmn:incoming>
+        <bpmn:outgoing>Flow_1hje9jo</bpmn:outgoing>
+      </bpmn:exclusiveGateway>
+      <bpmn:sequenceFlow id="Flow_1e4c9xl" sourceRef="Event_15de12f" targetRef="Gateway_1xge9oc" />
+      <bpmn:sequenceFlow id="Flow_1hje9jo" sourceRef="Gateway_1xge9oc" targetRef="Event_1cuhm1b" />
+      <bpmn:endEvent id="Event_1cuhm1b">
+        <bpmn:incoming>Flow_1hje9jo</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:intermediateThrowEvent id="Event_1yi1j91" name="Сбор найденных компаний и персон">
+        <bpmn:extensionElements>
+          <zeebe:ioMapping>
+            <zeebe:output source="=distinct values(&#10;  append(&#10;    enrichedCompanyIdList,&#10;    daDataCompanyId&#10;  )&#10;)" target="enrichedCompanyIdList" />
+            <zeebe:output source="=distinct values(&#10;  union(&#10;       enrichedPersonIdList&#10;  )&#10;)" target="enrichedPersonIdList" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_17d8agp</bpmn:incoming>
+        <bpmn:outgoing>Flow_1kctizk</bpmn:outgoing>
+      </bpmn:intermediateThrowEvent>
+      <bpmn:sequenceFlow id="Flow_1kctizk" sourceRef="Event_1yi1j91" targetRef="Gateway_1xge9oc" />
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_057g8e7" sourceRef="Activity_1q81x3a" targetRef="Event_0pdh92p" />
+    <bpmn:sequenceFlow id="Flow_1ymdgyp" sourceRef="Activity_0kbklrq" targetRef="Event_10tk4nl" />
+    <bpmn:sequenceFlow id="Flow_0q19zs6" sourceRef="Activity_17wqdva" targetRef="Event_09ypdqr" />
+    <bpmn:sequenceFlow id="Flow_0nr7ujp" sourceRef="Activity_1jc11x8" targetRef="Event_0tsyx5h" />
+    <bpmn:serviceTask id="Activity_1gkrdia" name="Создание связей ЕИО и учредитель MANAGER_AND_FOUNDER">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="POST /relation/{relationEnrichmentType}" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;MANAGER_AND_FOUNDER&#34;" target="relationEnrichmentType" />
+          <zeebe:input source="=distinct values(&#10;  union(&#10;       companyIdList,&#10;       personIdList&#10;  )&#10;)" target="entityIdList" />
+          <zeebe:output source="=for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;managerPersonToCompany&#34;&#10;      or item.value.relationTypeRefId = &#34;managerAndFounderPersonToCompany&#34;)]&#10;    return relationDto.value.leftId" target="managerAndFounderPersonIdList" />
+          <zeebe:output source="=distinct values(&#10;  union(&#10;    for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;managerCompanyToCompany&#34;&#10;      or item.value.relationTypeRefId = &#34;managerAndFounderCompanyToCompany&#34;)]&#10;    return relationDto.value.leftId,&#10;        for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;managerPersonToCompany&#34;&#10;      or item.value.relationTypeRefId = &#34;managerAndFounderPersonToCompany&#34;)]&#10;    return relationDto.value.rightId&#10;  )&#10;)" target="managerAndFounderCompanyIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_13ukvm9</bpmn:incoming>
+      <bpmn:outgoing>Flow_1oxxot0</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:intermediateThrowEvent id="Event_1f0fsem" name="Сбор найденных персон">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=distinct values(&#10;  union(&#10;       personIdList,&#10;       managerAndFounderPersonIdList&#10;  )&#10;)" target="personIdList" />
+          <zeebe:output source="=distinct values(&#10;  union(&#10;       companyIdList,&#10;       managerAndFounderCompanyIdList&#10;  )&#10;)" target="companyIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1oxxot0</bpmn:incoming>
+      <bpmn:outgoing>Flow_15tlnnd</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_1oxxot0" sourceRef="Activity_1gkrdia" targetRef="Event_1f0fsem" />
+    <bpmn:sequenceFlow id="Flow_15tlnnd" sourceRef="Event_1f0fsem" targetRef="Activity_14n5g8m" />
+    <bpmn:intermediateThrowEvent id="Event_0ku2xkz" name="Сбор найденных компаний и персон">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=distinct values(&#10;  union(&#10;       companyIdList,&#10;       guaranteeSwapCompanyIdList&#10;  )&#10;)" target="companyIdList" />
+          <zeebe:output source="=distinct values(&#10;  union(&#10;       personIdList,&#10;       guaranteeSwapPersonIdList&#10;  )&#10;)" target="personIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1a9sut0</bpmn:incoming>
+      <bpmn:outgoing>Flow_1fer69s</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_1fer69s" sourceRef="Event_0ku2xkz" targetRef="Activity_17wqdva" />
+    <bpmn:intermediateThrowEvent id="Event_09ypdqr" name="Сбор найденных компаний и персон">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=distinct values(&#10;  union(&#10;       companyIdList,&#10;       throughHoldingCompanyIdList&#10;  )&#10;)" target="companyIdList" />
+          <zeebe:output source="=distinct values(&#10;  union(&#10;       personIdList,&#10;       throughHoldingPersonIdList&#10;  )&#10;)" target="personIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0q19zs6</bpmn:incoming>
+      <bpmn:outgoing>Flow_15ibuew</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_15ibuew" sourceRef="Event_09ypdqr" targetRef="Activity_0w0gx38" />
+    <bpmn:intermediateThrowEvent id="Event_0gvnezq" name="Инициализация массивов обогащенных компаний и персон">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=[]" target="enrichedCompanyIdList" />
+          <zeebe:output source="=[]" target="enrichedPersonIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_04c5xzu</bpmn:incoming>
+      <bpmn:outgoing>Flow_1jlzqro</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_1jlzqro" sourceRef="Event_0gvnezq" targetRef="Activity_08z7rip" />
+    <bpmn:intermediateThrowEvent id="Event_0xe4ntw" name="Сбор найденных компаний и персон">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=distinct values(&#10;  union(&#10;       companyIdList,&#10;       enrichedCompanyIdList&#10;  )&#10;)" target="companyIdList" />
+          <zeebe:output source="=distinct values(&#10;  union(&#10;       personIdList,&#10;       enrichedPersonIdList&#10;  )&#10;)" target="personIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_075uq9v</bpmn:incoming>
+      <bpmn:outgoing>Flow_13ukvm9</bpmn:outgoing>
+    </bpmn:intermediateThrowEvent>
+    <bpmn:sequenceFlow id="Flow_075uq9v" sourceRef="Activity_08z7rip" targetRef="Event_0xe4ntw" />
+    <bpmn:sequenceFlow id="Flow_13ukvm9" sourceRef="Event_0xe4ntw" targetRef="Activity_1gkrdia" />
+    <bpmn:serviceTask id="Activity_0w0gx38" name="Поиск холдинга 1го уровня по идентификатору компании">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="GET /api/company/holding" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=companyId" target="entityId" />
+          <zeebe:output source="=if (body[item.level = &#34;1&#34;][1] != null)&#10;then body[item.level = &#34;1&#34;][1].businessId&#10;else null" target="holdingBusinessId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_15ibuew</bpmn:incoming>
+      <bpmn:outgoing>Flow_0qj8fj8</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0qj8fj8" sourceRef="Activity_0w0gx38" targetRef="Gateway_1i87x0d" />
+    <bpmn:sequenceFlow id="Flow_1wwtz1p" sourceRef="Event_19hliab" targetRef="Activity_136obom" />
+    <bpmn:serviceTask id="Activity_16z66u6" name="Получение типа компании">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="GET /api/company/company/{businessId}/lite" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=companyId" target="businessId" />
+          <zeebe:output source="=body.companyTypeRefId" target="companyTypeRefId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0aldoko</bpmn:incoming>
+      <bpmn:outgoing>Flow_04wz84m</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_0s2coi9" default="Flow_0c5i0rz">
+      <bpmn:incoming>Flow_04wz84m</bpmn:incoming>
+      <bpmn:outgoing>Flow_0c5i0rz</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1a14r7z</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_09djlr2">
+      <bpmn:incoming>Flow_1a14r7z</bpmn:incoming>
+      <bpmn:incoming>Flow_101f3co</bpmn:incoming>
+      <bpmn:outgoing>Flow_174topd</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Activity_1g533iu" name="Получение ФЛ ИП">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;employee&#34;" target="relationTypeRefId" />
+          <zeebe:input source="=companyId" target="rightId" />
+          <zeebe:input source="=true" target="isMain" />
+          <zeebe:output source="=if body[1].leftId != null&#10;then [body[1].leftId]&#10;else []" target="personIdList" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="GET /api/company/relation/right-id-search/" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0c5i0rz</bpmn:incoming>
+      <bpmn:outgoing>Flow_101f3co</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_04wz84m" sourceRef="Activity_16z66u6" targetRef="Gateway_0s2coi9" />
+    <bpmn:sequenceFlow id="Flow_0c5i0rz" sourceRef="Gateway_0s2coi9" targetRef="Activity_1g533iu" />
+    <bpmn:sequenceFlow id="Flow_1a14r7z" sourceRef="Gateway_0s2coi9" targetRef="Gateway_09djlr2">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=companyTypeRefId = "legalentity"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_101f3co" sourceRef="Activity_1g533iu" targetRef="Gateway_09djlr2" />
+    <bpmn:sequenceFlow id="Flow_174topd" sourceRef="Gateway_09djlr2" targetRef="Activity_0kbklrq" />
+    <bpmn:sequenceFlow id="Flow_04c5xzu" sourceRef="Event_0pdh92p" targetRef="Event_0gvnezq" />
+    <bpmn:sequenceFlow id="Flow_0rpmr6h" sourceRef="Activity_11gha4z" targetRef="Activity_1jei9nx" />
+    <bpmn:sequenceFlow id="Flow_0aldoko" sourceRef="Activity_1jei9nx" targetRef="Activity_16z66u6" />
+    <bpmn:serviceTask id="Activity_1jei9nx" name="ФОКУС&#10;Расширенные сведения организаций, связанных с человеком">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=personFounderId" target="personId" />
+          <zeebe:output source="=&#34;_&#34;" target="ignored" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="POST avocadocc-api-enricher/focus/personAffiliates/egrDetails/platform" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0rpmr6h</bpmn:incoming>
+      <bpmn:outgoing>Flow_0aldoko</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true">
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=personFounderIdList" inputElement="personFounderId" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_11gha4z" name="ФОКУС&#10;Реквизиты организаций, связанных с человеком">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=personFounderId" target="personId" />
+          <zeebe:output source="=&#34;_&#34;" target="ignored" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="POST avocadocc-api-enricher/focus/personAffiliates/req/platform" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_06sqve6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0rpmr6h</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics isSequential="true">
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=personFounderIdList" inputElement="personFounderId" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1h47wl3" name="ФОКУС Обогащение Ближайшие связи компаний">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=companyId" target="companyId" />
+          <zeebe:output source="=distinct values(&#10;  for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;personFounder&#34;)&#10;      and get value(personMap, item.value.leftId).inn != null]&#10;    return relationDto.value.leftId)" target="personFounderIdList" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="POST avocadocc-api-enricher/focus/companyAffiliationsTypes/platform" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_09qsm5l</bpmn:incoming>
+      <bpmn:outgoing>Flow_06sqve6</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_06sqve6" sourceRef="Activity_1h47wl3" targetRef="Activity_11gha4z" />
+    <bpmn:serviceTask id="Activity_12etud7" name="ФОКУС Обогащение Расширенные сведения организаций, связанных с компанией">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=companyId" target="companyId" />
+          <zeebe:output source="=&#34;_&#34;" target="ignored" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="POST avocadocc-api-enricher/focus/egrDetails/platform" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1bf8wwh</bpmn:incoming>
+      <bpmn:outgoing>Flow_09qsm5l</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_09qsm5l" sourceRef="Activity_12etud7" targetRef="Activity_1h47wl3" />
+    <bpmn:textAnnotation id="TextAnnotation_1qvxk2i">
+      <bpmn:text>+ Кредиты из банковской системы?</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0ff2jnz" sourceRef="Activity_08swr94" targetRef="TextAnnotation_1qvxk2i" />
+    <bpmn:textAnnotation id="TextAnnotation_1hn75c3">
+      <bpmn:text>После обогащения заявок и договоров?
+Объединить? Если считать договор = заявка</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1qco4sx" associationDirection="None" sourceRef="Activity_14n5g8m" targetRef="TextAnnotation_1hn75c3" />
+    <bpmn:association id="Association_0ug4cf3" associationDirection="None" sourceRef="Activity_08swr94" targetRef="TextAnnotation_1hn75c3" />
+    <bpmn:group id="Group_01f9g4c" categoryValueRef="CategoryValue_1fkumst" />
+    <bpmn:group id="Group_13tikyv" />
+    <bpmn:group id="Group_1k7lytq" categoryValueRef="CategoryValue_0s1czys" />
+    <bpmn:group id="Group_17q77ok" categoryValueRef="CategoryValue_1h66dh3" />
+    <bpmn:group id="Group_1oiqdwd" />
+    <bpmn:group id="Group_0sc86v3" categoryValueRef="CategoryValue_1d1tf3j" />
+    <bpmn:textAnnotation id="TextAnnotation_1r7i4og">
+      <bpmn:text>Выделить в подпроцесс?</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_10qmg8k" associationDirection="None" sourceRef="Activity_08z7rip" targetRef="TextAnnotation_1r7i4og" />
+    <bpmn:textAnnotation id="TextAnnotation_1w55d43">
+      <bpmn:text>Учреды рекурсивно до 3го колена с долей &gt;= 20% с прерыванием на являющихся правительственными организациями (если ОКФС не задан - сходим в ДаДата)</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1s6modg" associationDirection="None" sourceRef="Activity_0kbklrq" targetRef="TextAnnotation_1w55d43" />
+    <bpmn:textAnnotation id="TextAnnotation_02g65hi">
+      <bpmn:text>По учредам ФЛ найденным на предыдущем шаге</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0d78mld" associationDirection="None" sourceRef="Activity_11gha4z" targetRef="TextAnnotation_02g65hi" />
+    <bpmn:association id="Association_05aryb3" associationDirection="None" sourceRef="Activity_1jei9nx" targetRef="TextAnnotation_02g65hi" />
+    <bpmn:textAnnotation id="TextAnnotation_0av7qbf">
+      <bpmn:text>только по заёмщику, т.к. ранее для остальных использовался ЦФТ</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_07tdvxm" associationDirection="None" sourceRef="Activity_1q81x3a" targetRef="TextAnnotation_0av7qbf" />
+    <bpmn:textAnnotation id="TextAnnotation_1he3qqd">
+      <bpmn:text>employee + isMain = true ИСКЛЮЧАЮЩЕЕ ИЛИ employee + isMain + founder</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1rb04ca" associationDirection="None" sourceRef="Activity_1gkrdia" targetRef="TextAnnotation_1he3qqd" />
+    <bpmn:textAnnotation id="TextAnnotation_0zzfwn0">
+      <bpmn:text>Заявки не в отказе, где субъекты имеют одну из ролей: BORROWER
+GUARANTOR
+PLEDGER
+THIRD_PARTY
+OTHER_ROLE
+Действует год с даты создания заявки</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0p56oa9" associationDirection="None" sourceRef="Activity_14n5g8m" targetRef="TextAnnotation_0zzfwn0" />
+    <bpmn:textAnnotation id="TextAnnotation_114j55o">
+      <bpmn:text>Кредиты, где субъекты имеют роли BORROWER_CONTRACT_ROLE = "1"
+GUARANTOR_CONTRACT_ROLE = "5" в кредитах друг друга</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1y0ado7" associationDirection="None" sourceRef="Activity_08swr94" targetRef="TextAnnotation_114j55o" />
+    <bpmn:textAnnotation id="TextAnnotation_1c8sxkh">
+      <bpmn:text>ГСЗ 2,3 уровня, где присутствуют оба субъекта + если они связаны ТОЛЬКО так, дополнительная связь</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1kx03ii" associationDirection="None" sourceRef="Activity_17wqdva" targetRef="TextAnnotation_1c8sxkh" />
+  </bpmn:process>
+  <bpmn:error id="Error_0ityuc5" />
+  <bpmn:category id="Category_04q1f3h">
+    <bpmn:categoryValue id="CategoryValue_1fkumst" value="Расширение перечня рассматриваемых субектов на основе обогащенных данных" />
+  </bpmn:category>
+  <bpmn:category id="Category_02cyjr7">
+    <bpmn:categoryValue id="CategoryValue_0s1czys" value="Через кредиты и заявки" />
+  </bpmn:category>
+  <bpmn:category id="Category_1tqrcaz">
+    <bpmn:categoryValue id="CategoryValue_1h66dh3" value="Через ГСЗ" />
+  </bpmn:category>
+  <bpmn:category id="Category_01nhay1">
+    <bpmn:categoryValue id="CategoryValue_1d1tf3j" value="После обогащения" />
+  </bpmn:category>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="avocc-credit-cpa-recreate-gsz">
+      <bpmndi:BPMNShape id="Event_19hliab_di" bpmnElement="Event_19hliab">
+        <dc:Bounds x="152" y="402" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0tsyx5h_di" bpmnElement="Event_0tsyx5h">
+        <dc:Bounds x="6912" y="402" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0v8mm0v" bpmnElement="Activity_08swr94" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="4885" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_17wqdva_di" bpmnElement="Activity_17wqdva">
+        <dc:Bounds x="5215" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0wmppru" bpmnElement="Activity_0kbklrq" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="1750" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_10tk4nl_di" bpmnElement="Event_10tk4nl">
+        <dc:Bounds x="1902" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1877" y="450" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0pdh92p_di" bpmnElement="Event_0pdh92p">
+        <dc:Bounds x="2202" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2177" y="446" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1i87x0d_di" bpmnElement="Gateway_1i87x0d" isMarkerVisible="true">
+        <dc:Bounds x="5695" y="395" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0tatqpi" bpmnElement="Activity_16xa23z">
+        <dc:Bounds x="5800" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1h5hj01_di" bpmnElement="Gateway_1h5hj01" isMarkerVisible="true">
+        <dc:Bounds x="5955" y="395" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_068ucmc" bpmnElement="Activity_1jc11x8">
+        <dc:Bounds x="6050" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0ep26dz_di" bpmnElement="Activity_136obom">
+        <dc:Bounds x="380" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0cggr5x" bpmnElement="Activity_1q81x3a" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="2050" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ej914c" bpmnElement="Event_0sw293r">
+        <dc:Bounds x="4757" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4733" y="445" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0czylwz" bpmnElement="Activity_14n5g8m">
+        <dc:Bounds x="4605" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_17hp9on" bpmnElement="Activity_08z7rip" isExpanded="true">
+        <dc:Bounds x="2740" y="80" width="1290" height="730" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1k7omeq" bpmnElement="Event_0ie840b">
+        <dc:Bounds x="2780" y="402" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1q3xfkj" bpmnElement="Activity_1cssc8a">
+        <dc:Bounds x="3470" y="260" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0eovu6p" bpmnElement="Activity_05lsk23">
+        <dc:Bounds x="3310" y="500" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0o2zba4" bpmnElement="Activity_11ugdry">
+        <dc:Bounds x="3150" y="500" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0is1llw" bpmnElement="Gateway_0q6jlze" isMarkerVisible="true">
+        <dc:Bounds x="3625" y="395" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0lu3yh4" bpmnElement="Gateway_0u9qvue" isMarkerVisible="true">
+        <dc:Bounds x="3025" y="395" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_052s0lk" bpmnElement="Activity_1t5g51b">
+        <dc:Bounds x="3470" y="500" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1xge9oc_di" bpmnElement="Gateway_1xge9oc" isMarkerVisible="true">
+        <dc:Bounds x="3835" y="395" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1cuhm1b_di" bpmnElement="Event_1cuhm1b">
+        <dc:Bounds x="3952" y="402" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1yi1j91_di" bpmnElement="Event_1yi1j91">
+        <dc:Bounds x="3732" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3708" y="445" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0dws8ph" bpmnElement="Event_15de12f">
+        <dc:Bounds x="3392" y="562" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_1llotim" bpmnElement="Flow_1eqjk7x">
+        <di:waypoint x="3570" y="300" />
+        <di:waypoint x="3650" y="300" />
+        <di:waypoint x="3650" y="395" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0fitmsx" bpmnElement="Flow_01x4tit">
+        <di:waypoint x="3250" y="540" />
+        <di:waypoint x="3310" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_001nrge" bpmnElement="Flow_1624cnm">
+        <di:waypoint x="3410" y="540" />
+        <di:waypoint x="3470" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1c9n3z8" bpmnElement="Flow_06det46">
+        <di:waypoint x="3050" y="445" />
+        <di:waypoint x="3050" y="540" />
+        <di:waypoint x="3150" y="540" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1tv5r77" bpmnElement="Flow_1rzrx5n">
+        <di:waypoint x="3570" y="540" />
+        <di:waypoint x="3650" y="540" />
+        <di:waypoint x="3650" y="445" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_02u5mwq" bpmnElement="Flow_17d8agp">
+        <di:waypoint x="3675" y="420" />
+        <di:waypoint x="3732" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_031cz0p" bpmnElement="Flow_10740ba">
+        <di:waypoint x="3050" y="395" />
+        <di:waypoint x="3050" y="300" />
+        <di:waypoint x="3470" y="300" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1617zya" bpmnElement="Flow_00lmw0s">
+        <di:waypoint x="2816" y="420" />
+        <di:waypoint x="3025" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1e4c9xl_di" bpmnElement="Flow_1e4c9xl">
+        <di:waypoint x="3410" y="598" />
+        <di:waypoint x="3410" y="730" />
+        <di:waypoint x="3860" y="730" />
+        <di:waypoint x="3860" y="445" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hje9jo_di" bpmnElement="Flow_1hje9jo">
+        <di:waypoint x="3885" y="420" />
+        <di:waypoint x="3952" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1kctizk_di" bpmnElement="Flow_1kctizk">
+        <di:waypoint x="3768" y="420" />
+        <di:waypoint x="3835" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_1sdqay3" bpmnElement="Activity_1gkrdia">
+        <dc:Bounds x="4250" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0v1ij7v" bpmnElement="Event_1f0fsem">
+        <dc:Bounds x="4402" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4378" y="445" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1p8vtdf" bpmnElement="Event_0ku2xkz">
+        <dc:Bounds x="5032" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="5008" y="445" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1lz44z1" bpmnElement="Event_09ypdqr">
+        <dc:Bounds x="5372" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="5348" y="445" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0gvnezq_di" bpmnElement="Event_0gvnezq">
+        <dc:Bounds x="2622" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2600" y="445" width="81" height="66" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1vx1ksa" bpmnElement="Event_0xe4ntw">
+        <dc:Bounds x="4092" y="402" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4068" y="445" width="86" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_19eqr93" bpmnElement="Activity_0w0gx38">
+        <dc:Bounds x="5540" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_175qlxq" bpmnElement="Activity_16z66u6">
+        <dc:Bounds x="1160" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1vyw081" bpmnElement="Gateway_0s2coi9" isMarkerVisible="true">
+        <dc:Bounds x="1335" y="395" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_05qlixy" bpmnElement="Gateway_09djlr2" isMarkerVisible="true">
+        <dc:Bounds x="1625" y="395" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ypdp0q" bpmnElement="Activity_1g533iu">
+        <dc:Bounds x="1450" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1ajbi0s_di" bpmnElement="Activity_1jei9nx">
+        <dc:Bounds x="990" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0yvek1n_di" bpmnElement="Activity_11gha4z">
+        <dc:Bounds x="830" y="380" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_06joq4l" bpmnElement="Activity_1h47wl3">
+        <dc:Bounds x="680" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_11gaczy" bpmnElement="Activity_12etud7">
+        <dc:Bounds x="530" y="380" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1qvxk2i_di" bpmnElement="TextAnnotation_1qvxk2i" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="4906" y="497" width="58" height="112" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1hn75c3_di" bpmnElement="TextAnnotation_1hn75c3" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="4710" y="600" width="172" height="70" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_01f9g4c_di" bpmnElement="Group_01f9g4c">
+        <dc:Bounds x="250" y="80" width="2310" height="730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1362" y="87" width="88" height="93" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_13tikyv_di" bpmnElement="Group_13tikyv">
+        <dc:Bounds x="350" y="190" width="1630" height="435" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_1k7lytq_di" bpmnElement="Group_1k7lytq">
+        <dc:Bounds x="4555" y="80" width="560" height="730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4793" y="87" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_17q77ok_di" bpmnElement="Group_17q77ok">
+        <dc:Bounds x="5160" y="80" width="300" height="740" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="5283" y="87" width="54" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_1oiqdwd_di" bpmnElement="Group_1oiqdwd">
+        <dc:Bounds x="5510" y="80" width="700" height="740" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Group_0sc86v3_di" bpmnElement="Group_0sc86v3">
+        <dc:Bounds x="4190" y="80" width="320" height="730" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="4319" y="87" width="62" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1r7i4og_di" bpmnElement="TextAnnotation_1r7i4og" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="3335" y="875" width="100" height="40" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1w55d43_di" bpmnElement="TextAnnotation_1w55d43" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="1850" y="204" width="119.99784853700517" height="170.3958691910499" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_02g65hi_di" bpmnElement="TextAnnotation_02g65hi">
+        <dc:Bounds x="930" y="290" width="99.99305040770942" height="69.68124536693847" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0av7qbf_di" bpmnElement="TextAnnotation_0av7qbf" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="2150" y="251" width="99.99274099883856" height="98.72241579558653" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1he3qqd_di" bpmnElement="TextAnnotation_1he3qqd">
+        <dc:Bounds x="4350" y="244" width="99.99274099883856" height="112.65969802555169" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0zzfwn0_di" bpmnElement="TextAnnotation_0zzfwn0">
+        <dc:Bounds x="4710" y="146" width="99.99274099883856" height="213.70499419279906" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_114j55o_di" bpmnElement="TextAnnotation_114j55o">
+        <dc:Bounds x="4990" y="146" width="99.99274099883856" height="170.73170731707316" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1c8sxkh_di" bpmnElement="TextAnnotation_1c8sxkh">
+        <dc:Bounds x="5320" y="146" width="99.99274099883856" height="141.69570267131243" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_1a9sut0_di" bpmnElement="Flow_1a9sut0">
+        <di:waypoint x="4985" y="420" />
+        <di:waypoint x="5032" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16ls9mz_di" bpmnElement="Flow_16ls9mz">
+        <di:waypoint x="5745" y="420" />
+        <di:waypoint x="5800" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vq5sw3_di" bpmnElement="Flow_0vq5sw3">
+        <di:waypoint x="5900" y="420" />
+        <di:waypoint x="5955" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11nxnk9_di" bpmnElement="Flow_11nxnk9">
+        <di:waypoint x="5720" y="395" />
+        <di:waypoint x="5720" y="300" />
+        <di:waypoint x="5980" y="300" />
+        <di:waypoint x="5980" y="395" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_015duza_di" bpmnElement="Flow_015duza">
+        <di:waypoint x="6005" y="420" />
+        <di:waypoint x="6050" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1bf8wwh_di" bpmnElement="Flow_1bf8wwh">
+        <di:waypoint x="480" y="420" />
+        <di:waypoint x="530" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wgki7h_di" bpmnElement="Flow_1wgki7h">
+        <di:waypoint x="1938" y="420" />
+        <di:waypoint x="2050" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_07k3mtd" bpmnElement="Flow_07tv897">
+        <di:waypoint x="4705" y="420" />
+        <di:waypoint x="4757" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1k16oy7_di" bpmnElement="Flow_1k16oy7">
+        <di:waypoint x="4793" y="420" />
+        <di:waypoint x="4885" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_057g8e7_di" bpmnElement="Flow_057g8e7">
+        <di:waypoint x="2150" y="420" />
+        <di:waypoint x="2202" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ymdgyp_di" bpmnElement="Flow_1ymdgyp">
+        <di:waypoint x="1850" y="420" />
+        <di:waypoint x="1902" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0q19zs6_di" bpmnElement="Flow_0q19zs6">
+        <di:waypoint x="5315" y="420" />
+        <di:waypoint x="5372" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nr7ujp_di" bpmnElement="Flow_0nr7ujp">
+        <di:waypoint x="6150" y="420" />
+        <di:waypoint x="6912" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0yu0kfr" bpmnElement="Flow_1oxxot0">
+        <di:waypoint x="4350" y="420" />
+        <di:waypoint x="4402" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15tlnnd_di" bpmnElement="Flow_15tlnnd">
+        <di:waypoint x="4438" y="420" />
+        <di:waypoint x="4605" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1fer69s_di" bpmnElement="Flow_1fer69s">
+        <di:waypoint x="5068" y="420" />
+        <di:waypoint x="5215" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_15ibuew_di" bpmnElement="Flow_15ibuew">
+        <di:waypoint x="5408" y="420" />
+        <di:waypoint x="5540" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1jlzqro_di" bpmnElement="Flow_1jlzqro">
+        <di:waypoint x="2658" y="420" />
+        <di:waypoint x="2740" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_075uq9v_di" bpmnElement="Flow_075uq9v">
+        <di:waypoint x="4030" y="420" />
+        <di:waypoint x="4092" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_13ukvm9_di" bpmnElement="Flow_13ukvm9">
+        <di:waypoint x="4128" y="420" />
+        <di:waypoint x="4250" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qj8fj8_di" bpmnElement="Flow_0qj8fj8">
+        <di:waypoint x="5640" y="420" />
+        <di:waypoint x="5695" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wwtz1p_di" bpmnElement="Flow_1wwtz1p">
+        <di:waypoint x="188" y="420" />
+        <di:waypoint x="380" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0kpxqvh" bpmnElement="Flow_04wz84m">
+        <di:waypoint x="1260" y="420" />
+        <di:waypoint x="1335" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0tpo0j0" bpmnElement="Flow_0c5i0rz">
+        <di:waypoint x="1385" y="420" />
+        <di:waypoint x="1450" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1pebtqq" bpmnElement="Flow_1a14r7z">
+        <di:waypoint x="1360" y="395" />
+        <di:waypoint x="1360" y="300" />
+        <di:waypoint x="1650" y="300" />
+        <di:waypoint x="1650" y="395" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1p69wnr" bpmnElement="Flow_101f3co">
+        <di:waypoint x="1550" y="420" />
+        <di:waypoint x="1625" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_174topd_di" bpmnElement="Flow_174topd">
+        <di:waypoint x="1675" y="420" />
+        <di:waypoint x="1750" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_04c5xzu_di" bpmnElement="Flow_04c5xzu">
+        <di:waypoint x="2238" y="420" />
+        <di:waypoint x="2622" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0rpmr6h_di" bpmnElement="Flow_0rpmr6h">
+        <di:waypoint x="930" y="420" />
+        <di:waypoint x="990" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0aldoko_di" bpmnElement="Flow_0aldoko">
+        <di:waypoint x="1090" y="420" />
+        <di:waypoint x="1160" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06sqve6_di" bpmnElement="Flow_06sqve6" bioc:stroke="#5b176d" color:border-color="#5b176d">
+        <di:waypoint x="780" y="420" />
+        <di:waypoint x="830" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09qsm5l_di" bpmnElement="Flow_09qsm5l">
+        <di:waypoint x="630" y="420" />
+        <di:waypoint x="680" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0ff2jnz_di" bpmnElement="Association_0ff2jnz">
+        <di:waypoint x="4935" y="460" />
+        <di:waypoint x="4935" y="497" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1qco4sx_di" bpmnElement="Association_1qco4sx">
+        <di:waypoint x="4690" y="460" />
+        <di:waypoint x="4776" y="600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0ug4cf3_di" bpmnElement="Association_0ug4cf3">
+        <di:waypoint x="4909" y="460" />
+        <di:waypoint x="4812" y="600" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_10qmg8k_di" bpmnElement="Association_10qmg8k" bioc:stroke="#5b176d" color:border-color="#5b176d">
+        <di:waypoint x="3385" y="810" />
+        <di:waypoint x="3385" y="875" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1s6modg_di" bpmnElement="Association_1s6modg" bioc:stroke="#5b176d" color:border-color="#5b176d">
+        <di:waypoint x="1820" y="380" />
+        <di:waypoint x="1850" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0d78mld_di" bpmnElement="Association_0d78mld">
+        <di:waypoint x="915" y="380" />
+        <di:waypoint x="932" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_05aryb3_di" bpmnElement="Association_05aryb3">
+        <di:waypoint x="1017" y="380" />
+        <di:waypoint x="1005" y="360" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_07tdvxm_di" bpmnElement="Association_07tdvxm" bioc:stroke="#5b176d" color:border-color="#5b176d">
+        <di:waypoint x="2126" y="380" />
+        <di:waypoint x="2150" y="343" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1rb04ca_di" bpmnElement="Association_1rb04ca">
+        <di:waypoint x="4325" y="380" />
+        <di:waypoint x="4350" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0p56oa9_di" bpmnElement="Association_0p56oa9">
+        <di:waypoint x="4671" y="380" />
+        <di:waypoint x="4710" y="284" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1y0ado7_di" bpmnElement="Association_1y0ado7">
+        <di:waypoint x="4951" y="380" />
+        <di:waypoint x="4990" y="284" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1kx03ii_di" bpmnElement="Association_1kx03ii">
+        <di:waypoint x="5281" y="380" />
+        <di:waypoint x="5320" y="284" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_13ou29m">
+    <bpmndi:BPMNPlane id="BPMNPlane_0r6iz4r" />
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1m5tquf">
+    <bpmndi:BPMNPlane id="BPMNPlane_1k8zvfr" />
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_13ar3ci">
+    <bpmndi:BPMNPlane id="BPMNPlane_08kf62h" />
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_15pkmj5">
+    <bpmndi:BPMNPlane id="BPMNPlane_1d3a3ge" />
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1fnoprp">
+    <bpmndi:BPMNPlane id="BPMNPlane_0tngqug" />
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1lrpsw1">
+    <bpmndi:BPMNPlane id="BPMNPlane_07k29lx" />
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_0tp6bfz">
+    <bpmndi:BPMNPlane id="BPMNPlane_1kgo77r" />
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1vwrz7a">
+    <bpmndi:BPMNPlane id="BPMNPlane_13be912" />
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1bz0hba">
+    <bpmndi:BPMNPlane id="BPMNPlane_09w0gyv" />
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1t274vu">
+    <bpmndi:BPMNPlane id="BPMNPlane_1hqq7l0" />
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_17ic0z0">
+    <bpmndi:BPMNPlane id="BPMNPlane_1o6m5x2" />
+  </bpmndi:BPMNDiagram>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_0j4rzs2">
+    <bpmndi:BPMNPlane id="BPMNPlane_17waxez" />
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

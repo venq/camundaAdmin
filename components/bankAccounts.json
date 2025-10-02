@@ -1,0 +1,86 @@
+{
+  "type": "bankAccounts",
+  "title": "Счета",
+  "visible": true,
+  "readonly": true,
+  "collapse": true,
+  "fields": {
+    "openDate": {
+      "visible": true,
+      "readonly": false,
+      "required": false
+    },
+    "accountStatus": {
+      "visible": true,
+      "readonly": false,
+      "required": false
+    },
+    "accountCurrency": {
+      "visible": true,
+      "readonly": false,
+      "required": false
+    }
+  },
+  "bankBics": [
+    {
+      "key": "046577446",
+      "value": "046577446"
+    },
+    {
+      "key": "048073770",
+      "value": "048073770"
+    },
+    {
+      "key": "044525787",
+      "value": "044525787"
+    },
+    {
+      "key": "040349700",
+      "value": "040349700"
+    },
+    {
+      "key": "045004725",
+      "value": "045004725"
+    },
+    {
+      "key": "040702763",
+      "value": "040702763"
+    },
+    {
+      "key": "044030706",
+      "value": "044030706"
+    }
+  ],
+  "accountCurrencyCodes": [
+    {
+      "key": "810",
+      "value": "Российский рубль"
+    },
+    {
+      "key": "978",
+      "value": "Евро"
+    },
+    {
+      "key": "840",
+      "value": "Доллар США"
+    },
+    {
+      "key": "156",
+      "value": "Юань"
+    },
+    {
+      "key": "398",
+      "value": "Казахстанский тенге"
+    }
+  ],
+  "accountStatusCodes": [
+    {
+      "key": "Работает",
+      "value": "Работает"
+    },
+    {
+      "key": "Забронирован",
+      "value": "Забронирован"
+    }
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "title": "Данные для стратегии",
+  "readonly": true,
+  "visible": true,
+  "collapse": false,
+  "type": "transactionAggregations",
+  "uiType": "unitable",
+  "aggregationNames": [
+    "s1Analytics"
+  ],
+  "uiConfig": {
+    "datasource": {
+      "type": "model",
+      "property": "aggregations.s1Analytics.analytics"
+    },
+    "indexColumn": {
+      "enabled": false
+    },
+    "columns": [
+      {
+        "header": "Наименование",
+        "field": "name",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "text",
+        "required": false
+      },
+      {
+        "header": "Значение",
+        "field": "value",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": false,
+        "type": "input",
+        "required": false
+      }
+    ]
+  }
+}

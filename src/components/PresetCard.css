@@ -1,0 +1,223 @@
+.preset-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-height: 280px;
+}
+
+.preset-card {
+  border-radius: 0 0 8px 8px !important;
+  padding: 0 !important;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.preset-card.is-default {
+  background-color: #f0fdf4;
+  border: 2px solid #10b981;
+}
+
+/* Цветная шапка с типом пресета */
+.preset-card-type-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 8px 8px 0 0;
+}
+
+.preset-card-type-header.badge-success {
+  background-color: #10b981;
+  color: white;
+}
+
+.preset-card-type-header.badge-warning {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.preset-card-type-header.badge-info {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.preset-card-type-header.badge-purple {
+  background-color: #7c3aed;
+  color: white;
+}
+
+.preset-card-type-header.badge-secondary {
+  background-color: #64748b;
+  color: white;
+}
+
+.preset-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px 16px 0;
+}
+
+.preset-card-title-section {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+}
+
+.preset-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.preset-card-id {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background-color: var(--bg-secondary);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  align-self: flex-start;
+}
+
+.preset-card-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.preset-card-wrapper:hover .preset-card-actions {
+  opacity: 1;
+}
+
+.btn-icon-white {
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-icon-white:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-icon-white.btn-danger:hover {
+  background-color: rgba(220, 38, 38, 0.9);
+  border-color: rgba(220, 38, 38, 1);
+}
+
+.preset-card-description {
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0 16px;
+  flex: 1;
+}
+
+.preset-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-color);
+  margin-top: auto;
+}
+
+.preset-card-meta-item:last-child {
+  margin-left: auto;
+}
+
+.preset-card-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+.preset-card-meta-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.preset-card-preview {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  margin: 0 16px 16px;
+  background-color: var(--bg-secondary);
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.preset-card-preview-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.preset-card-preview-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.preset-preview-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+
+.preset-preview-label {
+  color: var(--text-secondary);
+  font-weight: 500;
+  min-width: 80px;
+}
+
+.preset-preview-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+  padding-left: 12px;
+}
+
+.preview-tab-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background-color: var(--bg-primary);
+  border-left: 3px solid var(--primary-color);
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.preview-tab-title {
+  font-weight: 500;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.preview-tab-components {
+  color: var(--text-secondary);
+  font-size: 12px;
+}
+

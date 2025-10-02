@@ -1,0 +1,10 @@
+{
+  "type": "examination",
+  "title": "Выездная проверка Залога",
+  "readonly": false,
+  "collapse": false,
+  "divisions": [
+    {"key" :  "KA","value": "KA"},
+    {"key": "DZ", "value": "ДРЗ"}
+  ]
+}

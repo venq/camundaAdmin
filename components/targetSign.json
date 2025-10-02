@@ -1,0 +1,74 @@
+{
+  "id": "targetSign",
+  "type": "targetSign",
+  "title": "Признак цели",
+  "uiType": "uniform",
+  "visible": true,
+  "collapse": false,
+  "readonly": false,
+  "textable": false,
+  "blocks": [
+    {
+      "id": "targetSign",
+      "uiType" : "block",
+      "visible": true,
+      "readonly": false,
+      "fields": [
+        {
+          "col": 24,
+          "pos": 1,
+          "name": "Обеспечиваемое обязательство является долговым инструментом",
+          "type": "switch",
+          "label": "Обеспечиваемое обязательство является долговым инструментом",
+          "visible": true,
+          "disabled": false,
+          "required": true,
+          "responsive": {
+            "lg": 24,
+            "md": 24,
+            "sm": 24,
+            "xl": 24,
+            "xs": 24,
+            "xxl": 24
+          }
+        },
+        {
+          "col": 24,
+          "pos": 2,
+          "name": "Бенефициару компенсируется только понесенный им убыток",
+          "type": "switch",
+          "label": "Бенефициару компенсируется только понесенный им убыток",
+          "visible": true,
+          "disabled": false,
+          "required": true,
+          "responsive": {
+            "lg": 24,
+            "md": 24,
+            "sm": 24,
+            "xl": 24,
+            "xs": 24,
+            "xxl": 24
+          }
+        },
+        {
+          "col": 24,
+          "pos": 3,
+          "name": "Компенсация не превышает величину фактического убытка",
+          "type": "switch",
+          "label": "Компенсация не превышает величину фактического убытка",
+          "visible": true,
+          "disabled": false,
+          "required": true,
+          "responsive": {
+            "lg": 24,
+            "md": 24,
+            "sm": 24,
+            "xl": 24,
+            "xs": 24,
+            "xxl": 24
+          }
+        }
+      ]
+    }
+  ]
+}

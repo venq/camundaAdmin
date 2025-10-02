@@ -1,0 +1,29 @@
+{
+  "type": "uni",
+  "uiType": "uniform",
+  "title": "Результат обработки квитанции",
+  "keyFormat": "fileProcessResult~${ftsBgNumber}",
+  "visible": true,
+  "readonly": true,
+  "collapse": false,
+  "blocks": [
+    {
+      "id": "receiptProcessResultBlock",
+      "uiType": "wrapper",
+      "visible": true,
+      "collapse": false,
+      "required": true,
+      "fields": [
+        {
+          "col": 24,
+          "pos": 1,
+          "name": "resultMessage",
+          "type": "textarea",
+          "visible": true,
+          "readonly": true,
+          "responsive": {"xs": 24, "sm": 24, "md": 24, "lg": 24, "xl": 24, "xxl": 24}
+        }
+      ]
+    }
+  ]
+}

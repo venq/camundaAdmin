@@ -1,0 +1,20 @@
+{
+  "type": "documents",
+  "title": "Документы экспертизы",
+  "types": [
+    {
+      "load": true,
+      "sign": false,
+      "title": "Сопроводительные документы",
+      "remove": true,
+      "docType": "expertise",
+      "multiple": true,
+      "required": false,
+      "entityType": "expertise"
+    }
+  ],
+  "visible": true,
+  "collapse": true,
+  "readonly": false,
+  "entityType": "expertise"
+}

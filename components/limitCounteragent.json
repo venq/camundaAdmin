@@ -1,0 +1,11 @@
+{
+  "title": "Контрагент",
+  "visible": false,
+  "collapse": true,
+  "readonly": false,
+  "uiType": "@farzoom/banana-ui-components:Counteragent",
+  "params": {
+    "prefix": "productLimit"
+  },
+  "formType": "bank"
+}

@@ -1,0 +1,65 @@
+{
+  "type": "expertiseGroup",
+  "title": "Экспертизы",
+  "readonly": false,
+  "visible": true,
+  "collapse": true,
+  "uiType": "unitable",
+  "uiConfig": {
+    "actions": [
+    ],
+    "datasource": {
+      "type": "model",
+      "property": "expertises"
+    },
+    "indexColumn": {
+      "enabled": false
+    },
+    "columns": [
+      {
+        "header": "Запустить",
+        "field": "enabled",
+        "sorting": {
+          "enabled": false
+        },
+        "readonly": false,
+        "type": "switch",
+        "required": true
+      },
+      {
+        "header": "Экспертиза",
+        "field": "expertise",
+        "sorting": {
+          "enabled": false
+        },
+        "readonly": true,
+        "type": "select",
+        "options": [
+          {
+            "key": "economicSecurity",
+            "value": "Экспертиза службы экономической безопасности"
+          },
+          {
+            "key": "legal",
+            "value": "Экспертиза юридической службы "
+          },
+          {
+            "key": "pledge",
+            "value": "Экспертиза залоговой службы"
+          }
+        ],
+        "required": true
+      },
+      {
+        "header": "Задание эксперту",
+        "field": "expertTask",
+        "sorting": {
+          "enabled": false
+        },
+        "readonlyExp": "component?.enabled !== true",
+        "type": "textarea",
+        "requiredExp": "component?.enabled === true"
+      }
+    ]
+  }
+}

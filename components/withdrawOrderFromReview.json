@@ -1,0 +1,14 @@
+{
+  "type": "withdrawOrderFromReview",
+  "title": "Снятие заявки с рассмотрения",
+  "visible": true,
+  "readonly": false,
+  "collapse": false,
+  "refs": {
+    "labels": {
+      "selectedKindTitle": "Вид отказа",
+      "selectedCategoryTitle": "Категория",
+      "selectedReasonTitle": "Причина отказа"
+    }
+  }
+}

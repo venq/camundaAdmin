@@ -1,0 +1,10 @@
+{
+  "type": "comments",
+  "title": "Комментарии",
+  "readonly": false,
+  "cacheModel": false,
+  "visible": true,
+  "collapse": false,
+  "showTask": true,
+  "mustHasRole": "$PARENT_PROCESS"
+}

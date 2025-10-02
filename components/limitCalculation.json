@@ -1,0 +1,10 @@
+{
+  "type": "scoringList",
+  "entityType": "company",
+  "visible": true,
+  "readonly": true,
+  "collapse": false,
+  "scoringTypes": [
+    "limit_calculation"
+  ]
+}

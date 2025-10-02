@@ -1,0 +1,670 @@
+{
+  "type": "commonExpertise",
+  "title": "Экспертизы",
+  "readonly": true,
+  "visible": true,
+  "cacheModel": false,
+  "expertises": [
+    {
+      "type": "creditRisk",
+      "group": "creditRiskGroup",
+      "docTypeConclusion": "expertiseResult"
+    },
+    {
+      "type": "economicSecurity",
+      "group": "economicSecurityGroup",
+      "docTypeConclusion": "expertiseResult"
+    },
+    {
+      "type": "legal",
+      "group": "legalGroup",
+      "docTypeConclusion": "expertiseResult"
+    },
+    {
+      "type": "pledge",
+      "group": "pledgeGroup",
+      "docTypeConclusion": "expertiseResult"
+    }
+  ],
+  "columns": {
+    "startType": {
+      "pos": 13,
+      "type": "icon",
+      "refKey": "startTypeIcons"
+    },
+    "requiredType": {
+      "pos": 14,
+      "type": "icon",
+      "refKey": "requiredTypeIcons"
+    },
+    "groups": {
+      "pos": 0,
+      "type": "group",
+      "title": "Направление",
+      "refKey": "groups",
+      "levelTree": 1
+    },
+    "type": {
+      "pos": 1,
+      "type": "text",
+      "title": "Вид экспертизы",
+      "groupedBy": [
+        "type",
+        "department"
+      ],
+      "colspanWith": "groups",
+      "refKey": "expertiseTypes",
+      "levelTree": 2
+    },
+    "executorName": {
+      "pos": 4,
+      "type": "text",
+      "title": "Исполнитель"
+    },
+    "startDate": {
+      "pos": 5,
+      "type": "dateTime",
+      "title": "Дата создания"
+    },
+    "dueDate": {
+      "pos": 6,
+      "type": "dateTime",
+      "title": "Нормативный срок"
+    },
+    "status": {
+      "pos": 7,
+      "type": "text",
+      "title": "Статус",
+      "refKey": "statuses"
+    },
+    "decision": {
+      "pos": 8,
+      "type": "colorDecision",
+      "title": "Решение",
+      "refKey": "decisions"
+    },
+    "conclusionFile": {
+      "pos": 9,
+      "type": "expertiseDocument",
+      "tooltip": {
+        "placement": "bottom",
+        "values": [
+          {
+            "type": "text",
+            "value": "Скачать заключение"
+          }
+        ]
+      }
+    },
+    "finishedDate": {
+      "pos": 10,
+      "type": "dateTime",
+      "title": "Дата завершения"
+    },
+    "validity": {
+      "pos": 11,
+      "type": "dateTime",
+      "title": "Срок действия"
+    },
+    "action": {
+      "pos": 12,
+      "type": "expertiseAction",
+      "refKey": "actions"
+    },
+    "info": {
+      "pos": 13,
+      "type": "modal",
+      "refKey": "infoModals"
+    }
+  },
+  "refs": {
+    "expertiseTypes": {
+      "creditRisk": "Экспертиза службы управления рисками",
+      "economicSecurity": "Экспертиза службы экономической безопасности",
+      "legal": "Экспертиза юридической службы",
+      "pledge": "Экспертиза залоговой службы"
+    },
+    "statuses": {
+      "started": "Запущена",
+      "endorse": "Согласование",
+      "rework": "Доработка",
+      "completed": "Завершена",
+      "revoked": "Отозвана",
+      "planned": "Запланирована",
+      "new": ""
+    },
+    "startTypeIcons": {
+      "m": {
+        "iconName": "manualIcon",
+        "tooltip": {
+          "placement": "right",
+          "values": [
+            {
+              "type": "text",
+              "value": "Ручная"
+            }
+          ]
+        }
+      },
+      "a": {
+        "iconName": "autoIcon",
+        "tooltip": {
+          "placement": "right",
+          "values": [
+            {
+              "type": "text",
+              "value": "Автоматическая"
+            }
+          ]
+        }
+      }
+    },
+    "requiredTypeIcons": {
+      "required": {
+        "tooltip": {
+          "values": [
+            {
+              "type": "text",
+              "value": "Обязательная"
+            }
+          ],
+          "placement": "right"
+        },
+        "iconName": "requireIcon"
+      },
+      "notRequired": {
+        "tooltip": {
+          "values": [
+            {
+              "type": "text",
+              "value": "Необязательная"
+            }
+          ],
+          "placement": "right"
+        },
+        "iconName": "notRequireIcon"
+      }
+    },
+    "decisions": {
+      "positive": {
+        "color": "green",
+        "tooltip": {
+          "placement": "bottom",
+          "values": [
+            {
+              "type": "headerText",
+              "value": "Согласовано"
+            },
+            {
+              "type": "field",
+              "key": "comment"
+            }
+          ]
+        }
+      },
+      "negative": {
+        "color": "red",
+        "tooltip": {
+          "placement": "bottom",
+          "values": [
+            {
+              "type": "headerText",
+              "value": "Не согласовано"
+            },
+            {
+              "type": "field",
+              "key": "comment"
+            }
+          ]
+        }
+      },
+      "positiveCondition": {
+        "color": "yellow",
+        "tooltip": {
+          "placement": "bottom",
+          "values": [
+            {
+              "type": "headerText",
+              "value": "Согласовано с условием"
+            },
+            {
+              "type": "field",
+              "key": "comment"
+            }
+          ]
+        }
+      },
+      "notRequired": {
+        "color": "grey",
+        "tooltip": {
+          "placement": "bottom",
+          "values": [
+            {
+              "type": "headerText",
+              "value": "Не требуется"
+            },
+            {
+              "type": "field",
+              "key": "comment"
+            }
+          ]
+        }
+      }
+    },
+    "groups": {
+      "creditRiskGroup": "Экспертиза службы управления рисками",
+      "economicSecurityGroup": "Экспертиза службы экономической безопасности",
+      "legalGroup": "Экспертиза юридической службы",
+      "pledgeGroup": "Экспертиза залоговой службы"
+    },
+    "processes": {
+      "creditRisk": "credit-expertise-cpa-main",
+      "economicSecurity": "credit-expertise-cpa-main",
+      "legal": "credit-expertise-cpa-main",
+      "pledge": "credit-expertise-cpa-main"
+    },
+    "actions": [
+      {
+        "id": "start",
+        "title": "Запустить",
+        "visibleBy": {
+          "operator": "AND",
+          "conditions": [
+            {
+              "key": "status",
+              "values": [
+                "completed",
+                "revoked",
+                "new"
+              ]
+            },
+            {
+              "key": "readonly",
+              "values": [
+                "false"
+              ]
+            }
+          ]
+        },
+        "color": "green",
+        "modals": [
+          {
+            "visibleBy": {
+              "operator": "AND",
+              "conditions": [
+                {
+                  "key": "type",
+                  "values": [
+                    "creditRisk",
+                    "economicSecurity",
+                    "legal",
+                    "pledge"
+                  ]
+                }
+              ]
+            },
+            "fields": [
+              {
+                "name": "request",
+                "type": "textarea",
+                "label": "Задание",
+                "required": true,
+                "visible": true
+              },
+              {
+                "name": "requestDocuments",
+                "pos": 10,
+                "type": "documents",
+                "title": "Сопроводительные документы",
+                "types": [
+                  {
+                    "load": true,
+                    "sign": false,
+                    "title": "Документы",
+                    "remove": true,
+                    "docType": "expertise",
+                    "multiple": true,
+                    "required": false,
+                    "entityType": "expertise"
+                  }
+                ],
+                "visible": false,
+                "collapse": false,
+                "readonly": false,
+                "entityType": "expertise"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "stop",
+        "title": "Отозвать",
+        "visibleBy": {
+          "operator": "AND",
+          "conditions": [
+            {
+              "key": "status",
+              "values": [
+                "started",
+                "rework",
+                "endorse"
+              ]
+            },
+            {
+              "key": "readonly",
+              "values": [
+                "false"
+              ]
+            }
+          ]
+        },
+        "color": "red",
+        "modals": [
+          {
+            "visibleBy": {
+              "operator": "AND",
+              "conditions": [
+                {
+                  "key": "type",
+                  "values": [
+                    "creditRisk",
+                    "economicSecurity",
+                    "legal",
+                    "pledge"
+                  ]
+                }
+              ]
+            },
+            "fields": [
+              {
+                "name": "cancelText",
+                "type": "text",
+                "value": "Экспертиза будет отозвана без сохранения изменений",
+                "visible": true
+              },
+              {
+                "name": "comment",
+                "type": "textarea",
+                "label": "Комментарий",
+                "required": true,
+                "visible": true
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "infoModals": [
+      {
+        "fields": [
+          {
+            "pos": 10,
+            "col": 24,
+            "name": "request",
+            "type": "textarea",
+            "label": "Задание",
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          },
+          {
+            "pos": 20,
+            "col": 24,
+            "name": "requestFiles",
+            "type": "documents",
+            "title": "Сопроводительные документы",
+            "types": [
+              {
+                "load": false,
+                "sign": false,
+                "title": "Документы",
+                "remove": false,
+                "docType": "expertise",
+                "multiple": true,
+                "required": false,
+                "entityType": "expertise"
+              }
+            ],
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          },
+          {
+            "pos": 30,
+            "col": 12,
+            "name": "decision",
+            "type": "select",
+            "label": "Решение",
+            "options": [
+              {
+                "key": "positive",
+                "value": "Согласовано"
+              },
+              {
+                "key": "negative",
+                "value": "Не согласовано"
+              },
+              {
+                "key": "positiveCondition",
+                "value": "Согласовано с условием"
+              },
+              {
+                "key": "notRequired",
+                "value": "Не требуется"
+              },
+              {
+                "key": "rework",
+                "value": "Доработка"
+              }
+            ],
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          },
+          {
+            "pos": 30,
+            "col": 6,
+            "name": "executorName",
+            "type": "input",
+            "label": "Подготовил пользователь",
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          },
+          {
+            "pos": 30,
+            "col": 6,
+            "name": "conclusionDate",
+            "type": "inputDateTime",
+            "label": "Дата заключения",
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          },
+          {
+            "pos": 40,
+            "col": 6,
+            "name": "finalizerName",
+            "type": "input",
+            "label": "Согласовал",
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          },
+          {
+            "pos": 40,
+            "col": 6,
+            "name": "finalizeDate",
+            "type": "inputDateTime",
+            "label": "Дата согласования",
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          },
+          {
+            "pos": 40,
+            "col": 6,
+            "name": "status",
+            "type": "select",
+            "label": "Статус",
+            "options": [
+              {
+                "key": "completed",
+                "value": "Завершена"
+              },
+              {
+                "key": "revoked",
+                "value": "Отозвана"
+              },
+              {
+                "key": "started",
+                "value": "Запущена"
+              },
+              {
+                "key": "endorse",
+                "value": "На согласовании"
+              },
+              {
+                "key": "rework",
+                "value": "На доработке"
+              },
+              {
+                "key": "planned",
+                "value": "Запланирована"
+              },
+              {
+                "key": "new",
+                "value": ""
+              }
+            ],
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          },
+          {
+            "pos": 40,
+            "col": 6,
+            "name": "version",
+            "type": "inputNumber",
+            "label": "Версия",
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          },
+          {
+            "pos": 40,
+            "col": 10,
+            "name": "validity",
+            "type": "inputDateTime",
+            "label": "Дата окончания действия заключения по экспертизе",
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          },
+          {
+            "pos": 50,
+            "col": 14,
+            "name": "comment",
+            "type": "textarea",
+            "label": "Заключение",
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          },
+          {
+            "pos": 60,
+            "col": 12,
+            "name": "conclusionFile",
+            "type": "documents",
+            "title": "Документ заключения",
+            "types": [
+              {
+                "load": false,
+                "sign": false,
+                "title": "Документы",
+                "remove": false,
+                "docType": "expertiseResult",
+                "multiple": true,
+                "required": false,
+                "entityType": "expertise"
+              }
+            ],
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          }
+        ],
+        "visibleBy": {
+          "operator": "AND",
+          "conditions": [
+            {
+              "key": "type",
+              "values": [
+                "creditRisk",
+                "economicSecurity",
+                "legal",
+                "pledge"
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "fields": [
+          {
+            "pos": 60,
+            "col": 24,
+            "name": "reason",
+            "type": "textarea",
+            "label": "Причина отзыва",
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          },
+          {
+            "pos": 70,
+            "col": 12,
+            "name": "rejectDate",
+            "type": "inputDateTime",
+            "label": "Дата и время отзыва",
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          },
+          {
+            "pos": 70,
+            "col": 12,
+            "name": "rejectUser",
+            "type": "input",
+            "label": "Пользователь, отозвавший экспертизу",
+            "visible": true,
+            "disabled": true,
+            "readonly": false
+          }
+        ],
+        "visibleBy": {
+          "operator": "AND",
+          "conditions": [
+            {
+              "key": "type",
+              "values": [
+                "creditRisk",
+                "economicSecurity",
+                "legal",
+                "pledge"
+              ]
+            },
+            {
+              "key": "status",
+              "values": [
+                "revoked"
+              ]
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "emptyDepartmentReadonly": true
+}

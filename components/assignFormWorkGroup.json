@@ -1,0 +1,53 @@
+{
+  "type": "assignForm",
+  "uiType": "uniform",
+  "visible": true,
+  "readonly": false,
+  "workGroupRolesToLinkClient": [],
+  "blocks": [
+    {
+      "id": "assignBlock",
+      "uiType": "wrapper",
+      "fields": [
+        {
+          "col": 24,
+          "pos": 1,
+          "name": "assignUser",
+          "type": "select",
+          "optionsPath": "usersRef",
+          "label": "Пользователь",
+          "visible": true,
+          "disabled": false,
+          "required": true,
+          "responsive": {
+            "lg": 24,
+            "md": 24,
+            "sm": 24,
+            "xl": 24,
+            "xs": 24,
+            "xxl": 24
+          }
+        },
+        {
+          "col": 24,
+          "pos": 2,
+          "name": "assignToClient",
+          "type": "switch",
+          "label": "Закрепить за клиентом",
+          "visibleExp": "component?.enableLinkClientFunction",
+          "disabled": false,
+          "required": false,
+          "responsive": {
+            "lg": 24,
+            "md": 24,
+            "sm": 24,
+            "xl": 24,
+            "xs": 24,
+            "xxl": 24
+          }
+        }
+      ],
+      "visible": true
+    }
+  ]
+}

@@ -1,0 +1,74 @@
+{
+  "type": "addressExtended",
+  "title": "Адреса ЮЛ/ИП",
+  "visible": true,
+  "readonly": true,
+  "collapse": true,
+  "fields": {
+    "addressPurpose": {
+      "title": "Назначение адреса",
+      "required": false,
+      "readonly": false,
+      "visible": true
+    },
+    "addressType": {
+      "title": "Тип владения адресом",
+      "required": false,
+      "readonly": false,
+      "visible": true
+    }
+  },
+  "ref": {
+    "types": [
+      {
+        "key": "legal",
+        "value": "Юридический адрес",
+        "required": true
+      },
+      {
+        "key": "actual",
+        "value": "Фактический адрес"
+      },
+      {
+        "key": "postal",
+        "value": "Почтовый адрес"
+      }
+    ],
+    "ownTypesNew": [
+      {
+        "key": "ownership",
+        "value": "собственность"
+      },
+      {
+        "key": "sublease",
+        "value": "субаренда"
+      },
+      {
+        "key": "lease",
+        "value": "аренда"
+      },
+      {
+        "key": "other",
+        "value": "другое"
+      }
+    ],
+    "purposes": [
+      {
+        "key": "shop",
+        "value": "магазин"
+      },
+      {
+        "key": "office",
+        "value": "офис"
+      },
+      {
+        "key": "warehouse",
+        "value": "склад"
+      },
+      {
+        "key": "other",
+        "value": "другое"
+      }
+    ]
+  }
+}

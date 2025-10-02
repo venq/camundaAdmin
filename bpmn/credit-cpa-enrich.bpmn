@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_1gb64b9" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.27.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <bpmn:process id="credit-cpa-enrich" isExecutable="true">
+    <bpmn:startEvent id="Event_06xtu8c">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:output source="=[companyId]" target="companyIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>Flow_0t7ejm6</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:serviceTask id="Activity_0jzyhip" name="Актуализация параметров клиента">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="POST avocadocc-api-enricher/focus/req/platform" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=companyId" target="companyId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0t7ejm6</bpmn:incoming>
+      <bpmn:outgoing>Flow_0i67f7h</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_05lakq8" name="Получение связей клиента">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="POST avocadocc-api-enricher/focus/egrDetails/platform" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=companyId" target="companyId" />
+          <zeebe:output source="=distinct values(&#10;  for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;companyFounder&#34;)&#10;      and get value(companyMap, item.value.leftId).inn != null]&#10;    return relationDto.value.leftId)" target="companyFounderIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0yhdlqa</bpmn:incoming>
+      <bpmn:outgoing>Flow_0a0bp72</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0t7ejm6" sourceRef="Event_06xtu8c" targetRef="Activity_0jzyhip" />
+    <bpmn:sequenceFlow id="Flow_0i67f7h" sourceRef="Activity_0jzyhip" targetRef="Activity_0bcecha" />
+    <bpmn:sequenceFlow id="Flow_0a0bp72" sourceRef="Activity_05lakq8" targetRef="Activity_1qx96mq" />
+    <bpmn:serviceTask id="Activity_1qx96mq" name="Получение связей клиента">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="POST avocadocc-api-enricher/focus/beneficialOwners/platform" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=companyId" target="companyId" />
+          <zeebe:output source="=distinct values(&#10;  for relationDto&#10;    in get entries(relationMap)&#10;      [(item.value.endDate = null or date(item.value.endDate) &#62; today())&#10;      and (item.value.relationTypeRefId = &#34;companyBeneficiary&#34;)&#10;      and get value(companyMap, item.value.leftId).inn != null]&#10;    return relationDto.value.leftId)" target="companyBeneficiaryIdList" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0a0bp72</bpmn:incoming>
+      <bpmn:outgoing>Flow_1xhxv7g</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="Event_1w1aasq">
+      <bpmn:incoming>Flow_09ri9si</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:subProcess id="Activity_07mptyk">
+      <bpmn:extensionElements />
+      <bpmn:incoming>Flow_1xhxv7g</bpmn:incoming>
+      <bpmn:outgoing>Flow_1wlln98</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics>
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=union(companyFounderIdList, companyBeneficiaryIdList)" inputElement="companyId" outputCollection="" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+      <bpmn:startEvent id="Event_1gd0qa4">
+        <bpmn:outgoing>Flow_0vauxtx</bpmn:outgoing>
+      </bpmn:startEvent>
+      <bpmn:endEvent id="Event_1impdsc">
+        <bpmn:incoming>Flow_1nj3ydz</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_0vauxtx" sourceRef="Event_1gd0qa4" targetRef="Activity_0oviabw" />
+      <bpmn:sequenceFlow id="Flow_1nj3ydz" sourceRef="Activity_0oviabw" targetRef="Event_1impdsc" />
+      <bpmn:serviceTask id="Activity_0oviabw" name="Актуализация параметров клиента">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="POST avocadocc-api-enricher/focus/req/platform" />
+          <zeebe:ioMapping>
+            <zeebe:input source="=companyId" target="companyId" />
+          </zeebe:ioMapping>
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_0vauxtx</bpmn:incoming>
+        <bpmn:outgoing>Flow_1nj3ydz</bpmn:outgoing>
+      </bpmn:serviceTask>
+    </bpmn:subProcess>
+    <bpmn:sequenceFlow id="Flow_1wlln98" sourceRef="Activity_07mptyk" targetRef="Activity_1pnxqov" />
+    <bpmn:sequenceFlow id="Flow_1xhxv7g" sourceRef="Activity_1qx96mq" targetRef="Activity_07mptyk" />
+    <bpmn:sequenceFlow id="Flow_0l259fh" sourceRef="Activity_1n45epa" targetRef="Activity_1h47wl3" />
+    <bpmn:serviceTask id="Activity_1n45epa" name="Актуализация данных клиента из WB">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="banana-api-market.ServiceTaskDataFetch" retries="0" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=companyId" target="companyId" />
+          <zeebe:input source="=[&#34;wb&#34;]" target="markets" />
+          <zeebe:input source="=12" target="period" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_17uoqjr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0l259fh</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_17uoqjr" sourceRef="Activity_0bcecha" targetRef="Activity_1n45epa" />
+    <bpmn:serviceTask id="Activity_0bcecha" name="Актуализация данных по бух. отчетности клиента">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="POST avocadocc-api-enricher/focus/company/buh" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=companyId" target="companyId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0i67f7h</bpmn:incoming>
+      <bpmn:outgoing>Flow_17uoqjr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="Activity_1pnxqov" name="Создание досье в ЭА">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="avocc-credit-cpa-ea-dossier-order-members" propagateAllChildVariables="false" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=orderId" target="orderId" />
+          <zeebe:input source="=true" target="catchEA400" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1wlln98</bpmn:incoming>
+      <bpmn:outgoing>Flow_09ri9si</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:sequenceFlow id="Flow_09ri9si" sourceRef="Activity_1pnxqov" targetRef="Event_1w1aasq" />
+    <bpmn:serviceTask id="Activity_1h47wl3" name="ФОКУС Обогащение &#34;Расширенная аналитика&#34;">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=companyId" target="companyId" />
+          <zeebe:output source="=&#34;_&#34;" target="ignored" />
+        </zeebe:ioMapping>
+        <zeebe:taskDefinition type="POST avocadocc-api-enricher/focus/analytics/platform" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0l259fh</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yhdlqa</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0yhdlqa" sourceRef="Activity_1h47wl3" targetRef="Activity_05lakq8" />
+    <bpmn:textAnnotation id="TextAnnotation_1cj1cjw">
+      <bpmn:text>req, в результате актуалищируем параметры клиента в company.company, возможно обджект companyInfo</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_03la3mo">
+      <bpmn:text>egrDetails</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1m8gdki" sourceRef="Activity_0jzyhip" targetRef="TextAnnotation_1cj1cjw" />
+    <bpmn:association id="Association_0eoaydu" sourceRef="Activity_05lakq8" targetRef="TextAnnotation_03la3mo" />
+    <bpmn:textAnnotation id="TextAnnotation_1bakncb">
+      <bpmn:text>beneficialyOwners</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_01g19he" associationDirection="None" sourceRef="Activity_1qx96mq" targetRef="TextAnnotation_1bakncb" />
+    <bpmn:textAnnotation id="TextAnnotation_13ed5pu">
+      <bpmn:text>для каждой связанной компании, созданной (обновленной) в 3, выполняется первый этап обогащения (запрос req, чтобы при переходе в карточку связанной компании отображались регистрационные данные. Полное обогащение таких компаний  при необходимости выполняется при построении ГСЗ</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1ntvqrl" sourceRef="Activity_07mptyk" targetRef="TextAnnotation_13ed5pu" />
+    <bpmn:textAnnotation id="TextAnnotation_1pfj19s">
+      <bpmn:text>создать сущности:
+* компании-учредители клиента
+* ФЛ-учредители клиента
+* компании - бенефициары клиента
+* ФЛ-бенефициары клиента 
+и соответствующие релейшены к ним:
+* companyFounder 
+* personFounder
+* companyBeneficiary
+* personBeneficiary
+Не забыть долю владения в share!</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_1mr36fs" associationDirection="None" sourceRef="TextAnnotation_1pfj19s" targetRef="Activity_05lakq8" />
+    <bpmn:association id="Association_1v8cqvu" associationDirection="None" sourceRef="TextAnnotation_1pfj19s" targetRef="Activity_1qx96mq" />
+    <bpmn:textAnnotation id="TextAnnotation_141dkuy">
+      <bpmn:text>мультиинстанс по каждой компании (ЮЛ/ИП), полученной в списке  параметров при запуске обогащения
+Если связанные компании существуют, обновляем параметры компаний и параметры релейшенов. Если в актуальном списке связей нет компании, с которой релейшен построен ранее, для него необходимо заполнить  archivedAt (недействующий)</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1vsfdhb">
+      <bpmn:text>На входе список компаний, которые необходимо обогатить</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0a5i66w">
+      <bpmn:text>req: для каждой связанной компании</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0b70g5h" associationDirection="None" sourceRef="TextAnnotation_0a5i66w" targetRef="Activity_0oviabw" />
+    <bpmn:textAnnotation id="TextAnnotation_0nn1hpx">
+      <bpmn:text>analytics</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_0ell8w2" associationDirection="None" sourceRef="Activity_1h47wl3" targetRef="TextAnnotation_0nn1hpx" />
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="credit-cpa-enrich">
+      <bpmndi:BPMNShape id="BPMNShape_06mgwqc" bpmnElement="Event_06xtu8c" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="482" y="302" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1dkac1o" bpmnElement="Activity_0jzyhip">
+        <dc:Bounds x="580" y="280" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0f35c6o" bpmnElement="Activity_05lakq8">
+        <dc:Bounds x="1220" y="280" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1a5h2ri" bpmnElement="Activity_1qx96mq">
+        <dc:Bounds x="1380" y="280" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0cxzi9k" bpmnElement="Event_1w1aasq" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="2272" y="302" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0z9er7p_di" bpmnElement="Activity_1n45epa">
+        <dc:Bounds x="900" y="280" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1udu5r6_di" bpmnElement="Activity_0bcecha">
+        <dc:Bounds x="740" y="280" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1setolg_di" bpmnElement="Activity_1pnxqov" bioc:stroke="#8e24aa" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#8e24aa">
+        <dc:Bounds x="2010" y="280" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_06joq4l" bpmnElement="Activity_1h47wl3">
+        <dc:Bounds x="1060" y="280" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1jtg5u3" bpmnElement="Activity_07mptyk" isExpanded="true">
+        <dc:Bounds x="1540" y="220" width="340" height="186" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0z1d3rs" bpmnElement="Event_1gd0qa4" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="1562" y="302" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0o54qut" bpmnElement="Event_1impdsc" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="1812" y="302" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_04kels3_di" bpmnElement="Activity_0oviabw">
+        <dc:Bounds x="1656" y="280" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_12ziuvk" bpmnElement="Flow_0vauxtx" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1598" y="320" />
+        <di:waypoint x="1656" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1f46bp7" bpmnElement="Flow_1nj3ydz" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1756" y="320" />
+        <di:waypoint x="1812" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0qqharn" bpmnElement="Association_0eoaydu">
+        <di:waypoint x="1275" y="360" />
+        <di:waypoint x="1278" y="380" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_01g19he_di" bpmnElement="Association_01g19he">
+        <di:waypoint x="1425" y="360" />
+        <di:waypoint x="1422" y="378" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0mg5b0z" bpmnElement="Association_1ntvqrl">
+        <di:waypoint x="1687" y="220" />
+        <di:waypoint x="1688" y="210" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1mr36fs_di" bpmnElement="Association_1mr36fs">
+        <di:waypoint x="1314" y="242" />
+        <di:waypoint x="1280" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1v8cqvu_di" bpmnElement="Association_1v8cqvu">
+        <di:waypoint x="1412" y="242" />
+        <di:waypoint x="1425" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0b70g5h_di" bpmnElement="Association_0b70g5h">
+        <di:waypoint x="1700" y="270" />
+        <di:waypoint x="1700" y="280" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0ell8w2_di" bpmnElement="Association_0ell8w2">
+        <di:waypoint x="1110" y="360" />
+        <di:waypoint x="1110" y="378" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_1b7aofy" bpmnElement="TextAnnotation_1cj1cjw">
+        <dc:Bounds x="520" y="191" width="190" height="73" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1axl90x" bpmnElement="TextAnnotation_141dkuy">
+        <dc:Bounds x="160" y="90" width="280" height="193" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0uzjqf4" bpmnElement="TextAnnotation_1vsfdhb">
+        <dc:Bounds x="160" y="291" width="100" height="98" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_0qk3wr0" bpmnElement="Flow_0t7ejm6" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="518" y="320" />
+        <di:waypoint x="580" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_07hs486" bpmnElement="Flow_0i67f7h" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="680" y="320" />
+        <di:waypoint x="740" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0lanpih" bpmnElement="Flow_0a0bp72" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1320" y="320" />
+        <di:waypoint x="1380" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0z99our" bpmnElement="Flow_1wlln98" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1880" y="320" />
+        <di:waypoint x="2010" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1xhxv7g_di" bpmnElement="Flow_1xhxv7g" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1480" y="320" />
+        <di:waypoint x="1540" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0l259fh_di" bpmnElement="Flow_0l259fh" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1000" y="320" />
+        <di:waypoint x="1060" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_17uoqjr_di" bpmnElement="Flow_17uoqjr" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="840" y="320" />
+        <di:waypoint x="900" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_09ri9si_di" bpmnElement="Flow_09ri9si">
+        <di:waypoint x="2110" y="320" />
+        <di:waypoint x="2272" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0vp675q" bpmnElement="Association_1m8gdki">
+        <di:waypoint x="610" y="280" />
+        <di:waypoint x="602" y="264" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_1j4fvze" bpmnElement="TextAnnotation_03la3mo">
+        <dc:Bounds x="1235" y="380" width="90" height="26" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1bakncb_di" bpmnElement="TextAnnotation_1bakncb">
+        <dc:Bounds x="1360" y="378" width="120" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0vmy7oi" bpmnElement="TextAnnotation_13ed5pu">
+        <dc:Bounds x="1520" y="77" width="300" height="133" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_06j1pgg" bpmnElement="TextAnnotation_1pfj19s">
+        <dc:Bounds x="1235" y="77" width="300" height="165" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0a5i66w_di" bpmnElement="TextAnnotation_0a5i66w">
+        <dc:Bounds x="1615" y="230" width="170" height="40" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0yhdlqa_di" bpmnElement="Flow_0yhdlqa" bioc:stroke="#205022" color:border-color="#205022">
+        <di:waypoint x="1160" y="320" />
+        <di:waypoint x="1220" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="TextAnnotation_0nn1hpx_di" bpmnElement="TextAnnotation_0nn1hpx">
+        <dc:Bounds x="1060" y="378" width="99.99156545209178" height="29.984817813765183" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

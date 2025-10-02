@@ -1,0 +1,44 @@
+{
+  "type": "management",
+  "title": "Структура органов управления",
+  "visible": true,
+  "readonly": true,
+  "collapse": true,
+  "fields": {
+    "supremeGoverningBody": {
+      "required": true,
+      "readonly": false,
+      "visible": true
+    },
+    "soleExecutiveBodyRefId": {
+      "required": true,
+      "readonly": false,
+      "visible": true
+    },
+    "managementCompany": {
+      "required": true,
+      "readonly": false,
+      "visible": true
+    },
+    "supervisoryBoard": {
+      "required": false,
+      "readonly": false,
+      "visible": true
+    },
+    "collegialExecutiveBody": {
+      "required": false,
+      "readonly": false,
+      "visible": true
+    },
+    "supervisoryBoard.members": {
+      "required": true,
+      "readonly": false,
+      "visible": false
+    },
+    "collegialExecutiveBody.members": {
+      "required": true,
+      "readonly": false,
+      "visible": false
+    }
+  }
+}

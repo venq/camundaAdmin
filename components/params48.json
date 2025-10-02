@@ -1,0 +1,37 @@
+{
+  "type": "genparams",
+  "title": "Результаты агрегата 48",
+  "visible": true,
+  "collapse": true,
+  "readonly": true,
+  "entityType": "order",
+  "attributes": {
+      "preapprovedClientsCount": {
+        "pos": 1,
+        "type": "int",
+        "format": "string",
+        "visible": "true",
+        "required": "false",
+        "readonly": "true",
+        "title": "Количество клиентов найденных в ЦХД"
+      },
+      "preapprovedClientsCountIncluded": {
+        "pos": 2,
+        "type": "int",
+        "format": "string",
+        "visible": "true",
+        "required": "false",
+        "readonly": "true",
+        "title": "Количество клиентов прошедших проверку на 6 месяцев"
+      },
+      "preapprovedClientsCountExcluded": {
+        "pos": 3,
+        "type": "int",
+        "format": "string",
+        "visible": "true",
+        "required": "false",
+        "readonly": "true",
+        "title": "Количество клиентов не прошедших проверку на 6 месяцев"
+      }
+  }
+}

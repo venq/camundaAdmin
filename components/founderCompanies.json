@@ -1,0 +1,14 @@
+{
+  "type": "founderCompanies",
+  "title": "Учредители",
+  "visible": true,
+  "readonly": true,
+  "collapse": false,
+  "uiType": "list",
+  "fields": {
+    "legalAddress": {
+      "visible": true,
+      "required": true
+    }
+  }
+}

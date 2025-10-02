@@ -1,0 +1,258 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0pnzkw5" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.37.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <bpmn:error id="Error_1eef7hp" name="REJECT" errorCode="REJECT" />
+  <bpmn:message id="Message_2fskdhm" name="CANCEL_CLIENT">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=orderId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:signal id="Signal_17hu2un" name="=&#34;stop_client&#34; + orderId" />
+  <bpmn:signal id="Signal_30fb1n0" name="=&#34;stop_bank&#34; + orderId" />
+  <bpmn:escalation id="Escalation_0eab6e6" name="REJECT" escalationCode="REJECT" />
+  <bpmn:collaboration id="Collaboration_1p86kui">
+    <bpmn:participant id="Participant_0mufich" name="Продуктовый прескоринг" processRef="credit-cpa-prescoring" />
+    <bpmn:textAnnotation id="TextAnnotation_1hsr3ya">
+      <bpmn:text>Продуктовый прескоринг</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1bq0y1p">
+      <bpmn:text>проверки по данным КФ, ЦФТ (стоп-листы и платежная дисциплина).
+Источники данных (в т.ч ЦФТ запрашивает процесс расчета скорингов</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_19ar5up" associationDirection="None" sourceRef="TextAnnotation_1bq0y1p" targetRef="Activity_1h11rl5" />
+    <bpmn:textAnnotation id="TextAnnotation_1qu484c">
+      <bpmn:text>проверить СФ по заемщику, включая:
+* кредитную историю (при наличии согласия на БКИ, если клиент ранее кредитовался и предоставлял согласие). Если согласия нет, СФ по КИ считать пройденными или непроверенными, не должно влиять на маршрутизацию
+* получить подробные данные по арбитражам и исполнительным производствам заемщика (определить источник данных!)</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1vbjpka">
+      <bpmn:text>Отображаем:
+1. Параметры клиента (в т.ч. apiKey+clientId озон, связанные юл/фл)
+2. Участники сделки
+3. Параметры продукта
+4. ГСЗ
+5. Бухотчетность и данные от ВБ
+6. Скоринги и расчет риск-уровня
+7. Документы (доктайпы и при наличии подобранные документы)
+8. Лимиты с утилизацией
+9. Арбитражи списком</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_00fmik6" associationDirection="None" sourceRef="TextAnnotation_1qu484c" targetRef="Activity_1h11rl5" />
+    <bpmn:association id="Association_06g595b" associationDirection="None" sourceRef="Activity_1j9q4px" targetRef="TextAnnotation_1hsr3ya" />
+    <bpmn:association id="Association_0zve4qc" associationDirection="None" sourceRef="TextAnnotation_1vbjpka" targetRef="credit-cpa-prescoring.UserTaskSelectProducts" />
+  </bpmn:collaboration>
+  <bpmn:process id="credit-cpa-prescoring" name="Продуктовый прескоринг" isExecutable="true">
+    <bpmn:sequenceFlow id="Flow_1ys3a96" sourceRef="Activity_1h11rl5" targetRef="Gateway_10r42pm" />
+    <bpmn:sequenceFlow id="Flow_0lysnjq" name="Сработали безусловные стопы, отказ" sourceRef="Gateway_10r42pm" targetRef="Event_005pn3l">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=hasStopFactors != null and hasStopFactors = true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:callActivity id="Activity_1h11rl5" name="Проверка стоп-факторов и расчет риск-уровня">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="credit-cpa-prescoring-evaluate" propagateAllChildVariables="false" propagateAllParentVariables="false" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=orderId" target="orderId" />
+          <zeebe:input source="=&#34;stop-factor-scoring-borrower&#34;" target="scoringType" />
+          <zeebe:input source="=&#34;company&#34;" target="entityType" />
+          <zeebe:input source="=provider.id" target="entityId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1wrl05g</bpmn:incoming>
+      <bpmn:outgoing>Flow_1ys3a96</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:startEvent id="Event_0kg3btu">
+      <bpmn:outgoing>Flow_1wrl05g</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="Flow_1wrl05g" sourceRef="Event_0kg3btu" targetRef="Activity_1h11rl5" />
+    <bpmn:exclusiveGateway id="Gateway_10r42pm" default="Flow_1yj1y9a">
+      <bpmn:incoming>Flow_1ys3a96</bpmn:incoming>
+      <bpmn:outgoing>Flow_0lysnjq</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1yj1y9a</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_005pn3l" name="Отказ банка">
+      <bpmn:incoming>Flow_0lysnjq</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1p0yigr" errorRef="Error_1eef7hp" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0yrc9l9" sourceRef="credit-cpa-prescoring.UserTaskSelectProducts" targetRef="Gateway_1lh9t6c" />
+    <bpmn:sequenceFlow id="Flow_0va0i5q" sourceRef="Gateway_1lh9t6c" targetRef="Event_1l8dy4i">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=UserTaskSelectProductsResult = "bankReject"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0qtc3qf" sourceRef="Gateway_1lh9t6c" targetRef="Event_15t4d15" />
+    <bpmn:sequenceFlow id="Flow_0ac5bvr" sourceRef="Activity_1j9q4px" targetRef="credit-cpa-prescoring.UserTaskSelectProducts" />
+    <bpmn:sequenceFlow id="Flow_18r5v52" sourceRef="Activity_0jae466" targetRef="Activity_1j9q4px" />
+    <bpmn:sequenceFlow id="Flow_1yj1y9a" sourceRef="Gateway_10r42pm" targetRef="Activity_0jae466" />
+    <bpmn:exclusiveGateway id="Gateway_1lh9t6c" default="Flow_0qtc3qf">
+      <bpmn:incoming>Flow_0yrc9l9</bpmn:incoming>
+      <bpmn:outgoing>Flow_0va0i5q</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0qtc3qf</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_1l8dy4i" name="Отказ банка">
+      <bpmn:incoming>Flow_0va0i5q</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_19nq7vw" errorRef="Error_1eef7hp" />
+    </bpmn:endEvent>
+    <bpmn:callActivity id="Activity_0jae466" name="Определить ГСЗ">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="avocc-credit-cpa-recreate-gsz" propagateAllChildVariables="false" propagateAllParentVariables="false" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=companyId" target="companyId" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1yj1y9a</bpmn:incoming>
+      <bpmn:outgoing>Flow_18r5v52</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:serviceTask id="Activity_1j9q4px" name="Установить статус заявки">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="common-cpa-main.ServiceTaskUpdateStatus" retries="0" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;prescoring&#34;" target="code" />
+          <zeebe:input source="=orderId" target="orderId" />
+          <zeebe:input source="=8" target="percent" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_18r5v52</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ac5bvr</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:userTask id="credit-cpa-prescoring.UserTaskSelectProducts" name="Акцепт продукта и определение участников">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;CLIENT_DEPARTMENT_MANAGER&#34;]" target="ManagerGroups" />
+          <zeebe:input source="=[&#34;CLIENT_DEPARTMENT&#34;]" target="AssignGroups" />
+          <zeebe:input source="=&#34;CLIENT_DEPARTMENT_ROLE&#34;" target="WorkGroupRole" />
+          <zeebe:output source="=decisionId" target="UserTaskSelectProductsResult" />
+        </zeebe:ioMapping>
+        <zeebe:taskHeaders>
+          <zeebe:header key="name" value="Акцепт продукта и определение участников" />
+        </zeebe:taskHeaders>
+        <zeebe:assignmentDefinition assignee="=if initiator.channel = &#34;bank&#34; then initiator.login else &#34;&#34;" candidateGroups="=[&#34;CLIENT_DEPARTMENT&#34;, &#34;CLIENT_DEPARTMENT_MANAGER&#34;]" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ac5bvr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yrc9l9</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:endEvent id="Event_15t4d15">
+      <bpmn:incoming>Flow_0qtc3qf</bpmn:incoming>
+    </bpmn:endEvent>
+  </bpmn:process>
+  <bpmn:message id="Message_052hi5n" name="stop_bank">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=orderId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_24bgm57" name="CANCEL_BANK">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=orderId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:error id="Error_1u7p4s2" name="CLIENT_REJECT" errorCode="CLIENT_REJECT" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_1p86kui">
+      <bpmndi:BPMNShape id="Participant_0mufich_di" bpmnElement="Participant_0mufich" isHorizontal="true">
+        <dc:Bounds x="156" y="120" width="1234" height="700" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wvfs99_di" bpmnElement="Activity_1h11rl5">
+        <dc:Bounds x="320" y="480" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0s3jdn5" bpmnElement="Event_0kg3btu" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="209" y="502" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0hetbs1" bpmnElement="Gateway_10r42pm" isMarkerVisible="true">
+        <dc:Bounds x="505" y="495" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0g1dgw9_di" bpmnElement="Event_005pn3l" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="512" y="632" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="500" y="675" width="63" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_13agtfp" bpmnElement="Gateway_1lh9t6c" isMarkerVisible="true">
+        <dc:Bounds x="1155" y="495" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_15pkco2_di" bpmnElement="Event_1l8dy4i" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1162" y="632" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1148" y="678" width="63" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_16tqpcw_di" bpmnElement="Activity_0jae466">
+        <dc:Bounds x="640" y="480" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1rk1odd" bpmnElement="Activity_1j9q4px" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="810" y="480" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1g69qen" bpmnElement="credit-cpa-prescoring.UserTaskSelectProducts">
+        <dc:Bounds x="980" y="480" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1sky6u9" bpmnElement="Event_15t4d15" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="1282" y="502" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_0dg2ngz" bpmnElement="Flow_1ys3a96" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="420" y="520" />
+        <di:waypoint x="505" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0auwoq2" bpmnElement="Flow_0lysnjq" bioc:stroke="#e53935" color:border-color="#e53935">
+        <di:waypoint x="530" y="545" />
+        <di:waypoint x="530" y="632" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="456" y="558" width="67" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1wrl05g_di" bpmnElement="Flow_1wrl05g">
+        <di:waypoint x="245" y="520" />
+        <di:waypoint x="320" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0oqd64f" bpmnElement="Flow_0yrc9l9" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1080" y="520" />
+        <di:waypoint x="1155" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0u5io1i" bpmnElement="Flow_0va0i5q" bioc:stroke="#e53935" color:border-color="#e53935">
+        <di:waypoint x="1180" y="545" />
+        <di:waypoint x="1180" y="632" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0qtc3qf_di" bpmnElement="Flow_0qtc3qf" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1205" y="520" />
+        <di:waypoint x="1282" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ac5bvr_di" bpmnElement="Flow_0ac5bvr" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="910" y="520" />
+        <di:waypoint x="980" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18r5v52_di" bpmnElement="Flow_18r5v52" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="740" y="520" />
+        <di:waypoint x="810" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1yj1y9a_di" bpmnElement="Flow_1yj1y9a">
+        <di:waypoint x="555" y="520" />
+        <di:waypoint x="640" y="520" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_18c1d5v" bpmnElement="TextAnnotation_1hsr3ya">
+        <dc:Bounds x="790" y="420" width="100" height="40" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_19yyd7c" bpmnElement="TextAnnotation_1bq0y1p">
+        <dc:Bounds x="250" y="350" width="200" height="98" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1qu484c_di" bpmnElement="TextAnnotation_1qu484c">
+        <dc:Bounds x="450" y="285" width="330" height="148" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1vbjpka_di" bpmnElement="TextAnnotation_1vbjpka">
+        <dc:Bounds x="920" y="269" width="270" height="179" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Association_19ar5up_di" bpmnElement="Association_19ar5up">
+        <di:waypoint x="355" y="448" />
+        <di:waypoint x="358" y="480" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_00fmik6_di" bpmnElement="Association_00fmik6">
+        <di:waypoint x="502" y="433" />
+        <di:waypoint x="419" y="487" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_071q6gf" bpmnElement="Association_06g595b">
+        <di:waypoint x="850" y="480" />
+        <di:waypoint x="846" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0zve4qc_di" bpmnElement="Association_0zve4qc">
+        <di:waypoint x="1037" y="448" />
+        <di:waypoint x="1030" y="480" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>

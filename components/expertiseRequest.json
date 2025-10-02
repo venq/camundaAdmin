@@ -1,0 +1,8 @@
+{
+  "type": "expertiseRequest",
+  "title": "Сопроводительное письмо",
+  "visible": true,
+  "readonly": true,
+  "collapse": false,
+  "require": false
+}

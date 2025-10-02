@@ -1,0 +1,2418 @@
+{
+  "type": "limitStructure",
+  "title": "Структура лимита",
+  "uiType": "uniform",
+  "visible": true,
+  "cacheModel": false,
+  "collapse": true,
+  "readonly": false,
+  "textable": false,
+  "blocks": [
+    {
+      "id": "limitBlock",
+      "visible": true,
+      "collapse": false,
+      "readonly": false,
+      "uiType": "wrapper",
+      "blocks": [
+        {
+          "id": "limitInfoBlock",
+          "visible": true,
+          "collapse": false,
+          "readonly": false,
+          "uiType": "wrapper",
+          "blocks": [
+            {
+              "id": "idLimitPrognozBlock",
+              "visibleExp": "component?.taskDefinitionKey === 'carambola-credit-cpa-send-limit-prognoz.UserTaskFillParamsLimit'",
+              "collapse": false,
+              "readonly": false,
+              "uiType": "wrapper",
+              "fields": [
+                {
+                  "type": "input",
+                  "disabled": false,
+                  "required": true,
+                  "name": "limitIdPrognoz",
+                  "visible": true,
+                  "label": "Идентификатор лимита в АС Прогноз",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 24,
+                    "xxl": 24
+                  },
+                  "col": 24,
+                  "pos": 1
+                }
+              ]
+            },
+            {
+              "id": "financialGroupBlock",
+              "visible": true,
+              "opened": false,
+              "collapse": true,
+              "readonly": false,
+              "uiType": "wrapper",
+              "title": "Финансовая группа",
+              "fields": [
+                {
+                  "type": "input",
+                  "disabled": true,
+                  "name": "financialGroup.financialGroupName",
+                  "visibleExp": "!!component?.financialGroup?.financialGroupName",
+                  "label": "Наименование",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 24,
+                    "xxl": 24
+                  },
+                  "col": 24,
+                  "pos": 1
+                },
+                {
+                  "type": "unitable",
+                  "visibleExp": "!!component?.financialGroup?.limit",
+                  "disabled": false,
+                  "name": "limitAmountTable",
+                  "properties": {
+                    "uiConfig": {
+                      "actions": [
+                        {
+                          "action": "editUniform",
+                          "type": "row-action",
+                          "refKey": "editFinancialGroupLimitForm",
+                          "title": "Изменить"
+                        }
+                      ],
+                      "columns": [
+                        {
+                          "type": "text",
+                          "field": "totalLimitAmountLabel",
+                          "header": "Параметр",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true
+                        },
+                        {
+                          "type": "money",
+                          "field": "effectiveAmount",
+                          "header": "Действующее значение",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "money",
+                          "field": "changeAmount",
+                          "header": "Изменение",
+                          "valueExp": "component?.amount - component?.effectiveAmount",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "inputMoney",
+                          "field": "amount",
+                          "header": "Новое значение",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        }
+                      ],
+                      "datasource": {
+                        "type": "model",
+                        "property": "financialGroup.limit"
+                      },
+                      "indexColumn": {
+                        "enabled": false
+                      }
+                    },
+                    "refs": {
+                      "configs": {
+                        "editFinancialGroupLimitForm": {
+                          "type": "uniform",
+                          "blocks": [
+                            {
+                              "id": "editFinancialGroupLimitFormBlock",
+                              "uiType": "wrapper",
+                              "visible": true,
+                              "blocks": [
+                                {
+                                  "id": "financialGroupLimitForm",
+                                  "uiType": "wrapper",
+                                  "fields": [
+                                    {
+                                      "name": "payloads.saveFinancialGroupLimit.amount",
+                                      "type": "inputMoney",
+                                      "defaultValuePath": "financialGroup.limit.index.amount",
+                                      "label": "Новое значение",
+                                      "visible": true,
+                                      "readonly": false,
+                                      "required": true,
+                                      "col": 24,
+                                      "pos": 1
+                                    }
+                                  ],
+                                  "visible": true
+                                },
+                                {
+                                  "id": "saveFinancialGroupLimitButton",
+                                  "justify": "end",
+                                  "visible": true,
+                                  "uiType": "wrapper",
+                                  "fields": [
+                                    {
+                                      "type": "button",
+                                      "name": "saveFinancialGroupLimit",
+                                      "value": "Сохранить",
+                                      "validateBlock": "editFinancialGroupLimitFormBlock",
+                                      "properties": {
+                                        "buttonType": "primary"
+                                      },
+                                      "apiKey": "saveFinancialGroupLimit",
+                                      "visible": true,
+                                      "textAlign": "right",
+                                      "responsive": {
+                                        "xs": 24,
+                                        "sm": 24,
+                                        "md": 24,
+                                        "lg": 24,
+                                        "xl": 24,
+                                        "xxl": 24
+                                      },
+                                      "col": 24,
+                                      "pos": 1
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "visible": true
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "switch",
+                  "name": "financialGroup.extraLimitEnabled",
+                  "visible": true,
+                  "disabled": false,
+                  "label": "Доп. ограничения в иностранной валюте",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 24,
+                    "xxl": 24
+                  },
+                  "col": 24,
+                  "pos": 1
+                },
+                {
+                  "type": "unitable",
+                  "visibleExp": "component?.financialGroup?.extraLimitEnabled",
+                  "name": "financialGroupExtraLimitTable",
+                  "readonly": false,
+                  "title": "Добавить ограничение",
+                  "properties": {
+                    "uiConfig": {
+                      "actions": [
+                        {
+                          "action": "addUniform",
+                          "type": "top-action",
+                          "refKey": "addFinancialGroupExtraLimitForm",
+                          "title": "Добавить ограничение в валюте"
+                        },
+                        {
+                          "action": "editUniform",
+                          "type": "row-action",
+                          "refKey": "addFinancialGroupExtraLimitForm",
+                          "title": "Изменить ограничение в валюте"
+                        },
+                        {
+                          "action": "api",
+                          "id": "saveFinancialGroupExtraLimit",
+                          "type": "row-action"
+                        }
+                      ],
+                      "columns": [
+                        {
+                          "type": "select",
+                          "field": "currency",
+                          "header": "Валюта",
+                          "optionsPath": "currenciesRef",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true
+                        },
+                        {
+                          "type": "money",
+                          "field": "currencyEffectiveAmount",
+                          "header": "Действующее значение в валюте",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "money",
+                          "field": "currencyChangeAmount",
+                          "header": "Изменение в валюте",
+                          "valueExp": "component?.currencyAmount - component?.currencyEffectiveAmount",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "inputMoney",
+                          "field": "currencyAmount",
+                          "header": "Новое значение в валюте",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "inputMoney",
+                          "field": "exchangeRate",
+                          "header": "Прогнозный курс. руб. за единицу",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "money",
+                          "field": "roubleAmount",
+                          "valueExp": "component?.exchangeRate * component?.currencyAmount",
+                          "header": "Новое значение, руб.",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        }
+                      ],
+                      "datasource": {
+                        "type": "model",
+                        "property": "financialGroup.extraLimit"
+                      },
+                      "indexColumn": {
+                        "enabled": false
+                      }
+                    },
+                    "refs": {
+                      "configs": {
+                        "addFinancialGroupExtraLimitForm": {
+                          "type": "uniform",
+                          "blocks": [
+                            {
+                              "id": "addFinancialGroupExtraLimitFormBlock",
+                              "uiType": "wrapper",
+                              "visible": true,
+                              "blocks": [
+                                {
+                                  "id": "financialGroupExtraLimitForm",
+                                  "uiType": "wrapper",
+                                  "fields": [
+                                    {
+                                      "name": "payloads.saveFinancialGroupExtraLimit.currency",
+                                      "type": "select",
+                                      "defaultValuePath": "financialGroup.extraLimit.index.currency",
+                                      "label": "Валюта",
+                                      "optionsPath": "currenciesRef",
+                                      "visible": true,
+                                      "readonly": false,
+                                      "required": true,
+                                      "col": 24
+                                    },
+                                    {
+                                      "name": "payloads.saveFinancialGroupExtraLimit.currencyAmount",
+                                      "type": "inputMoney",
+                                      "defaultValuePath": "financialGroup.extraLimit.index.currencyAmount",
+                                      "label": "Новое значение в валюте",
+                                      "visible": true,
+                                      "readonly": false,
+                                      "required": true,
+                                      "col": 24
+                                    },
+                                    {
+                                      "name": "payloads.saveFinancialGroupExtraLimit.exchangeRate",
+                                      "type": "inputMoney",
+                                      "defaultValuePath": "financialGroup.extraLimit.index.exchangeRate",
+                                      "label": "Прогнозный курс. руб. за единицу",
+                                      "visible": true,
+                                      "readonly": false,
+                                      "required": true,
+                                      "col": 24
+                                    }
+                                  ],
+                                  "visible": true
+                                },
+                                {
+                                  "id": "saveFinancialGroupExtraLimitButton",
+                                  "justify": "end",
+                                  "visible": true,
+                                  "uiType": "wrapper",
+                                  "fields": [
+                                    {
+                                      "type": "button",
+                                      "name": "saveFinancialGroupExtraLimit",
+                                      "value": "Сохранить",
+                                      "validateBlock": "addFinancialGroupExtraLimitFormBlock",
+                                      "properties": {
+                                        "buttonType": "primary"
+                                      },
+                                      "apiKey": "saveFinancialGroupExtraLimit",
+                                      "visible": true,
+                                      "textAlign": "right",
+                                      "responsive": {
+                                        "xs": 24,
+                                        "sm": 24,
+                                        "md": 24,
+                                        "lg": 24,
+                                        "xl": 24,
+                                        "xxl": 24
+                                      },
+                                      "col": 24,
+                                      "pos": 1
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "visible": true
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "clientBlock",
+              "visible": true,
+              "opened": false,
+              "collapse": true,
+              "readonly": false,
+              "uiType": "wrapper",
+              "title": "Клиент",
+              "fields": [
+                {
+                  "type": "input",
+                  "disabled": true,
+                  "name": "debtor.type.name",
+                  "visible": true,
+                  "label": "Тип",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 8,
+                    "xxl": 8
+                  },
+                  "col": 8,
+                  "pos": 1
+                },
+                {
+                  "type": "input",
+                  "disabled": true,
+                  "name": "debtor.shortName",
+                  "visible": true,
+                  "label": "Наименование",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 8,
+                    "xxl": 8
+                  },
+                  "col": 8,
+                  "pos": 2
+                },
+                {
+                  "type": "input",
+                  "disabled": true,
+                  "name": "debtor.crmCode",
+                  "visible": true,
+                  "label": "Код в CRM",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 8,
+                    "xxl": 8
+                  },
+                  "col": 8,
+                  "pos": 3
+                },
+                {
+                  "type": "unitable",
+                  "visible": true,
+                  "name": "responsiblePersonsTable",
+                  "readonly": false,
+                  "properties": {
+                    "uiConfig": {
+                      "columns": [
+                        {
+                          "type": "input",
+                          "field": "role",
+                          "header": "Ответственные лица",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "input",
+                          "field": "name",
+                          "header": "ФИО",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "input",
+                          "field": "position",
+                          "header": "Должность",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "input",
+                          "field": "department",
+                          "header": "Подразделение",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        }
+                      ],
+                      "datasource": {
+                        "type": "model",
+                        "property": "debtor.responsiblePersons"
+                      },
+                      "indexColumn": {
+                        "enabled": false
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "id": "limitParametersBlock",
+              "visible": true,
+              "opened": false,
+              "collapse": true,
+              "readonly": false,
+              "uiType": "wrapper",
+              "title": "Параметры лимита",
+              "fields": [
+                {
+                  "type": "inputMoney",
+                  "disabled": false,
+                  "name": "limitGraph.amount",
+                  "visible": true,
+                  "required": true,
+                  "label": "Сумма лимита",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 8,
+                    "xxl": 8
+                  },
+                  "col": 8,
+                  "pos": 1
+                },
+                {
+                  "type": "inputMoney",
+                  "disabled": true,
+                  "name": "limitGraph.effectiveAmount",
+                  "visible": true,
+                  "label": "Действующее значение",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 8,
+                    "xxl": 8
+                  },
+                  "col": 8,
+                  "pos": 2
+                },
+                {
+                  "type": "inputMoney",
+                  "disabled": true,
+                  "valueExp": "component?.limitGraph?.amount - component?.limitGraph?.effectiveAmount",
+                  "name": "limitGraph.changeAmount",
+                  "visible": true,
+                  "label": "Изменение",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 8,
+                    "xxl": 8
+                  },
+                  "col": 8,
+                  "pos": 3
+                },
+                {
+                  "type": "inputDate",
+                  "disabled": false,
+                  "required": true,
+                  "name": "limitGraph.dates.beginDate",
+                  "visible": true,
+                  "label": "Дата начала действия",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 8,
+                    "xxl": 8
+                  },
+                  "col": 8,
+                  "pos": 4
+                },
+                {
+                  "type": "inputDate",
+                  "disabled": false,
+                  "required": true,
+                  "name": "limitGraph.dates.endDate",
+                  "visible": true,
+                  "label": "Дата окончания действия",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 8,
+                    "xxl": 8
+                  },
+                  "col": 8,
+                  "pos": 5
+                },
+                {
+                  "type": "inputNumber",
+                  "disabled": true,
+                  "name": "limitGraph.dates.term",
+                  "visible": true,
+                  "label": "Срок действия, дней",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 8,
+                    "xxl": 8
+                  },
+                  "col": 8,
+                  "pos": 6
+                },
+                {
+                  "type": "textarea",
+                  "disabled": false,
+                  "name": "limitGraph.essenceQuestion",
+                  "visible": true,
+                  "label": "Суть вопроса",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 24,
+                    "xxl": 24
+                  },
+                  "col": 24,
+                  "pos": 7
+                },
+                {
+                  "type": "unitable",
+                  "visible": true,
+                  "title": "Добавить сублимит",
+                  "name": "subLimitTable",
+                  "readonly": false,
+                  "properties": {
+                    "uiConfig": {
+                      "actions": [
+                        {
+                          "action": "addUniform",
+                          "type": "top-action",
+                          "refKey": "addSubLimitForm",
+                          "title": "Добавить сублимит"
+                        },
+                        {
+                          "action": "editUniform",
+                          "type": "row-action",
+                          "refKey": "addSubLimitForm",
+                          "title": "Изменить сублимит"
+                        },
+                        {
+                          "action": "api",
+                          "id": "saveSubLimit",
+                          "type": "row-action"
+                        }
+                      ],
+                      "columns": [
+                        {
+                          "type": "select",
+                          "field": "subLimitType",
+                          "header": "Сублимит",
+                          "optionsPath": "subLimitTypes",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true
+                        },
+                        {
+                          "type": "money",
+                          "field": "limitGraph.effectiveAmount",
+                          "header": "Действующее значений",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "money",
+                          "field": "limitGraph.changeAmount",
+                          "header": "Изменение",
+                          "valueExp": "component?.limitGraph?.amount - component?.limitGraph?.effectiveAmount",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "inputMoney",
+                          "field": "limitGraph.amount",
+                          "header": "Новое значение",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        }
+                      ],
+                      "datasource": {
+                        "type": "model",
+                        "property": "sublimitsInfo"
+                      },
+                      "indexColumn": {
+                        "enabled": false
+                      }
+                    },
+                    "refs": {
+                      "configs": {
+                        "addSubLimitForm": {
+                          "type": "uniform",
+                          "blocks": [
+                            {
+                              "id": "addSubLimitFormBlock",
+                              "uiType": "wrapper",
+                              "visible": true,
+                              "blocks": [
+                                {
+                                  "id": "subLimitForm",
+                                  "uiType": "wrapper",
+                                  "fields": [
+                                    {
+                                      "type": "select",
+                                      "name": "payloads.saveSubLimit.subLimitType",
+                                      "label": "Сублимит",
+                                      "defaultValuePath": "sublimitsInfo.index.subLimitType",
+                                      "properties": {
+                                        "optionsPath": "subLimitTypes"
+                                      },
+                                      "responsive": {
+                                        "lg": 24,
+                                        "md": 24,
+                                        "sm": 24,
+                                        "xl": 24,
+                                        "xs": 24,
+                                        "xxl": 24
+                                      },
+                                      "disabled": false,
+                                      "visible": true,
+                                      "required": true,
+                                      "col": 24,
+                                      "pos": 1
+                                    },
+                                    {
+                                      "name": "payloads.saveSubLimit.limitGraph.amount",
+                                      "type": "inputMoney",
+                                      "defaultValuePath": "sublimitsInfo.index.limitGraph.amount",
+                                      "label": "Новое значение",
+                                      "visible": true,
+                                      "disabled": false,
+                                      "required": true,
+                                      "responsive": {
+                                        "lg": 24,
+                                        "md": 24,
+                                        "sm": 24,
+                                        "xl": 24,
+                                        "xs": 24,
+                                        "xxl": 24
+                                      },
+                                      "col": 24,
+                                      "pos": 2
+                                    }
+                                  ],
+                                  "visible": true
+                                },
+                                {
+                                  "id": "saveSubLimitButton",
+                                  "justify": "end",
+                                  "visible": true,
+                                  "uiType": "wrapper",
+                                  "fields": [
+                                    {
+                                      "type": "button",
+                                      "name": "saveSubLimit",
+                                      "value": "Сохранить",
+                                      "validateBlock": "addSubLimitFormBlock",
+                                      "properties": {
+                                        "buttonType": "primary"
+                                      },
+                                      "apiKey": "saveSubLimit",
+                                      "visible": true,
+                                      "textAlign": "right",
+                                      "responsive": {
+                                        "xs": 24,
+                                        "sm": 24,
+                                        "md": 24,
+                                        "lg": 24,
+                                        "xl": 24,
+                                        "xxl": 24
+                                      },
+                                      "col": 24,
+                                      "pos": 1
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "visible": true
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "switch",
+                  "name": "limitGraph.extraLimitEnabled",
+                  "visible": true,
+                  "disabled": false,
+                  "label": "Доп. ограничения в иностранной валюте",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 24,
+                    "xxl": 24
+                  },
+                  "col": 24,
+                  "pos": 8
+                },
+                {
+                  "type": "unitable",
+                  "visibleExp": "component?.limitGraph?.extraLimitEnabled",
+                  "name": "extraLimitTable",
+                  "title": "Добавить ограничение",
+                  "readonly": false,
+                  "properties": {
+                    "uiConfig": {
+                      "actions": [
+                        {
+                          "action": "addUniform",
+                          "type": "top-action",
+                          "refKey": "addExtraLimitForm",
+                          "title": "Добавить ограничение в валюте"
+                        },
+                        {
+                          "action": "editUniform",
+                          "type": "row-action",
+                          "refKey": "addExtraLimitForm",
+                          "title": "Изменить ограничение в валюте"
+                        },
+                        {
+                          "action": "api",
+                          "id": "saveExtraLimit",
+                          "type": "row-action"
+                        }
+                      ],
+                      "columns": [
+                        {
+                          "type": "select",
+                          "field": "currency",
+                          "header": "Валюта",
+                          "optionsPath": "currenciesRef",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true
+                        },
+                        {
+                          "type": "money",
+                          "field": "currencyEffectiveAmount",
+                          "header": "Действующее значение в валюте",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "money",
+                          "field": "currencyChangeAmount",
+                          "header": "Изменение в валюте",
+                          "valueExp": "component?.currencyAmount - component?.currencyEffectiveAmount",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "inputMoney",
+                          "field": "currencyAmount",
+                          "header": "Новое значение в валюте",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "inputMoney",
+                          "field": "exchangeRate",
+                          "header": "Прогнозный курс. руб. за единицу",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        },
+                        {
+                          "type": "money",
+                          "field": "roubleAmount",
+                          "valueExp": "component?.exchangeRate * component?.currencyAmount",
+                          "header": "Новое значение, руб.",
+                          "sorting": {
+                            "enabled": false
+                          },
+                          "readonly": true,
+                          "required": true
+                        }
+                      ],
+                      "datasource": {
+                        "type": "model",
+                        "property": "limitGraph.extraLimit"
+                      },
+                      "indexColumn": {
+                        "enabled": false
+                      }
+                    },
+                    "refs": {
+                      "configs": {
+                        "addExtraLimitForm": {
+                          "type": "uniform",
+                          "blocks": [
+                            {
+                              "id": "addExtraLimitFormBlock",
+                              "uiType": "wrapper",
+                              "visible": true,
+                              "blocks": [
+                                {
+                                  "id": "extraLimitForm",
+                                  "uiType": "wrapper",
+                                  "fields": [
+                                    {
+                                      "name": "payloads.saveExtraLimit.currency",
+                                      "type": "select",
+                                      "label": "Валюта",
+                                      "defaultValuePath": "limitGraph.extraLimit.index.currency",
+                                      "optionsPath": "currenciesRef",
+                                      "visible": true,
+                                      "readonly": false,
+                                      "required": true,
+                                      "col": 24
+                                    },
+                                    {
+                                      "name": "payloads.saveExtraLimit.currencyAmount",
+                                      "type": "inputMoney",
+                                      "defaultValuePath": "limitGraph.extraLimit.index.currencyAmount",
+                                      "label": "Новое значение в валюте",
+                                      "visible": true,
+                                      "readonly": false,
+                                      "required": true,
+                                      "col": 24
+                                    },
+                                    {
+                                      "name": "payloads.saveExtraLimit.exchangeRate",
+                                      "type": "inputMoney",
+                                      "defaultValuePath": "limitGraph.extraLimit.index.exchangeRate",
+                                      "label": "Прогнозный курс. руб. за единицу",
+                                      "visible": true,
+                                      "readonly": false,
+                                      "required": true,
+                                      "col": 24
+                                    }
+                                  ],
+                                  "visible": true
+                                },
+                                {
+                                  "id": "saveExtraLimitButton",
+                                  "justify": "end",
+                                  "visible": true,
+                                  "uiType": "wrapper",
+                                  "fields": [
+                                    {
+                                      "type": "button",
+                                      "name": "saveExtraLimit",
+                                      "value": "Сохранить",
+                                      "validateBlock": "addExtraLimitFormBlock",
+                                      "properties": {
+                                        "buttonType": "primary"
+                                      },
+                                      "apiKey": "saveExtraLimit",
+                                      "visible": true,
+                                      "textAlign": "right",
+                                      "responsive": {
+                                        "xs": 24,
+                                        "sm": 24,
+                                        "md": 24,
+                                        "lg": 24,
+                                        "xl": 24,
+                                        "xxl": 24
+                                      },
+                                      "col": 24,
+                                      "pos": 1
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ],
+                          "visible": true
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "type": "textarea",
+                  "disabled": false,
+                  "name": "limitGraph.limitComment",
+                  "visible": true,
+                  "label": "Комментарий",
+                  "responsive": {
+                    "xs": 24,
+                    "sm": 24,
+                    "md": 24,
+                    "lg": 24,
+                    "xl": 24,
+                    "xxl": 24
+                  },
+                  "col": 24,
+                  "pos": 9
+                }
+              ]
+            },
+            {
+              "id": "sublimitsBlock",
+              "title": "Сублимиты",
+              "blocks": [
+                {
+                  "id": "sublimitUniversalBlock",
+                  "fields": [
+                    {
+                      "col": 6,
+                      "pos": 1,
+                      "name": "limitGraph.amount",
+                      "type": "inputMoney",
+                      "label": "Сумма сублимита",
+                      "visible": true,
+                      "disabled": false,
+                      "responsive": {
+                        "lg": 24,
+                        "md": 24,
+                        "sm": 24,
+                        "xl": 6,
+                        "xs": 24,
+                        "xxl": 6
+                      }
+                    },
+                    {
+                      "col": 6,
+                      "pos": 2,
+                      "name": "limitGraph.dates.beginDate",
+                      "type": "inputDate",
+                      "label": "Дата начала действия",
+                      "visible": true,
+                      "disabled": false,
+                      "responsive": {
+                        "lg": 24,
+                        "md": 24,
+                        "sm": 24,
+                        "xl": 6,
+                        "xs": 24,
+                        "xxl": 6
+                      }
+                    },
+                    {
+                      "col": 6,
+                      "pos": 3,
+                      "name": "limitGraph.dates.endDate",
+                      "type": "inputDate",
+                      "label": "Дата окончания действия",
+                      "visible": true,
+                      "disabled": false,
+                      "responsive": {
+                        "lg": 24,
+                        "md": 24,
+                        "sm": 24,
+                        "xl": 6,
+                        "xs": 24,
+                        "xxl": 6
+                      }
+                    },
+                    {
+                      "col": 6,
+                      "pos": 4,
+                      "name": "limitGraph.dates.term",
+                      "type": "inputNumber",
+                      "label": "Срок действия, дней",
+                      "visible": true,
+                      "disabled": true,
+                      "responsive": {
+                        "lg": 24,
+                        "md": 24,
+                        "sm": 24,
+                        "xl": 6,
+                        "xs": 24,
+                        "xxl": 6
+                      }
+                    },
+                    {
+                      "col": 24,
+                      "pos": 5,
+                      "name": "limitGraph.participant",
+                      "type": "select",
+                      "label": "Участники сублимита",
+                      "visible": true,
+                      "disabled": false,
+                      "properties": {
+                        "mode": "multiple",
+                        "optionsPath": "participants"
+                      },
+                      "responsive": {
+                        "lg": 24,
+                        "md": 24,
+                        "sm": 24,
+                        "xl": 24,
+                        "xs": 24,
+                        "xxl": 24
+                      }
+                    },
+                    {
+                      "col": 24,
+                      "pos": 6,
+                      "name": "limitGraph.extraLimitEnabled",
+                      "type": "switch",
+                      "label": "Ограничения в иностранной валюте",
+                      "visible": true,
+                      "disabled": false,
+                      "responsive": {
+                        "lg": 24,
+                        "md": 24,
+                        "sm": 24,
+                        "xl": 24,
+                        "xs": 24,
+                        "xxl": 24
+                      }
+                    },
+                    {
+                      "name": "subLimitExtraLimitTable",
+                      "type": "unitable",
+                      "title": "Добавить ограничение",
+                      "readonly": false,
+                      "properties": {
+                        "refs": {
+                          "configs": {
+                            "addSubLimitExtraLimitForm": {
+                              "type": "uniform",
+                              "blocks": [
+                                {
+                                  "id": "addSubLimitExtraLimitFormBlock",
+                                  "blocks": [
+                                    {
+                                      "id": "subLimitExtraLimitForm",
+                                      "fields": [
+                                        {
+                                          "col": 24,
+                                          "name": "payloads.saveSubLimitExtra.currency",
+                                          "type": "select",
+                                          "label": "Валюта",
+                                          "visible": true,
+                                          "readonly": false,
+                                          "required": true,
+                                          "optionsPath": "currenciesRef",
+                                          "defaultValueExp": "blockComponent?.limitGraph?.extraLimit?.[index]?.currency"
+                                        },
+                                        {
+                                          "col": 24,
+                                          "name": "payloads.saveSubLimitExtra.currencyAmount",
+                                          "type": "inputMoney",
+                                          "label": "Новое значение в валюте",
+                                          "visible": true,
+                                          "readonly": false,
+                                          "required": true,
+                                          "defaultValueExp": "blockComponent?.limitGraph?.extraLimit?.[index]?.currencyAmount"
+                                        },
+                                        {
+                                          "col": 24,
+                                          "name": "payloads.saveSubLimitExtra.exchangeRate",
+                                          "type": "inputMoney",
+                                          "label": "Прогнозный курс. руб. за единицу",
+                                          "visible": true,
+                                          "readonly": false,
+                                          "required": true,
+                                          "defaultValueExp": "blockComponent?.limitGraph?.extraLimit?.[index]?.exchangeRate"
+                                        }
+                                      ],
+                                      "uiType": "wrapper",
+                                      "visible": true
+                                    },
+                                    {
+                                      "id": "saveSubLimitExtraButton",
+                                      "fields": [
+                                        {
+                                          "col": 24,
+                                          "pos": 1,
+                                          "name": "saveSubLimitExtra",
+                                          "type": "button",
+                                          "value": "Сохранить",
+                                          "apiKey": "saveSubLimitExtra",
+                                          "visible": true,
+                                          "textAlign": "right",
+                                          "properties": {
+                                            "buttonType": "primary"
+                                          },
+                                          "responsive": {
+                                            "lg": 24,
+                                            "md": 24,
+                                            "sm": 24,
+                                            "xl": 24,
+                                            "xs": 24,
+                                            "xxl": 24
+                                          },
+                                          "validateBlock": "addSubLimitExtraLimitFormBlock"
+                                        }
+                                      ],
+                                      "uiType": "wrapper",
+                                      "justify": "end",
+                                      "visible": true
+                                    }
+                                  ],
+                                  "uiType": "wrapper",
+                                  "visible": true
+                                }
+                              ],
+                              "visible": true
+                            }
+                          }
+                        },
+                        "uiConfig": {
+                          "actions": [
+                            {
+                              "type": "top-action",
+                              "title": "Добавить ограничение в валюте",
+                              "action": "addUniform",
+                              "refKey": "addSubLimitExtraLimitForm"
+                            },
+                            {
+                              "type": "row-action",
+                              "title": "Изменить ограничение в валюте",
+                              "action": "editUniform",
+                              "refKey": "addSubLimitExtraLimitForm"
+                            },
+                            {
+                              "id": "saveSubLimitExtra",
+                              "type": "row-action",
+                              "action": "api"
+                            }
+                          ],
+                          "columns": [
+                            {
+                              "type": "select",
+                              "field": "currency",
+                              "header": "Валюта",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "readonly": true,
+                              "optionsPath": "currenciesRef"
+                            },
+                            {
+                              "type": "money",
+                              "field": "currencyEffectiveAmount",
+                              "header": "Действующее значение в валюте",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "readonly": true,
+                              "required": true
+                            },
+                            {
+                              "type": "money",
+                              "field": "currencyChangeAmount",
+                              "header": "Изменение в валюте",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "readonly": true,
+                              "required": true,
+                              "valueExp": "component?.currencyAmount - component?.currencyEffectiveAmount"
+                            },
+                            {
+                              "type": "inputMoney",
+                              "field": "currencyAmount",
+                              "header": "Новое значение в валюте",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "readonly": true,
+                              "required": true
+                            },
+                            {
+                              "type": "inputMoney",
+                              "field": "exchangeRate",
+                              "header": "Прогнозный курс. руб. за единицу",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "readonly": true,
+                              "required": true
+                            },
+                            {
+                              "type": "money",
+                              "field": "roubleAmount",
+                              "header": "Новое значение, руб.",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "readonly": true,
+                              "required": true,
+                              "valueExp": "component?.exchangeRate * component?.currencyAmount"
+                            }
+                          ],
+                          "datasource": {
+                            "type": "blockComponent",
+                            "property": "limitGraph.extraLimit"
+                          },
+                          "indexColumn": {
+                            "enabled": false
+                          }
+                        }
+                      },
+                      "visibleExp": "blockComponent?.limitGraph?.extraLimitEnabled"
+                    },
+                    {
+                      "col": 24,
+                      "pos": 7,
+                      "name": "limitGraph.crossLimitEnabled",
+                      "type": "switch",
+                      "label": "Перекрестные лимиты",
+                      "visible": true,
+                      "disabled": false,
+                      "responsive": {
+                        "lg": 24,
+                        "md": 24,
+                        "sm": 24,
+                        "xl": 24,
+                        "xs": 24,
+                        "xxl": 24
+                      }
+                    },
+                    {
+                      "name": "crossLimitTable",
+                      "type": "unitable",
+                      "title": "Добавить перекрестный лимит",
+                      "readonly": false,
+                      "properties": {
+                        "refs": {
+                          "configs": {
+                            "addCrossLimitForm": {
+                              "type": "uniform",
+                              "blocks": [
+                                {
+                                  "id": "addCrossLimitFormBlock",
+                                  "blocks": [
+                                    {
+                                      "id": "crossLimitForm",
+                                      "fields": [
+                                        {
+                                          "col": 24,
+                                          "pos": 1,
+                                          "name": "payloads.saveCrossLimit.crossLimitType",
+                                          "type": "select",
+                                          "label": "Лимит",
+                                          "visible": true,
+                                          "disabled": false,
+                                          "required": true,
+                                          "optionsPath": "subLimitTypes",
+                                          "defaultValueExp": "blockComponent?.limitGraph?.crossLimit?.[index]?.crossLimitType"
+                                        },
+                                        {
+                                          "col": 24,
+                                          "pos": 2,
+                                          "name": "payloads.saveCrossLimit.amount",
+                                          "type": "inputMoney",
+                                          "label": "Сумма ограничения, руб.",
+                                          "visible": true,
+                                          "readonly": false,
+                                          "required": true,
+                                          "defaultValueExp": "blockComponent?.limitGraph?.crossLimit?.[index]?.amount"
+                                        },
+                                        {
+                                          "col": 24,
+                                          "pos": 3,
+                                          "name": "payloads.saveCrossLimit.formula",
+                                          "type": "input",
+                                          "label": "Формула",
+                                          "visible": true,
+                                          "disabled": false,
+                                          "required": true,
+                                          "defaultValueExp": "blockComponent?.limitGraph?.crossLimit?.[index]?.formula"
+                                        }
+                                      ],
+                                      "uiType": "wrapper",
+                                      "visible": true
+                                    },
+                                    {
+                                      "id": "saveCrossLimitButton",
+                                      "fields": [
+                                        {
+                                          "col": 24,
+                                          "pos": 1,
+                                          "name": "saveCrossLimit",
+                                          "type": "button",
+                                          "value": "Сохранить",
+                                          "apiKey": "saveCrossLimit",
+                                          "visible": true,
+                                          "textAlign": "right",
+                                          "properties": {
+                                            "buttonType": "primary"
+                                          },
+                                          "responsive": {
+                                            "lg": 24,
+                                            "md": 24,
+                                            "sm": 24,
+                                            "xl": 24,
+                                            "xs": 24,
+                                            "xxl": 24
+                                          },
+                                          "validateBlock": "addCrossLimitFormBlock"
+                                        }
+                                      ],
+                                      "uiType": "wrapper",
+                                      "justify": "end",
+                                      "visible": true
+                                    }
+                                  ],
+                                  "uiType": "wrapper",
+                                  "visible": true
+                                }
+                              ],
+                              "visible": true
+                            }
+                          }
+                        },
+                        "uiConfig": {
+                          "actions": [
+                            {
+                              "type": "top-action",
+                              "title": "Добавить перекрестный лимит",
+                              "action": "addUniform",
+                              "refKey": "addCrossLimitForm"
+                            },
+                            {
+                              "type": "row-action",
+                              "title": "Изменить перекрестный лимит",
+                              "action": "editUniform",
+                              "refKey": "addCrossLimitForm"
+                            },
+                            {
+                              "id": "saveCrossLimit",
+                              "type": "row-action",
+                              "action": "api"
+                            }
+                          ],
+                          "columns": [
+                            {
+                              "type": "select",
+                              "field": "crossLimitType",
+                              "header": "Лимит",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "readonly": true,
+                              "required": true,
+                              "optionsPath": "subLimitTypes"
+                            },
+                            {
+                              "type": "inputMoney",
+                              "field": "amount",
+                              "header": "Сумма ограничения, руб.",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "readonly": true,
+                              "required": true
+                            },
+                            {
+                              "type": "input",
+                              "field": "formula",
+                              "header": "Формула",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "readonly": false,
+                              "required": true
+                            }
+                          ],
+                          "datasource": {
+                            "type": "blockComponent",
+                            "property": "limitGraph.crossLimit"
+                          },
+                          "indexColumn": {
+                            "enabled": false
+                          }
+                        }
+                      },
+                      "visibleExp": "blockComponent?.limitGraph?.crossLimitEnabled"
+                    },
+                    {
+                      "name": "productListTable",
+                      "type": "unitable",
+                      "title": "Добавить разрешенный тип продукта",
+                      "visible": true,
+                      "readonly": false,
+                      "properties": {
+                        "refs": {
+                          "configs": {
+                            "addProductListForm": {
+                              "type": "uniform",
+                              "blocks": [
+                                {
+                                  "id": "addProductListFormBlock",
+                                  "blocks": [
+                                    {
+                                      "id": "productListForm",
+                                      "fields": [
+                                        {
+                                          "col": 24,
+                                          "pos": 1,
+                                          "name": "payloads.saveProductList.productType",
+                                          "type": "select",
+                                          "label": "Продукт",
+                                          "sorting": {
+                                            "enabled": false
+                                          },
+                                          "visible": true,
+                                          "disabled": false,
+                                          "required": true,
+                                          "properties": {
+                                            "optionsExp": "blockComponent?.productTypes"
+                                          },
+                                          "responsive": {
+                                            "lg": 24,
+                                            "md": 24,
+                                            "sm": 24,
+                                            "xl": 24,
+                                            "xs": 24,
+                                            "xxl": 24
+                                          },
+                                          "defaultValueExp": "blockComponent?.limitGraph?.productList?.[index]?.productType"
+                                        },
+                                        {
+                                          "col": 24,
+                                          "pos": 2,
+                                          "name": "payloads.saveProductList.targetedUse",
+                                          "type": "textarea",
+                                          "label": "Целевое использование",
+                                          "sorting": {
+                                            "enabled": false
+                                          },
+                                          "visible": true,
+                                          "disabled": false,
+                                          "required": true,
+                                          "responsive": {
+                                            "lg": 24,
+                                            "md": 24,
+                                            "sm": 24,
+                                            "xl": 24,
+                                            "xs": 24,
+                                            "xxl": 24
+                                          },
+                                          "defaultValueExp": "blockComponent?.limitGraph?.productList?.[index]?.targetedUse"
+                                        },
+                                        {
+                                          "col": 12,
+                                          "pos": 3,
+                                          "name": "payloads.saveProductList.maxTerm",
+                                          "type": "inputNumber",
+                                          "label": "Макс. срок продукта, мес.",
+                                          "sorting": {
+                                            "enabled": false
+                                          },
+                                          "visible": true,
+                                          "disabled": false,
+                                          "required": true,
+                                          "responsive": {
+                                            "lg": 24,
+                                            "md": 24,
+                                            "sm": 24,
+                                            "xl": 12,
+                                            "xs": 24,
+                                            "xxl": 12
+                                          },
+                                          "defaultValueExp": "blockComponent?.limitGraph?.productList?.[index]?.maxTerm"
+                                        },
+                                        {
+                                          "col": 12,
+                                          "pos": 4,
+                                          "name": "payloads.saveProductList.maxTrancheTerm",
+                                          "type": "input",
+                                          "label": "Макс. cрок траншей",
+                                          "sorting": {
+                                            "enabled": false
+                                          },
+                                          "visible": true,
+                                          "disabled": false,
+                                          "required": true,
+                                          "responsive": {
+                                            "lg": 24,
+                                            "md": 24,
+                                            "sm": 24,
+                                            "xl": 12,
+                                            "xs": 24,
+                                            "xxl": 12
+                                          },
+                                          "defaultValueExp": "blockComponent?.limitGraph?.productList?.[index]?.maxTrancheTerm"
+                                        },
+                                        {
+                                          "col": 24,
+                                          "pos": 5,
+                                          "name": "payloads.saveProductList.incomeRequirements",
+                                          "type": "textarea",
+                                          "label": "Требования по доходности сделок",
+                                          "sorting": {
+                                            "enabled": false
+                                          },
+                                          "visible": true,
+                                          "disabled": false,
+                                          "required": true,
+                                          "responsive": {
+                                            "lg": 24,
+                                            "md": 24,
+                                            "sm": 24,
+                                            "xl": 24,
+                                            "xs": 24,
+                                            "xxl": 24
+                                          },
+                                          "defaultValueExp": "blockComponent?.limitGraph?.productList?.[index]?.incomeRequirements"
+                                        },
+                                        {
+                                          "col": 24,
+                                          "pos": 6,
+                                          "name": "payloads.saveProductList.reserveRequirements",
+                                          "type": "textarea",
+                                          "label": "Требования по резервированию сделок",
+                                          "sorting": {
+                                            "enabled": false
+                                          },
+                                          "visible": true,
+                                          "disabled": false,
+                                          "required": true,
+                                          "responsive": {
+                                            "lg": 24,
+                                            "md": 24,
+                                            "sm": 24,
+                                            "xl": 24,
+                                            "xs": 24,
+                                            "xxl": 24
+                                          },
+                                          "defaultValueExp": "blockComponent?.limitGraph?.productList?.[index]?.reserveRequirements"
+                                        },
+                                        {
+                                          "col": 24,
+                                          "pos": 7,
+                                          "name": "payloads.saveProductList.otherRequirements",
+                                          "type": "textarea",
+                                          "label": "Прочие условия",
+                                          "sorting": {
+                                            "enabled": false
+                                          },
+                                          "visible": true,
+                                          "disabled": false,
+                                          "required": true,
+                                          "responsive": {
+                                            "lg": 24,
+                                            "md": 24,
+                                            "sm": 24,
+                                            "xl": 24,
+                                            "xs": 24,
+                                            "xxl": 24
+                                          },
+                                          "defaultValueExp": "blockComponent?.limitGraph?.productList?.[index]?.otherRequirements"
+                                        }
+                                      ],
+                                      "uiType": "wrapper",
+                                      "visible": true
+                                    },
+                                    {
+                                      "id": "saveProductListButton",
+                                      "fields": [
+                                        {
+                                          "col": 24,
+                                          "pos": 1,
+                                          "name": "saveProductList",
+                                          "type": "button",
+                                          "value": "Сохранить",
+                                          "apiKey": "saveProductList",
+                                          "visible": true,
+                                          "textAlign": "right",
+                                          "properties": {
+                                            "buttonType": "primary"
+                                          },
+                                          "responsive": {
+                                            "lg": 24,
+                                            "md": 24,
+                                            "sm": 24,
+                                            "xl": 24,
+                                            "xs": 24,
+                                            "xxl": 24
+                                          },
+                                          "validateBlock": "addProductListFormBlock"
+                                        }
+                                      ],
+                                      "uiType": "wrapper",
+                                      "justify": "end",
+                                      "visible": true
+                                    }
+                                  ],
+                                  "uiType": "wrapper",
+                                  "visible": true
+                                }
+                              ],
+                              "visible": true
+                            }
+                          }
+                        },
+                        "uiConfig": {
+                          "actions": [
+                            {
+                              "type": "top-action",
+                              "title": "Добавить разрешенный тип продукта",
+                              "action": "addUniform",
+                              "refKey": "addProductListForm"
+                            },
+                            {
+                              "type": "row-action",
+                              "title": "Изменить разрешенный тип продукта",
+                              "action": "editUniform",
+                              "refKey": "addProductListForm"
+                            },
+                            {
+                              "id": "saveProductList",
+                              "type": "row-action",
+                              "action": "api"
+                            }
+                          ],
+                          "columns": [
+                            {
+                              "type": "select",
+                              "field": "productType",
+                              "header": "Продукт",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "visible": true,
+                              "readonly": true,
+                              "required": true,
+                              "optionsExp": "blockComponent?.productTypes"
+                            },
+                            {
+                              "type": "input",
+                              "field": "targetedUse",
+                              "header": "Целевое использование",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "visible": true,
+                              "readonly": true,
+                              "required": true
+                            },
+                            {
+                              "type": "inputNumber",
+                              "field": "maxTerm",
+                              "header": "Макс. срок продукта, мес.",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "visible": true,
+                              "readonly": true,
+                              "required": true
+                            },
+                            {
+                              "type": "input",
+                              "field": "maxTrancheTerm",
+                              "header": "Макс. cрок траншей",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "visible": true,
+                              "readonly": true,
+                              "required": true
+                            },
+                            {
+                              "type": "input",
+                              "field": "incomeRequirements",
+                              "header": "Требования по доходности сделок",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "visible": true,
+                              "readonly": true,
+                              "required": true
+                            },
+                            {
+                              "type": "input",
+                              "field": "reserveRequirements",
+                              "header": "Требования по резервированию сделок",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "visible": true,
+                              "readonly": true,
+                              "required": true
+                            },
+                            {
+                              "type": "input",
+                              "field": "otherRequirements",
+                              "header": "Прочие условия",
+                              "sorting": {
+                                "enabled": false
+                              },
+                              "visible": true,
+                              "readonly": true,
+                              "required": true
+                            }
+                          ],
+                          "datasource": {
+                            "type": "blockComponent",
+                            "property": "limitGraph.productList"
+                          },
+                          "indexColumn": {
+                            "enabled": false
+                          }
+                        }
+                      }
+                    },
+                    {
+                      "col": 24,
+                      "pos": 8,
+                      "name": "limitGraph.mainDebtPayments",
+                      "type": "input",
+                      "label": "Объем платежей / периодичность платежей в погашение основного долга",
+                      "visible": true,
+                      "disabled": false,
+                      "responsive": {
+                        "lg": 24,
+                        "md": 24,
+                        "sm": 24,
+                        "xl": 24,
+                        "xs": 24,
+                        "xxl": 24
+                      }
+                    },
+                    {
+                      "col": 24,
+                      "pos": 9,
+                      "name": "limitGraph.projectInformation",
+                      "type": "input",
+                      "label": "Информация о проекте",
+                      "visible": true,
+                      "disabled": false,
+                      "responsive": {
+                        "lg": 24,
+                        "md": 24,
+                        "sm": 24,
+                        "xl": 24,
+                        "xs": 24,
+                        "xxl": 24
+                      }
+                    },
+                    {
+                      "col": 24,
+                      "pos": 10,
+                      "name": "limitGraph.financialPurposeInformation",
+                      "type": "input",
+                      "label": "Информация о цели финансирования",
+                      "visible": true,
+                      "disabled": false,
+                      "responsive": {
+                        "lg": 24,
+                        "md": 24,
+                        "sm": 24,
+                        "xl": 24,
+                        "xs": 24,
+                        "xxl": 24
+                      }
+                    }
+                  ],
+                  "opened": false,
+                  "uiType": "wrapper",
+                  "visible": true,
+                  "collapse": true,
+                  "readonly": false,
+                  "titleExp": "blockComponent?.subLimitName",
+                  "datasource": "sublimitsInfo",
+                  "repeatable": true
+                }
+              ],
+              "opened": false,
+              "uiType": "wrapper",
+              "visible": true,
+              "collapse": true,
+              "readonly": false
+            }
+          ]
+        },
+        {
+          "id": "saveBtnBlock",
+          "visible": true,
+          "collapse": false,
+          "readonly": false,
+          "justify": "center",
+          "uiType": "wrapper",
+          "fields": [
+            {
+              "type": "button",
+              "name": "saveAllLimitBtn",
+              "value": "Сохранить структуру лимита",
+              "validateBlock": "limitBlock",
+              "properties": {
+                "buttonType": "primary"
+              },
+              "apiKey": "saveAllLimit",
+              "visible": true,
+              "textAlign": "center",
+              "responsive": {
+                "xs": 24,
+                "sm": 24,
+                "md": 24,
+                "lg": 24,
+                "xl": 24,
+                "xxl": 24
+              },
+              "col": 24,
+              "pos": 1
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "gutter": [
+    16,
+    16
+  ],
+  "currenciesRef": [
+    {
+      "key": "36",
+      "value": "Австралийский доллар"
+    },
+    {
+      "key": "40",
+      "value": "Австрийский шиллинг"
+    },
+    {
+      "key": "944",
+      "value": "Азербайджанский манат"
+    },
+    {
+      "key": "31",
+      "value": "Азербайджанский манат"
+    },
+    {
+      "key": "826",
+      "value": "Английский фунт стерлингов"
+    },
+    {
+      "key": "51",
+      "value": "Армянский драм"
+    },
+    {
+      "key": "50",
+      "value": "Бангладешская така"
+    },
+    {
+      "key": "112",
+      "value": "Белорусские рубли"
+    },
+    {
+      "key": "933",
+      "value": "Белорусский рубль"
+    },
+    {
+      "key": "974",
+      "value": "Белорусский рубль(old)"
+    },
+    {
+      "key": "56",
+      "value": "Бельгийский франк"
+    },
+    {
+      "key": "975",
+      "value": "Болгарский лев"
+    },
+    {
+      "key": "986",
+      "value": "Бразильский реал"
+    },
+    {
+      "key": "348",
+      "value": "Венгерский форинт"
+    },
+    {
+      "key": "410",
+      "value": "Вон Республики Корея"
+    },
+    {
+      "key": "528",
+      "value": "Голландский гульден"
+    },
+    {
+      "key": "344",
+      "value": "Гонконгский доллар"
+    },
+    {
+      "key": "981",
+      "value": "Грузинский лари"
+    },
+    {
+      "key": "208",
+      "value": "Датские кроны"
+    },
+    {
+      "key": "784",
+      "value": "Дирхам"
+    },
+    {
+      "key": "840",
+      "value": "Доллар США"
+    },
+    {
+      "key": "978",
+      "value": "ЕВРО"
+    },
+    {
+      "key": "356",
+      "value": "Индийская рупия"
+    },
+    {
+      "key": "372",
+      "value": "Ирландский фунт"
+    },
+    {
+      "key": "352",
+      "value": "Исландская крона"
+    },
+    {
+      "key": "724",
+      "value": "Испанские песеты"
+    },
+    {
+      "key": "380",
+      "value": "Итальянская лира"
+    },
+    {
+      "key": "398",
+      "value": "Казахские тенге"
+    },
+    {
+      "key": "124",
+      "value": "Канадский доллар"
+    },
+    {
+      "key": "417",
+      "value": "Киргизский сом"
+    },
+    {
+      "key": "156",
+      "value": "Китайский юань"
+    },
+    {
+      "key": "976",
+      "value": "Конголезский франк"
+    },
+    {
+      "key": "428",
+      "value": "Латвийский лат"
+    },
+    {
+      "key": "642",
+      "value": "ЛЕЙ"
+    },
+    {
+      "key": "440",
+      "value": "Литовский лит"
+    },
+    {
+      "key": "498",
+      "value": "Молдавский лей"
+    },
+    {
+      "key": "276",
+      "value": "Немецкая марка"
+    },
+    {
+      "key": "949",
+      "value": "новая турецкая лира"
+    },
+    {
+      "key": "554",
+      "value": "Новозеландский доллар"
+    },
+    {
+      "key": "946",
+      "value": "Новый румынский лей"
+    },
+    {
+      "key": "934",
+      "value": "Новый туркменский манат"
+    },
+    {
+      "key": "578",
+      "value": "Норвежские кроны"
+    },
+    {
+      "key": "985",
+      "value": "Польский злотый"
+    },
+    {
+      "key": "810",
+      "value": "Российский рубль"
+    },
+    {
+      "key": "643",
+      "value": "Российский рубль(международный)"
+    },
+    {
+      "key": "960",
+      "value": "СДР (Специальные права заимствования)"
+    },
+    {
+      "key": "702",
+      "value": "Сингапурский доллар"
+    },
+    {
+      "key": "280",
+      "value": "Старая немецкая марка"
+    },
+    {
+      "key": "972",
+      "value": "Таджикский сомони"
+    },
+    {
+      "key": "764",
+      "value": "Тайский бат"
+    },
+    {
+      "key": "792",
+      "value": "Турецкая лира"
+    },
+    {
+      "key": "795",
+      "value": "Туркменский манат"
+    },
+    {
+      "key": "860",
+      "value": "Узбекский сум-купон"
+    },
+    {
+      "key": "980",
+      "value": "Украинская гривна"
+    },
+    {
+      "key": "902",
+      "value": "Украинский карбованец"
+    },
+    {
+      "key": "246",
+      "value": "Финская марка"
+    },
+    {
+      "key": "262",
+      "value": "ФРАНК ДЖИБУТИ"
+    },
+    {
+      "key": "250",
+      "value": "Французский франк"
+    },
+    {
+      "key": "203",
+      "value": "Чешская крона"
+    },
+    {
+      "key": "752",
+      "value": "Шведская крона"
+    },
+    {
+      "key": "756",
+      "value": "Швейцарский франк"
+    },
+    {
+      "key": "954",
+      "value": "ЭКЮ"
+    },
+    {
+      "key": "233",
+      "value": "Эстонская крона"
+    },
+    {
+      "key": "710",
+      "value": "Южноафриканский рэнд"
+    },
+    {
+      "key": "392",
+      "value": "Японская иена"
+    }
+  ],
+  "subLimitTypes": [
+    {
+      "key": "REVOLVING_CREDITS",
+      "value": "Оборотные кредиты"
+    },
+    {
+      "key": "INVEST_CREDITS",
+      "value": "Инвестиционные кредиты"
+    },
+    {
+      "key": "DOCUMENT_DEALS",
+      "value": "Документарные сделки"
+    }
+  ],
+  "productTypes": {
+    "DOCUMENT_DEALS": [
+      {
+        "key": "shareRepurchaseObligationGuarantee",
+        "value": "Агентский факторинг"
+      },
+      {
+        "key": "guaranteeForParticipationInTenders",
+        "value": "Аккредитив расчетный"
+      },
+      {
+        "key": "warrantyProvidedToThirdParties",
+        "value": "Аккредитив резервный (stand-by)"
+      },
+      {
+        "key": "paymentGuarantee",
+        "value": "Аккредитив с отсрочкой платежа"
+      },
+      {
+        "key": "warrantyPeriodGuarantee",
+        "value": "Аккредитив с отсрочкой платежа и постфинансированием"
+      },
+      {
+        "key": "customsGuarantee",
+        "value": "Аккредитив с постфинансированием"
+      },
+      {
+        "key": "guaranteeOfPaymentForServices",
+        "value": "Гарантия в рамках 214-ФЗ"
+      },
+      {
+        "key": "agentFactoring",
+        "value": "Гарантия возврата авансовых платежей"
+      },
+      {
+        "key": "taxGuarantee",
+        "value": "Гарантия гарантийного периода"
+      },
+      {
+        "key": "contractPerformanceGuarantee",
+        "value": "Гарантия исполнения контракта"
+      },
+      {
+        "key": "exciseTaxPaymentGuarantee",
+        "value": "Гарантия исполнения обязательств в рамках жилищного законодательства"
+      },
+      {
+        "key": "letterOfCreditWithDeferredPaymentAndPostFinancing",
+        "value": "Гарантия исполнения обязательства использования приобретаемых федеральных специальных марок в соответствии с их назначением"
+      },
+      {
+        "key": "guaranteeOfFulfillmentOfTheObligationToUsePurchased",
+        "value": "Гарантия использования федеральных специальных акцизных марок"
+      },
+      {
+        "key": "guaranteeOfTheUseOfFederalSpecialExciseStamps",
+        "value": "Гарантия на участие в тендерах, аукционах, конкурсах"
+      },
+      {
+        "key": "guaranteeUnder",
+        "value": "Гарантия налоговая (Налоговый кодекс)"
+      },
+      {
+        "key": "letterOfCreditSettlement",
+        "value": "Гарантия обязательств по выкупу акций"
+      },
+      {
+        "key": "stand-byLetterOfCredit",
+        "value": "Гарантия оплаты услуг"
+      },
+      {
+        "key": "judicialGuarantee",
+        "value": "Гарантия платежа"
+      },
+      {
+        "key": "generalWarrantyAgreement",
+        "value": "Гарантия судебная"
+      },
+      {
+        "key": "agreementOnOpeningLettersOfCredit",
+        "value": "Гарантия таможенная (289-ФЗ)"
+      },
+      {
+        "key": "letterOfCreditWithDeferredPayment",
+        "value": "Гарантия уплаты акциза"
+      },
+      {
+        "key": "guaranteeOfFulfillmentOfObligationsUnderHousingLegislation",
+        "value": "Гарантия, предоставленная в адрес третьих лиц"
+      },
+      {
+        "key": "counterGuarantee",
+        "value": "Генеральное соглашение по гарантии"
+      },
+      {
+        "key": "letterOfCreditWithPost-financing",
+        "value": "Контргарантия"
+      },
+      {
+        "key": "advancePaymentRefundGuarantee",
+        "value": "Соглашение об открытии аккредитивов"
+      }
+    ],
+    "INVEST_CREDITS": [
+      {
+        "key": "creditLineWithDebtLimit",
+        "value": "Кредит с единовременной выдачей"
+      },
+      {
+        "key": "loanWithOne-timeDisbursement",
+        "value": "Кредитная линия с лимитом выдачи"
+      },
+      {
+        "key": "creditLineWithWithdrawalLimit",
+        "value": "Кредитная линия с лимитом задолженности"
+      }
+    ],
+    "REVOLVING_CREDITS": [
+      {
+        "key": "creditLineWithDebtLimit",
+        "value": "Генеральное соглашение по кредитам"
+      },
+      {
+        "key": "assignmentLoanWithOneTimeIssuance",
+        "value": "Кредит с единовременной выдачей"
+      },
+      {
+        "key": "generalAgreementOnLoans",
+        "value": "Кредит цессии ЦКП"
+      },
+      {
+        "key": "creditOfCessionOfTheCentralClearinghouse",
+        "value": "Кредитная линия с лимитом выдачи"
+      },
+      {
+        "key": "tskpAssignment",
+        "value": "Кредитная линия с лимитом задолженности"
+      },
+      {
+        "key": "loanWithOne-timeDisbursement",
+        "value": "Цессия ЦКП"
+      },
+      {
+        "key": "creditLineWithWithdrawalLimit",
+        "value": "Цессия. Кредит с единовременной выдачей"
+      }
+    ]
+  },
+  "roles": [
+    {
+      "key": "borrower",
+      "value": "Заемщик"
+    },
+    {
+      "key": "guarantor",
+      "value": "Поручитель"
+    },
+    {
+      "key": "pledger",
+      "value": "Залогодатель"
+    },
+    {
+      "key": "isOther",
+      "value": "Прочие"
+    }
+  ]
+}

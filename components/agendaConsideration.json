@@ -1,0 +1,177 @@
+{
+  "type": "agendaConsideration",
+  "uiType": "uniform",
+  "title": "Рассмотрение повестки",
+  "cacheModel": false,
+  "visible": true,
+  "collapse": false,
+  "readonly": false,
+  "textable": false,
+  "blocks": [
+    {
+      "id": "params",
+      "title": "Параметры",
+      "visible": true,
+      "opened": false,
+      "collapse": false,
+      "fields": [
+        {
+          "col": 24,
+          "pos": 1,
+          "name": "initiators",
+          "type": "textarea",
+          "label": "Инициаторы",
+          "visible": true,
+          "disabled": true,
+          "required": false,
+          "responsive": {
+            "lg": 24,
+            "md": 24,
+            "sm": 24,
+            "xl": 24,
+            "xs": 24,
+            "xxl": 24
+          }
+        },
+        {
+          "col": 24,
+          "pos": 2,
+          "name": "meetingDateTime",
+          "type": "inputDateTime",
+          "label": "Дата/время заседания комитета",
+          "visible": true,
+          "disabled": false,
+          "required": false,
+          "responsive": {
+            "lg": 24,
+            "md": 24,
+            "sm": 24,
+            "xl": 24,
+            "xs": 24,
+            "xxl": 24
+          }
+        },
+        {
+          "col": 24,
+          "pos": 3,
+          "name": "invited",
+          "type": "textarea",
+          "label": "Приглашенные лица",
+          "visible": true,
+          "disabledExp": "component?.taskDefinitionKey === 'carambola-credit-cpa-cc-voting.UserTaskResultUOUL'",
+          "required": false,
+          "responsive": {
+            "lg": 24,
+            "md": 24,
+            "sm": 24,
+            "xl": 24,
+            "xs": 24,
+            "xxl": 24
+          }
+        },
+        {
+          "col": 12,
+          "pos": 4,
+          "name": "duration",
+          "type": "inputNumber",
+          "label": "Длительность выступления (мин)",
+          "visible": true,
+          "disabledExp": "component?.taskDefinitionKey === 'carambola-credit-cpa-cc-voting.UserTaskResultUOUL'",
+          "required": false,
+          "responsive": {
+            "lg": 12,
+            "md": 12,
+            "sm": 12,
+            "xl": 12,
+            "xs": 12,
+            "xxl": 12
+          }
+        },
+        {
+          "col": 12,
+          "pos": 5,
+          "name": "eventFormat",
+          "type": "select",
+          "properties": {
+            "options": [
+              {
+                "key": "absentia",
+                "value": "Заочная"
+              },
+              {
+                "key": "presence",
+                "value": "Очная"
+              }
+            ]
+          },
+          "label": "Форма проведения",
+          "visible": true,
+          "required": false,
+          "disabledExp": "component?.taskDefinitionKey === 'carambola-credit-cpa-cc-voting.UserTaskResultUOUL'",
+          "responsive": {
+            "lg": 12,
+            "md": 12,
+            "sm": 12,
+            "xl": 12,
+            "xs": 12,
+            "xxl": 12
+          }
+        },
+        {
+          "col": 12,
+          "pos": 6,
+          "name": "decisionDate",
+          "type": "inputDate",
+          "label": "Дата принятия решения",
+          "disabled": false,
+          "required": false,
+          "visibleExp": "component?.taskDefinitionKey === 'carambola-credit-cpa-cc-voting.UserTaskResultUOUL'",
+          "responsive": {
+            "lg": 12,
+            "md": 12,
+            "sm": 12,
+            "xl": 12,
+            "xs": 12,
+            "xxl": 12
+          }
+        },
+        {
+          "col": 12,
+          "pos": 7,
+          "name": "agendaNumber",
+          "type": "input",
+          "label": "Номер вопроса повестки",
+          "disabled": false,
+          "required": false,
+          "visibleExp": "component?.taskDefinitionKey === 'carambola-credit-cpa-cc-voting.UserTaskResultUOUL'",
+          "responsive": {
+            "lg": 12,
+            "md": 12,
+            "sm": 12,
+            "xl": 12,
+            "xs": 12,
+            "xxl": 12
+          }
+        },
+        {
+          "col": 24,
+          "pos": 8,
+          "name": "assignmentList",
+          "type": "textarea",
+          "label": "Список поручений",
+          "disabled": false,
+          "required": false,
+          "visibleExp": "component?.taskDefinitionKey === 'carambola-credit-cpa-cc-voting.UserTaskResultUOUL'",
+          "responsive": {
+            "lg": 24,
+            "md": 24,
+            "sm": 24,
+            "xl": 24,
+            "xs": 24,
+            "xxl": 24
+          }
+        }
+      ]
+    }
+  ]
+}

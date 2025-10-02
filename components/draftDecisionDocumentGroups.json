@@ -1,0 +1,18 @@
+{
+  "type": "documentGroups",
+  "title": "Документы заявки",
+  "readonly": false,
+  "collapse": false,
+  "visible": true,
+  "notRequiredStore": "none",
+  "notRequired": {
+    "readonly": true
+  },
+  "groups": {
+    "order": {
+      "termSheet": {},
+      "decisionDraft": {}
+    }
+  },
+  "cacheModel": false
+}

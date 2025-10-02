@@ -1,0 +1,148 @@
+{
+  "type": "decisionMaking",
+  "uiType": "uniform",
+  "title": "Принятие решения",
+  "cacheModel": true,
+  "visible": true,
+  "collapse": false,
+  "readonly": false,
+  "textable": false,
+  "blocks": [
+    {
+      "id": "params",
+      "title": "Параметры",
+      "visible": true,
+      "opened": false,
+      "collapse": false,
+      "fields": [
+        {
+          "col": 24,
+          "pos": 1,
+          "name": "initiator",
+          "type": "input",
+          "label": "Инициатор",
+          "visible": true,
+          "disabled": true,
+          "required": true,
+          "readonly": true,
+          "responsive": {
+            "lg": 24,
+            "md": 24,
+            "sm": 24,
+            "xl": 24,
+            "xs": 24,
+            "xxl": 24
+          }
+        },
+        {
+          "col": 24,
+          "pos": 2,
+          "name": "speakers",
+          "type": "textarea",
+          "label": "Докладчики",
+          "visible": true,
+          "disabled": false,
+          "required": true,
+          "readonly": false,
+          "responsive": {
+            "lg": 24,
+            "md": 24,
+            "sm": 24,
+            "xl": 24,
+            "xs": 24,
+            "xxl": 24
+          }
+        },
+        {
+          "col": 24,
+          "pos": 3,
+          "name": "invited",
+          "type": "textarea",
+          "label": "Приглашенные лица",
+          "visible": true,
+          "disabled": false,
+          "required": false,
+          "readonly": false,
+          "responsive": {
+            "lg": 24,
+            "md": 24,
+            "sm": 24,
+            "xl": 24,
+            "xs": 24,
+            "xxl": 24
+          }
+        },
+        {
+          "col": 12,
+          "pos": 4,
+          "name": "duration",
+          "type": "inputNumber",
+          "label": "Длительность выступления (мин)",
+          "visible": true,
+          "disabled": false,
+          "required": false,
+          "readonly": false,
+          "responsive": {
+            "lg": 12,
+            "md": 12,
+            "sm": 12,
+            "xl": 12,
+            "xs": 12,
+            "xxl": 12
+          }
+        },
+        {
+          "col": 12,
+          "pos": 5,
+          "name": "eventFormat",
+          "type": "select",
+          "properties": {
+            "options": [
+              {
+                "key": "absentia",
+                "value": "Заочная"
+              },
+              {
+                "key": "presence",
+                "value": "Очная"
+              }
+            ]
+          },
+          "label": "Форма проведения",
+          "visible": true,
+          "required": false,
+          "disabled": false,
+          "readonly": false,
+          "responsive": {
+            "lg": 12,
+            "md": 12,
+            "sm": 12,
+            "xl": 12,
+            "xs": 12,
+            "xxl": 12
+          }
+        },
+        {
+          "col": 24,
+          "pos": 5,
+          "name": "needPreCommittee",
+          "type": "switch",
+          "label": "Необходимо рассмотрение на предкомитете",
+          "disabled": false,
+          "required": false,
+          "readonly": false,
+          "defaultValue": false,
+          "visibleExp": "component?.taskDefinitionKey === 'carambola-credit-cpa-decision-making.UserTaskEndorseMaterial' || component?.taskDefinitionKey === 'carambola-credit-cpa-change-limit-decision-making.UserTaskEndorseMaterial'",
+          "responsive": {
+            "lg": 24,
+            "md": 24,
+            "sm": 24,
+            "xl": 24,
+            "xs": 24,
+            "xxl": 24
+          }
+        }
+      ]
+    }
+  ]
+}

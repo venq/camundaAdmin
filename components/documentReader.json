@@ -1,0 +1,6 @@
+{
+  "type": "documentReader",
+  "title": "Просмотр документов",
+  "readonly": true,
+  "collapse": false
+}

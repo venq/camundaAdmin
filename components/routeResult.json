@@ -1,0 +1,6 @@
+{
+  "type": "routeResult",
+  "title": "Результат голосования",
+  "readonly": false,
+  "collapse": false
+}

@@ -1,0 +1,7 @@
+{
+  "uiType": "@farzoom/banana-ui-components:DocumentGroups",
+  "title": "Документы",
+  "visible": true,
+  "readonly": true,
+  "collapse": true
+}

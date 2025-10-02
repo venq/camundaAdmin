@@ -1,0 +1,41 @@
+{
+  "type": "bgCommissionChart",
+  "title": "График коммиссии",
+  "readonly": true,
+  "visible": true,
+  "collapse": true,
+  "uiType": "unitable",
+  "uiConfig": {
+    "datasource": {
+      "type": "model",
+      "property": "body.planList"
+    },
+    "indexColumn": {
+      "enabled": true
+    },
+    "columns": [
+      {
+        "header": "Дата",
+        "field": "datePayment",
+        "sorting": {
+          "enabled": true,
+          "default": "ASC"
+        },
+        "readonly": true,
+        "type": "date",
+        "format": "DD.MM.YYYY",
+        "required": false
+      },
+      {
+        "header": "Значение",
+        "field": "sumPayment",
+        "sorting": {
+          "enabled": false
+        },
+        "readonly": true,
+        "type": "money",
+        "required": false
+      }
+    ]
+  }
+}
