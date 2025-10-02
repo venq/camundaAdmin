@@ -1,45 +1,5 @@
 import type { BpmnProcess } from '@/types';
-
-export const mockBpmnXml = `<?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
-  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
-  xmlns:zeebe="http://camunda.org/schema/zeebe/1.0"
-  id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn">
-  <bpmn:process id="creditProcess" name="Процесс кредитования" isExecutable="true">
-    <bpmn:startEvent id="StartEvent_1" name="Начало">
-      <bpmn:outgoing>Flow_1</bpmn:outgoing>
-    </bpmn:startEvent>
-    <bpmn:userTask id="reviewApplication" name="Проверка заявки">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="creditProcess.reviewApplication" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_1</bpmn:incoming>
-      <bpmn:outgoing>Flow_2</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:serviceTask id="calculateRisk" name="Расчет риска">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="RiskCalculator" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_2</bpmn:incoming>
-      <bpmn:outgoing>Flow_3</bpmn:outgoing>
-    </bpmn:serviceTask>
-    <bpmn:userTask id="makeDecision" name="Принятие решения">
-      <bpmn:extensionElements>
-        <zeebe:taskDefinition type="creditProcess.makeDecision" />
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_3</bpmn:incoming>
-      <bpmn:outgoing>Flow_4</bpmn:outgoing>
-    </bpmn:userTask>
-    <bpmn:endEvent id="EndEvent_1" name="Конец">
-      <bpmn:incoming>Flow_4</bpmn:incoming>
-    </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_1" sourceRef="StartEvent_1" targetRef="reviewApplication" />
-    <bpmn:sequenceFlow id="Flow_2" sourceRef="reviewApplication" targetRef="calculateRisk" />
-    <bpmn:sequenceFlow id="Flow_3" sourceRef="calculateRisk" targetRef="makeDecision" />
-    <bpmn:sequenceFlow id="Flow_4" sourceRef="makeDecision" targetRef="EndEvent_1" />
-  </bpmn:process>
-</bpmn:definitions>`;
+import { creditCpaMainXml, creditCpaDocumentsXml, mockBpmnXml } from './bpmnXml';
 
 export const mockBpmnProcesses: BpmnProcess[] = [
   {
@@ -49,7 +9,7 @@ export const mockBpmnProcesses: BpmnProcess[] = [
     processId: 'credit-cpa-main',
     name: 'Выдача кредитов: Основной процесс',
     description: 'Полный цикл выдачи кредита от подачи заявки до выдачи продукта',
-    bpmnXml: mockBpmnXml, // Placeholder, реальный XML слишком большой
+    bpmnXml: creditCpaMainXml,
     userTasks: [
       {
         id: 'ut-1',
@@ -162,7 +122,7 @@ export const mockBpmnProcesses: BpmnProcess[] = [
     processId: 'credit-cpa-documents',
     name: 'Сбор документов',
     description: 'Подпроцесс сбора и проверки пакета документов по кредитной заявке',
-    bpmnXml: mockBpmnXml,
+    bpmnXml: creditCpaDocumentsXml,
     userTasks: [
       {
         id: 'ut-2',

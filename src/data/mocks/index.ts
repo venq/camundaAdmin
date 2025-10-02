@@ -3,6 +3,7 @@ export * from './users';
 export * from './tenants';
 export * from './projects';
 export * from './registries';
+export * from './bpmnXml';
 export * from './bpmnProcesses';
 export * from './userTasks';
 export * from './serviceTasks';

@@ -109,28 +109,12 @@ export function BpmnViewerPage() {
 
     viewerInstance.current = viewer;
 
-    // Функция для загрузки BPMN из файла
-    const loadBpmnFile = async () => {
-      try {
-        // Пытаемся загрузить реальный BPMN файл
-        const response = await fetch(`/bpmn/${bpmnProcess.fileName}`);
-        if (response.ok) {
-          const xml = await response.text();
-          return xml;
-        } else {
-          // Если файл не найден, используем XML из моков
-          return bpmnProcess.bpmnXml;
-        }
-      } catch (error) {
-        console.warn('Не удалось загрузить BPMN файл, используем данные из моков');
-        return bpmnProcess.bpmnXml;
-      }
-    };
-
     // Даем контейнеру время на рендеринг перед импортом XML
     const timer = setTimeout(() => {
-      // Загружаем и отображаем BPMN
-      loadBpmnFile().then((xml) => {
+      // Используем BPMN XML из моков
+      const xml = bpmnProcess.bpmnXml;
+
+      if (xml) {
         viewer.importXML(xml)
           .then(() => {
             const canvas = viewer.get('canvas');
@@ -169,7 +153,9 @@ export function BpmnViewerPage() {
             console.error('Ошибка загрузки BPMN:', err);
             setViewerError(err.message);
           });
-      });
+      } else {
+        setViewerError('BPMN XML не найден в моках');
+      }
     }, 100); // Задержка 100ms для инициализации контейнера
 
     // Очистка при размонтировании

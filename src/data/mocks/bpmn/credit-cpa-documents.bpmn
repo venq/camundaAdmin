@@ -1,0 +1,913 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" id="Definitions_0wxaka1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="5.24.0" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.5.0">
+  <bpmn:escalation id="Escalation_2mca2mo" name="REJECT" escalationCode="REJECT" />
+  <bpmn:collaboration id="Collaboration_18pkw8t">
+    <bpmn:participant id="Participant_00k2t1d" name="Сбор документов" processRef="credit-cpa-documents" />
+    <bpmn:textAnnotation id="TextAnnotation_0y1u5ci">
+      <bpmn:text>КлМ</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_16tn4br">
+      <bpmn:text>Сбор документов
+(fillOrder)</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_03sfxe1">
+      <bpmn:text>Клиент</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_00mxykx">
+      <bpmn:text>Ваша задача: см. шахматку
+
+1. в разрезе участников с ролями заполняем анкеты 
+2. списки документов уже определены на Прескоринге в соответствии с выбранным продуктом, контролируем недостающие и делаем дозапрос документов (создается параллельная заадча Клиенту
+3. Приложить выписку в формате 1С
+4. Приложить документы (в том числе подписанные - проверить, принимает ли компонент документы .sig и как отображает подпись)
+5. Если документы подписаны - показывать подписанными с результатом проверки подписи
+6. Валидация - заполнение опросников, приложены документы, подписаны документы
+7. контроль согласий (файл и параметры)
+
+Вкладки и компоненты:
+1. Параметры клиента (все)
+2. Параметры продукта
+3. Участники сделки
+4. ГВЗ
+5. Документы
+6. Лимит
+7. Скоринги
+
+Варианты решений: 
+1. Анкета заполнена (accept)
+2. Отказ по заявке (+ выбрать причину отказа, компонент Причины отказа)</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1ovzunj">
+      <bpmn:text>Клиент</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_0v1bomm">
+      <bpmn:text>Только по клиенту</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_11ct38a">
+      <bpmn:text>Заменить на анкету-согласие</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_13bfc3g">
+      <bpmn:text>Сохранение в objects по orderId</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_1bk6npj">
+      <bpmn:text>КМ</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:textAnnotation id="TextAnnotation_07s0myi">
+      <bpmn:text>Клиент</bpmn:text>
+    </bpmn:textAnnotation>
+    <bpmn:association id="Association_05ogi3t" associationDirection="None" sourceRef="credit-cpa-documents.UserTaskRequestDocuments" targetRef="TextAnnotation_03sfxe1" />
+    <bpmn:association id="Association_08mjt9l" associationDirection="None" sourceRef="credit-cpa-documents.UserTaskCollectDocuments" targetRef="TextAnnotation_00mxykx" />
+    <bpmn:association id="Association_0k5sncf" associationDirection="None" sourceRef="credit-cpa-documents.UserTaskCollectDocumentsClient" targetRef="TextAnnotation_07s0myi" />
+    <bpmn:association id="Association_1ony021" associationDirection="None" sourceRef="TextAnnotation_0y1u5ci" targetRef="credit-cpa-documents.UserTaskCollectDocuments" />
+    <bpmn:association id="Association_14bux1u" associationDirection="None" sourceRef="Activity_1g3ccwa" targetRef="TextAnnotation_16tn4br" />
+    <bpmn:association id="Association_001o1v8" associationDirection="None" sourceRef="credit-cpa-documents.UserTaskClientSignAgreements" targetRef="TextAnnotation_1ovzunj" />
+    <bpmn:association id="Association_020kjmd" associationDirection="None" sourceRef="credit-cpa-documents.UserTaskClientSignAgreements" targetRef="TextAnnotation_0v1bomm" />
+    <bpmn:association id="Association_0zswlrc" associationDirection="None" sourceRef="credit-cpa-documents.UserTaskBankSignAgreements" targetRef="TextAnnotation_1bk6npj" />
+    <bpmn:association id="Association_0vmekio" associationDirection="None" sourceRef="Activity_0jsn2s2" targetRef="TextAnnotation_13bfc3g" />
+    <bpmn:association id="Association_1d1qkdh" associationDirection="None" sourceRef="Activity_05ks9ox" targetRef="TextAnnotation_11ct38a" />
+  </bpmn:collaboration>
+  <bpmn:process id="credit-cpa-documents" name="Сбор документов" isExecutable="true">
+    <bpmn:exclusiveGateway id="Gateway_1j8g8ex" default="Flow_1vthba2">
+      <bpmn:incoming>Flow_0a7n1mi</bpmn:incoming>
+      <bpmn:incoming>Flow_07qsd61</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vthba2</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1ff75cm</bpmn:outgoing>
+      <bpmn:outgoing>Flow_16183hr</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:startEvent id="Event_11g6vcu">
+      <bpmn:outgoing>Flow_0g86you</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="Event_0oqryog" name="Отказ банка">
+      <bpmn:incoming>Flow_1ff75cm</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1hjz91j" errorRef="Error_0239s8w" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_16rw1yz" name="Отказ клиента">
+      <bpmn:incoming>Flow_16183hr</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_1xhl34l" errorRef="Error_11fy5fr" />
+    </bpmn:endEvent>
+    <bpmn:userTask id="credit-cpa-documents.UserTaskCollectDocuments" name="Заполнение анкеты и сбор пакета документов">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;CLIENT_DEPARTMENT&#34;]" target="AssignGroups" />
+          <zeebe:input source="=[&#34;CLIENT_DEPARTMENT_MANAGER&#34;]" target="ManagerGroups" />
+          <zeebe:input source="=&#34;CLIENT_DEPARTMENT_ROLE&#34;" target="WorkGroupRole" />
+          <zeebe:output source="=decisionId" target="UserTaskCollectDocumentsResult" />
+        </zeebe:ioMapping>
+        <zeebe:assignmentDefinition candidateGroups="=[&#34;CLIENT_DEPARTMENT&#34;, &#34;CLIENT_DEPARTMENT_MANAGER&#34;]" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="name" value="Заполнение анкеты и сбор пакета документов" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0s5jmad</bpmn:incoming>
+      <bpmn:incoming>Flow_0g8x02b</bpmn:incoming>
+      <bpmn:outgoing>Flow_0a7n1mi</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="credit-cpa-documents.UserTaskRequestDocuments" name="Дозапрос документов">
+      <bpmn:extensionElements>
+        <zeebe:taskHeaders>
+          <zeebe:header key="name" value="Дозапрос документов" />
+        </zeebe:taskHeaders>
+        <zeebe:assignmentDefinition candidateGroups="=[&#34;CLIENT&#34;]" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;CLIENT&#34;]" target="AssignGroups" />
+          <zeebe:input source="=&#34;CLIENT_ROLE&#34;" target="WorkGroupRole" />
+          <zeebe:input source="=&#34;CLIENT_MANAGER&#34;" target="ManagerGroups" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_01bl5vv</bpmn:incoming>
+    </bpmn:userTask>
+    <bpmn:exclusiveGateway id="Gateway_1t958u9" default="Flow_0s5jmad">
+      <bpmn:incoming>Flow_1mfum71</bpmn:incoming>
+      <bpmn:incoming>Flow_1mgmj3n</bpmn:incoming>
+      <bpmn:outgoing>Flow_0s5jmad</bpmn:outgoing>
+      <bpmn:outgoing>Flow_11upqst</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="credit-cpa-documents.UserTaskCollectDocumentsClient" name="Клиент: Заполнение анкеты и сбор пакета документов">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;CLIENT&#34;]" target="AssignGroups" />
+          <zeebe:input source="=&#34;CLIENT_ROLE&#34;" target="WorkGroupRole" />
+          <zeebe:input source="=&#34;CLIENT_MANAGER&#34;" target="ManagerGroups" />
+          <zeebe:output source="=decisionId" target="UserTaskCollectDocumentsClientResult" />
+        </zeebe:ioMapping>
+        <zeebe:assignmentDefinition candidateGroups="=[&#34;CLIENT&#34;]" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="name" value="Клиент: Заполнение анкеты и сбор пакета документов" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_11upqst</bpmn:incoming>
+      <bpmn:outgoing>Flow_07qsd61</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:boundaryEvent id="Event_0w3fbkf" attachedToRef="credit-cpa-documents.UserTaskRequestDocuments">
+      <bpmn:outgoing>Flow_0g8x02b</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1yyp73b" messageRef="Message_0nnq4ph" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_0xy4x82" cancelActivity="false" attachedToRef="credit-cpa-documents.UserTaskCollectDocuments">
+      <bpmn:outgoing>Flow_01bl5vv</bpmn:outgoing>
+      <bpmn:messageEventDefinition id="MessageEventDefinition_1tiwtgy" messageRef="Message_0brcl2s" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_0a7n1mi" sourceRef="credit-cpa-documents.UserTaskCollectDocuments" targetRef="Gateway_1j8g8ex" />
+    <bpmn:sequenceFlow id="Flow_07qsd61" sourceRef="credit-cpa-documents.UserTaskCollectDocumentsClient" targetRef="Gateway_1j8g8ex" />
+    <bpmn:sequenceFlow id="Flow_1vthba2" sourceRef="Gateway_1j8g8ex" targetRef="Activity_0u0u62x" />
+    <bpmn:sequenceFlow id="Flow_1ff75cm" sourceRef="Gateway_1j8g8ex" targetRef="Event_0oqryog">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=UserTaskCollectDocumentsResult!= null and UserTaskCollectDocumentsResult = "bankReject"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_16183hr" sourceRef="Gateway_1j8g8ex" targetRef="Event_16rw1yz">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=UserTaskCollectDocumentsClientResult != null and UserTaskCollectDocumentsClientResult = "clientReject"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0nfx74e" sourceRef="Activity_1h11rl5" targetRef="Gateway_1er0f5i" />
+    <bpmn:sequenceFlow id="Flow_1gifwkh" sourceRef="Gateway_1er0f5i" targetRef="Activity_1y4rpsx" />
+    <bpmn:sequenceFlow id="Flow_1mfum71" name="Сработали стоп-факторы" sourceRef="Gateway_1er0f5i" targetRef="Gateway_1t958u9">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_12dhpsd" sourceRef="Activity_1y4rpsx" targetRef="Activity_1fsnhpl" />
+    <bpmn:sequenceFlow id="Flow_1qi3cah" sourceRef="Activity_1fsnhpl" targetRef="Activity_05ks9ox" />
+    <bpmn:sequenceFlow id="Flow_1akg4x9" sourceRef="Activity_05ks9ox" targetRef="Activity_018ingm" />
+    <bpmn:sequenceFlow id="Flow_1vaiqqn" sourceRef="Activity_018ingm" targetRef="Activity_03x625d" />
+    <bpmn:sequenceFlow id="Flow_0pmf52h" sourceRef="Activity_03x625d" targetRef="Gateway_0djrkhs" />
+    <bpmn:sequenceFlow id="Flow_0ijmk20" sourceRef="Gateway_0djrkhs" targetRef="credit-cpa-documents.UserTaskClientSignAgreements" />
+    <bpmn:sequenceFlow id="Flow_08x9pod" sourceRef="Gateway_0djrkhs" targetRef="credit-cpa-documents.UserTaskBankSignAgreements" />
+    <bpmn:sequenceFlow id="Flow_1et888d" sourceRef="credit-cpa-documents.UserTaskBankSignAgreements" targetRef="Event_11f7p4j" />
+    <bpmn:sequenceFlow id="Flow_0hf0l7r" sourceRef="Event_0zaw1yl" targetRef="Event_0aikfog" />
+    <bpmn:sequenceFlow id="Flow_0e4wsyl" sourceRef="Event_11f7p4j" targetRef="Gateway_1x3rwjf" />
+    <bpmn:sequenceFlow id="Flow_0vrgcm5" sourceRef="credit-cpa-documents.UserTaskClientSignAgreements" targetRef="Event_0wfto83" />
+    <bpmn:sequenceFlow id="Flow_1h5c4wx" sourceRef="Event_0wfto83" targetRef="Gateway_1x3rwjf" />
+    <bpmn:sequenceFlow id="Flow_0dabk2q" sourceRef="Gateway_1x3rwjf" targetRef="Gateway_1ywy358" />
+    <bpmn:sequenceFlow id="Flow_0g86you" sourceRef="Event_11g6vcu" targetRef="Activity_1g3ccwa" />
+    <bpmn:sequenceFlow id="Flow_0s5jmad" sourceRef="Gateway_1t958u9" targetRef="credit-cpa-documents.UserTaskCollectDocuments" />
+    <bpmn:sequenceFlow id="Flow_0g8x02b" sourceRef="Event_0w3fbkf" targetRef="credit-cpa-documents.UserTaskCollectDocuments" />
+    <bpmn:sequenceFlow id="Flow_01bl5vv" sourceRef="Event_0xy4x82" targetRef="credit-cpa-documents.UserTaskRequestDocuments" />
+    <bpmn:sequenceFlow id="Flow_1mx2rnq" sourceRef="Activity_1g3ccwa" targetRef="Gateway_12qp395" />
+    <bpmn:sequenceFlow id="Flow_11upqst" sourceRef="Gateway_1t958u9" targetRef="credit-cpa-documents.UserTaskCollectDocumentsClient">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=initiator.channel != null and initiator.channel = "agent"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="Activity_1g3ccwa" name="Установить статус заявки">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="common-cpa-main.ServiceTaskUpdateStatus" retries="0" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=&#34;fillOrder&#34;" target="code" />
+          <zeebe:input source="=orderId" target="orderId" />
+          <zeebe:input source="=15" target="percent" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0g86you</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mx2rnq</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="Flow_0oju1wl" sourceRef="Event_1etua5z" targetRef="Event_0aikfog" />
+    <bpmn:exclusiveGateway id="Gateway_1er0f5i" default="Flow_1gifwkh">
+      <bpmn:incoming>Flow_0nfx74e</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mfum71</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1gifwkh</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:serviceTask id="Activity_1fsnhpl" name="Получение участников сделки">
+      <bpmn:documentation>input:
+String orderId; requi
+
+output:
+OrderMembers orderMembers;</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="avocadocc-api-enricher/order/{orderId}/order-members" retries="0" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=orderId" target="orderId" />
+          <zeebe:input source="=[&#34;borrower&#34;, &#34;guarantor&#34;, &#34;pledger&#34;, &#34;companyFounder&#34;]" target="orderMemberRoles" />
+          <zeebe:output source="=for memberEntry in get entries(members)&#10;return {&#10;  &#34;id&#34;: memberEntry.key,&#10;  &#34;type&#34;: memberEntry.value.info.type,&#10;  &#34;inn&#34;: memberEntry.value.info.memberInn,&#10;  &#34;roles&#34;: memberEntry.value.roles&#10;}" target="orderMembers" />
+        </zeebe:ioMapping>
+        <zeebe:properties>
+          <zeebe:property name="camundaModeler:exampleOutputJson" value="{&#10;  &#34;members&#34;: {&#10;    &#34;additionalProp1&#34;: {&#10;      &#34;dataSource&#34;: {&#10;        &#34;additionalProp1&#34;: &#34;string&#34;,&#10;        &#34;additionalProp2&#34;: &#34;string&#34;,&#10;        &#34;additionalProp3&#34;: &#34;string&#34;&#10;      },&#10;      &#34;info&#34;: {&#10;        &#34;companyId&#34;: &#34;string&#34;,&#10;        &#34;companyInn&#34;: &#34;string&#34;,&#10;        &#34;companyName&#34;: &#34;string&#34;,&#10;        &#34;companyOgrn&#34;: &#34;string&#34;,&#10;        &#34;memberInn&#34;: &#34;string&#34;,&#10;        &#34;memberName&#34;: &#34;string&#34;,&#10;        &#34;memberOgrn&#34;: &#34;string&#34;,&#10;        &#34;passportNumber&#34;: &#34;string&#34;,&#10;        &#34;passportSeria&#34;: &#34;string&#34;,&#10;        &#34;type&#34;: &#34;string&#34;&#10;      },&#10;      &#34;roles&#34;: [&#10;        &#34;string&#34;&#10;      ]&#10;    },&#10;    &#34;additionalProp2&#34;: {&#10;      &#34;dataSource&#34;: {&#10;        &#34;additionalProp1&#34;: &#34;string&#34;,&#10;        &#34;additionalProp2&#34;: &#34;string&#34;,&#10;        &#34;additionalProp3&#34;: &#34;string&#34;&#10;      },&#10;      &#34;info&#34;: {&#10;        &#34;companyId&#34;: &#34;string&#34;,&#10;        &#34;companyInn&#34;: &#34;string&#34;,&#10;        &#34;companyName&#34;: &#34;string&#34;,&#10;        &#34;companyOgrn&#34;: &#34;string&#34;,&#10;        &#34;memberInn&#34;: &#34;string&#34;,&#10;        &#34;memberName&#34;: &#34;string&#34;,&#10;        &#34;memberOgrn&#34;: &#34;string&#34;,&#10;        &#34;passportNumber&#34;: &#34;string&#34;,&#10;        &#34;passportSeria&#34;: &#34;string&#34;,&#10;        &#34;type&#34;: &#34;string&#34;&#10;      },&#10;      &#34;roles&#34;: [&#10;        &#34;string&#34;&#10;      ]&#10;    },&#10;    &#34;additionalProp3&#34;: {&#10;      &#34;dataSource&#34;: {&#10;        &#34;additionalProp1&#34;: &#34;string&#34;,&#10;        &#34;additionalProp2&#34;: &#34;string&#34;,&#10;        &#34;additionalProp3&#34;: &#34;string&#34;&#10;      },&#10;      &#34;info&#34;: {&#10;        &#34;companyId&#34;: &#34;string&#34;,&#10;        &#34;companyInn&#34;: &#34;string&#34;,&#10;        &#34;companyName&#34;: &#34;string&#34;,&#10;        &#34;companyOgrn&#34;: &#34;string&#34;,&#10;        &#34;memberInn&#34;: &#34;string&#34;,&#10;        &#34;memberName&#34;: &#34;string&#34;,&#10;        &#34;memberOgrn&#34;: &#34;string&#34;,&#10;        &#34;passportNumber&#34;: &#34;string&#34;,&#10;        &#34;passportSeria&#34;: &#34;string&#34;,&#10;        &#34;type&#34;: &#34;string&#34;&#10;      },&#10;      &#34;roles&#34;: [&#10;        &#34;string&#34;&#10;      ]&#10;    }&#10;  }&#10;}" />
+        </zeebe:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_12dhpsd</bpmn:incoming>
+      <bpmn:outgoing>Flow_1qi3cah</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_1y4rpsx" name="Генерация анкеты-заявки">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="credit-api-doc-template.ServiceTaskGenerateDocs" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=if string length(provider.INN) = 12&#10;then &#34;questionnaire_individual&#34;&#10;else &#34;questionnaire&#34;" target="templateName" />
+          <zeebe:input source="=&#34;questionnaire&#34;" target="docType" />
+          <zeebe:input source="=orderId" target="entityId" />
+          <zeebe:input source="=orderId" target="orderId" />
+          <zeebe:output source="=&#34;_&#34;" target="ignored" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1gifwkh</bpmn:incoming>
+      <bpmn:outgoing>Flow_12dhpsd</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_018ingm" name="Сформировать список документов по выбранным продуктам для участников">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="credit-cpa-main.ServiceTaskMock" retries="0" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1akg4x9</bpmn:incoming>
+      <bpmn:outgoing>Flow_1vaiqqn</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Activity_03x625d" name="Проверить наличие согласий (СОПД, КИ) и их статус">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="credit-cpa-main.ServiceTaskMock" retries="0" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1vaiqqn</bpmn:incoming>
+      <bpmn:outgoing>Flow_0pmf52h</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:parallelGateway id="Gateway_0djrkhs">
+      <bpmn:incoming>Flow_0pmf52h</bpmn:incoming>
+      <bpmn:outgoing>Flow_0ijmk20</bpmn:outgoing>
+      <bpmn:outgoing>Flow_08x9pod</bpmn:outgoing>
+    </bpmn:parallelGateway>
+    <bpmn:userTask id="credit-cpa-documents.UserTaskBankSignAgreements" name="Приложите подписанные документы">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;CLIENT_DEPARTMENT&#34;]" target="AssignGroups" />
+          <zeebe:input source="=[&#34;CLIENT_DEPARTMENT_MANAGER&#34;]" target="ManagerGroups" />
+          <zeebe:input source="=&#34;CLIENT_DEPARTMENT_ROLE&#34;" target="WorkGroupRole" />
+          <zeebe:output source="=decisionId" target="UserTaskSignAgreementsResult" />
+        </zeebe:ioMapping>
+        <zeebe:assignmentDefinition candidateGroups="=[&#34;CLIENT_DEPARTMENT&#34;, &#34;CLIENT_DEPARTMENT_MANAGER&#34;]" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="name" value="Приложите подписанные документы" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_08x9pod</bpmn:incoming>
+      <bpmn:outgoing>Flow_1et888d</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateThrowEvent id="Event_11f7p4j" name="Завершить задачу подписания клиентом">
+      <bpmn:incoming>Flow_1et888d</bpmn:incoming>
+      <bpmn:outgoing>Flow_0e4wsyl</bpmn:outgoing>
+      <bpmn:signalEventDefinition id="SignalEventDefinition_12dg9nx" signalRef="Signal_3uf0ebm" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:userTask id="credit-cpa-documents.UserTaskClientSignAgreements" name="Подписать документы">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;CLIENT&#34;]" target="AssignGroups" />
+          <zeebe:input source="=&#34;CLIENT_ROLE&#34;" target="WorkGroupRole" />
+          <zeebe:input source="=&#34;CLIENT_MANAGER&#34;" target="ManagerGroups" />
+          <zeebe:output source="=decisionId" target="UserTaskSignAgreementsResult" />
+        </zeebe:ioMapping>
+        <zeebe:assignmentDefinition candidateGroups="=[&#34;CLIENT&#34;]" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="name" value="Подписать документы" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0ijmk20</bpmn:incoming>
+      <bpmn:outgoing>Flow_0vrgcm5</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:intermediateThrowEvent id="Event_0wfto83" name="Завершить задачу подписания банком">
+      <bpmn:incoming>Flow_0vrgcm5</bpmn:incoming>
+      <bpmn:outgoing>Flow_1h5c4wx</bpmn:outgoing>
+      <bpmn:signalEventDefinition id="SignalEventDefinition_188pf3u" signalRef="Signal_0ghr901" />
+    </bpmn:intermediateThrowEvent>
+    <bpmn:endEvent id="Event_0aikfog">
+      <bpmn:incoming>Flow_0hf0l7r</bpmn:incoming>
+      <bpmn:incoming>Flow_0oju1wl</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:boundaryEvent id="Event_0zaw1yl" attachedToRef="credit-cpa-documents.UserTaskBankSignAgreements">
+      <bpmn:outgoing>Flow_0hf0l7r</bpmn:outgoing>
+      <bpmn:signalEventDefinition id="SignalEventDefinition_1o8r7m3" signalRef="Signal_0ghr901" />
+    </bpmn:boundaryEvent>
+    <bpmn:boundaryEvent id="Event_1etua5z" attachedToRef="credit-cpa-documents.UserTaskClientSignAgreements">
+      <bpmn:outgoing>Flow_0oju1wl</bpmn:outgoing>
+      <bpmn:signalEventDefinition id="SignalEventDefinition_0e9jfe7" signalRef="Signal_3uf0ebm" />
+    </bpmn:boundaryEvent>
+    <bpmn:sequenceFlow id="Flow_1hza579" sourceRef="Activity_0u0u62x" targetRef="Activity_1h11rl5" />
+    <bpmn:serviceTask id="Activity_0u0u62x" name="Получение участников ГВЛ">
+      <bpmn:documentation>input:
+String orderId; requi
+
+output:
+OrderMembers orderMembers;</bpmn:documentation>
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="avocadocc-api-enricher/order/{orderId}/order-members" retries="0" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=orderId" target="orderId" />
+          <zeebe:input source="=[&#34;guarantor&#34;, &#34;pledger&#34;]" target="orderMemberRoles" />
+          <zeebe:output source="=for memberEntry in get entries(members)&#10;[item.value.info.type = &#34;company&#34;]&#10;return {&#10;  &#34;businessId&#34;: memberEntry.key,&#10;  &#34;type&#34;: memberEntry.value.info.type,&#10;  &#34;roles&#34;: memberEntry.value.roles&#10;}" target="companyDtoList" />
+        </zeebe:ioMapping>
+        <zeebe:properties>
+          <zeebe:property name="camundaModeler:exampleOutputJson" value="{&#10;  &#34;members&#34;: {&#10;    &#34;additionalProp1&#34;: {&#10;      &#34;dataSource&#34;: {&#10;        &#34;additionalProp1&#34;: &#34;string&#34;,&#10;        &#34;additionalProp2&#34;: &#34;string&#34;,&#10;        &#34;additionalProp3&#34;: &#34;string&#34;&#10;      },&#10;      &#34;info&#34;: {&#10;        &#34;companyId&#34;: &#34;string&#34;,&#10;        &#34;companyInn&#34;: &#34;string&#34;,&#10;        &#34;companyName&#34;: &#34;string&#34;,&#10;        &#34;companyOgrn&#34;: &#34;string&#34;,&#10;        &#34;memberInn&#34;: &#34;string&#34;,&#10;        &#34;memberName&#34;: &#34;string&#34;,&#10;        &#34;memberOgrn&#34;: &#34;string&#34;,&#10;        &#34;passportNumber&#34;: &#34;string&#34;,&#10;        &#34;passportSeria&#34;: &#34;string&#34;,&#10;        &#34;type&#34;: &#34;string&#34;&#10;      },&#10;      &#34;roles&#34;: [&#10;        &#34;string&#34;&#10;      ]&#10;    },&#10;    &#34;additionalProp2&#34;: {&#10;      &#34;dataSource&#34;: {&#10;        &#34;additionalProp1&#34;: &#34;string&#34;,&#10;        &#34;additionalProp2&#34;: &#34;string&#34;,&#10;        &#34;additionalProp3&#34;: &#34;string&#34;&#10;      },&#10;      &#34;info&#34;: {&#10;        &#34;companyId&#34;: &#34;string&#34;,&#10;        &#34;companyInn&#34;: &#34;string&#34;,&#10;        &#34;companyName&#34;: &#34;string&#34;,&#10;        &#34;companyOgrn&#34;: &#34;string&#34;,&#10;        &#34;memberInn&#34;: &#34;string&#34;,&#10;        &#34;memberName&#34;: &#34;string&#34;,&#10;        &#34;memberOgrn&#34;: &#34;string&#34;,&#10;        &#34;passportNumber&#34;: &#34;string&#34;,&#10;        &#34;passportSeria&#34;: &#34;string&#34;,&#10;        &#34;type&#34;: &#34;string&#34;&#10;      },&#10;      &#34;roles&#34;: [&#10;        &#34;string&#34;&#10;      ]&#10;    },&#10;    &#34;additionalProp3&#34;: {&#10;      &#34;dataSource&#34;: {&#10;        &#34;additionalProp1&#34;: &#34;string&#34;,&#10;        &#34;additionalProp2&#34;: &#34;string&#34;,&#10;        &#34;additionalProp3&#34;: &#34;string&#34;&#10;      },&#10;      &#34;info&#34;: {&#10;        &#34;companyId&#34;: &#34;string&#34;,&#10;        &#34;companyInn&#34;: &#34;string&#34;,&#10;        &#34;companyName&#34;: &#34;string&#34;,&#10;        &#34;companyOgrn&#34;: &#34;string&#34;,&#10;        &#34;memberInn&#34;: &#34;string&#34;,&#10;        &#34;memberName&#34;: &#34;string&#34;,&#10;        &#34;memberOgrn&#34;: &#34;string&#34;,&#10;        &#34;passportNumber&#34;: &#34;string&#34;,&#10;        &#34;passportSeria&#34;: &#34;string&#34;,&#10;        &#34;type&#34;: &#34;string&#34;&#10;      },&#10;      &#34;roles&#34;: [&#10;        &#34;string&#34;&#10;      ]&#10;    }&#10;  }&#10;}" />
+        </zeebe:properties>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1vthba2</bpmn:incoming>
+      <bpmn:outgoing>Flow_1hza579</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_1x3rwjf">
+      <bpmn:incoming>Flow_0e4wsyl</bpmn:incoming>
+      <bpmn:incoming>Flow_1h5c4wx</bpmn:incoming>
+      <bpmn:outgoing>Flow_0dabk2q</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="Gateway_1ywy358" default="Flow_0yasyau">
+      <bpmn:incoming>Flow_0dabk2q</bpmn:incoming>
+      <bpmn:outgoing>Flow_0yasyau</bpmn:outgoing>
+      <bpmn:outgoing>Flow_06j3mfr</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0vtq6mb</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0709xk7</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="Event_0xenya5" name="Отказ клиента">
+      <bpmn:incoming>Flow_0vtq6mb</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0z1xvv2" errorRef="Error_11fy5fr" />
+    </bpmn:endEvent>
+    <bpmn:endEvent id="Event_0h6tx4q" name="Отказ банка">
+      <bpmn:incoming>Flow_06j3mfr</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0s0pj8o" errorRef="Error_0239s8w" />
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="Flow_0yasyau" sourceRef="Gateway_1ywy358" targetRef="Gateway_0ioaxf4" />
+    <bpmn:sequenceFlow id="Flow_06j3mfr" sourceRef="Gateway_1ywy358" targetRef="Event_0h6tx4q">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=UserTaskSignAgreementsResult = "reject"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_0vtq6mb" sourceRef="Gateway_1ywy358" targetRef="Event_0xenya5">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=UserTaskSignAgreementsResult = "clientReject"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="Gateway_12qp395">
+      <bpmn:incoming>Flow_1mx2rnq</bpmn:incoming>
+      <bpmn:incoming>Flow_0709xk7</bpmn:incoming>
+      <bpmn:outgoing>Flow_1mgmj3n</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1mgmj3n" sourceRef="Gateway_12qp395" targetRef="Gateway_1t958u9" />
+    <bpmn:sequenceFlow id="Flow_0709xk7" name="На сбор докуимментов" sourceRef="Gateway_1ywy358" targetRef="Gateway_12qp395">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=UserTaskSignAgreementsResult = "rework"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:callActivity id="Activity_1h11rl5" name="Проверка стоп-факторов и расчет риск-уровня">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="credit-cpa-evaluate-scorings" propagateAllChildVariables="false" propagateAllParentVariables="false" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=orderId" target="orderId" />
+          <zeebe:input source="=&#34;stop-factor-scoring-members&#34;" target="scoringType" />
+          <zeebe:input source="=&#34;company&#34;" target="entityType" />
+          <zeebe:input source="=companyDto.businessId" target="entityId" />
+          <zeebe:input source="={roles: companyDto.roles, skip5: true}" target="params" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1hza579</bpmn:incoming>
+      <bpmn:outgoing>Flow_0nfx74e</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics>
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=companyDtoList" inputElement="companyDto" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="Gateway_0ioaxf4" default="Flow_1weeadr">
+      <bpmn:incoming>Flow_0yasyau</bpmn:incoming>
+      <bpmn:outgoing>Flow_1b9jjin</bpmn:outgoing>
+      <bpmn:outgoing>Flow_1weeadr</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_1b9jjin" sourceRef="Gateway_0ioaxf4" targetRef="credit-cpa-documents.UserTaskSignAgreementsCheck">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:sequenceFlow id="Flow_18f85b7" sourceRef="credit-cpa-documents.UserTaskSignAgreementsCheck" targetRef="Gateway_19lydil" />
+    <bpmn:sequenceFlow id="Flow_1weeadr" name="Пропускаем проверку подписания" sourceRef="Gateway_0ioaxf4" targetRef="Gateway_19lydil" />
+    <bpmn:endEvent id="Event_1fsawbp">
+      <bpmn:incoming>Flow_10xcvgw</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:serviceTask id="Activity_0jsn2s2" name="Получить и сохранить кредитную историю участников">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="credit-cpa-documents.ServiceTaskGetAndSaveMembersCreditHistory" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_188jh0z</bpmn:incoming>
+      <bpmn:outgoing>Flow_10xcvgw</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:callActivity id="Activity_1tg09ts" name="Сохранение согласий">
+      <bpmn:extensionElements>
+        <zeebe:calledElement processId="credit-cpa-save-permission" propagateAllChildVariables="false" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=orderMember" target="orderMember" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_0tej85t</bpmn:incoming>
+      <bpmn:outgoing>Flow_188jh0z</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics>
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=orderMembers" inputElement="orderMember" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:callActivity>
+    <bpmn:endEvent id="Event_02891e1" name="Отказ банка">
+      <bpmn:incoming>Flow_0mryc4q</bpmn:incoming>
+      <bpmn:errorEventDefinition id="ErrorEventDefinition_0aryegs" errorRef="Error_0239s8w" />
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="Gateway_19lydil" default="Flow_0tej85t">
+      <bpmn:incoming>Flow_18f85b7</bpmn:incoming>
+      <bpmn:incoming>Flow_1weeadr</bpmn:incoming>
+      <bpmn:outgoing>Flow_0tej85t</bpmn:outgoing>
+      <bpmn:outgoing>Flow_0mryc4q</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="Flow_10xcvgw" sourceRef="Activity_0jsn2s2" targetRef="Event_1fsawbp" />
+    <bpmn:sequenceFlow id="Flow_188jh0z" sourceRef="Activity_1tg09ts" targetRef="Activity_0jsn2s2" />
+    <bpmn:sequenceFlow id="Flow_0tej85t" sourceRef="Gateway_19lydil" targetRef="Activity_1tg09ts" />
+    <bpmn:sequenceFlow id="Flow_0mryc4q" sourceRef="Gateway_19lydil" targetRef="Event_02891e1">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=UserTaskSignAgreementsCheckResult != null and UserTaskSignAgreementsCheckResult = "reject"</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:userTask id="credit-cpa-documents.UserTaskSignAgreementsCheck" name="Проверить подписанные документы">
+      <bpmn:extensionElements>
+        <zeebe:ioMapping>
+          <zeebe:input source="=[&#34;CLIENT_DEPARTMENT&#34;]" target="AssignGroups" />
+          <zeebe:input source="=[&#34;CLIENT_DEPARTMENT_MANAGER&#34;]" target="ManagerGroups" />
+          <zeebe:input source="=&#34;CLIENT_DEPARTMENT_ROLE&#34;" target="WorkGroupRole" />
+          <zeebe:output source="=decisionId" target="UserTaskSignAgreementsCheckResult" />
+        </zeebe:ioMapping>
+        <zeebe:assignmentDefinition candidateGroups="=[&#34;CLIENT_DEPARTMENT&#34;, &#34;CLIENT_DEPARTMENT_MANAGER&#34;]" />
+        <zeebe:taskHeaders>
+          <zeebe:header key="name" value="Проверить подписанные документы" />
+        </zeebe:taskHeaders>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1b9jjin</bpmn:incoming>
+      <bpmn:outgoing>Flow_18f85b7</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:serviceTask id="Activity_05ks9ox" name="Генерация Анкеты-согласия">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="credit-api-doc-template.ServiceTaskGenerateDocs" />
+        <zeebe:ioMapping>
+          <zeebe:input source="=if orderMember.type = &#34;person&#34;&#10;then &#34;agreement_person&#34;&#10;else if string length(orderMember.inn) = 12&#10;then &#34;agreement_individual&#34;&#10;else &#34;agreement_company&#34;" target="templateName" />
+          <zeebe:input source="=if orderMember.type = &#34;person&#34;&#10;then &#34;agreementPerson&#34;&#10;else &#34;agreement&#34;" target="docType" />
+          <zeebe:input source="=orderMember.id" target="entityId" />
+          <zeebe:output source="=&#34;_&#34;" target="ignored" />
+        </zeebe:ioMapping>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_1qi3cah</bpmn:incoming>
+      <bpmn:outgoing>Flow_1akg4x9</bpmn:outgoing>
+      <bpmn:multiInstanceLoopCharacteristics>
+        <bpmn:extensionElements>
+          <zeebe:loopCharacteristics inputCollection="=orderMembers[not(list contains(item.roles, &#34;borrower&#34;))]" inputElement="orderMember" />
+        </bpmn:extensionElements>
+      </bpmn:multiInstanceLoopCharacteristics>
+    </bpmn:serviceTask>
+  </bpmn:process>
+  <bpmn:error id="Error_0239s8w" name="REJECT" errorCode="REJECT" />
+  <bpmn:message id="Message_0nnq4ph" name="CANCEL_REQUEST_DOCUMENTS">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=orderId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:message id="Message_0brcl2s" name="REQUEST_DOCUMENTS">
+    <bpmn:extensionElements>
+      <zeebe:subscription correlationKey="=orderId" />
+    </bpmn:extensionElements>
+  </bpmn:message>
+  <bpmn:error id="Error_1xr1t23" name="BANK_REJECT" errorCode="BANK_REJECT" />
+  <bpmn:signal id="Signal_0ghr901" name="=&#34;stopBankSign&#34; + orderId" />
+  <bpmn:signal id="Signal_3uf0ebm" name="=&#34;stopClientSign&#34; + orderId" />
+  <bpmn:error id="Error_11fy5fr" name="CLIENT_REJECT" errorCode="CLIENT_REJECT" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_18pkw8t">
+      <bpmndi:BPMNShape id="Participant_00k2t1d_di" bpmnElement="Participant_00k2t1d" isHorizontal="true">
+        <dc:Bounds x="160" y="80" width="3810" height="980" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1j8g8ex_di" bpmnElement="Gateway_1j8g8ex" isMarkerVisible="true">
+        <dc:Bounds x="1065" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_08fh6g4" bpmnElement="Event_11g6vcu" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="282" y="442" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_09zikmu_di" bpmnElement="Event_0oqryog" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1012" y="562" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="999" y="605" width="63" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1q1nfxk" bpmnElement="Event_16rw1yz" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="1132" y="562" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1114" y="605" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1rp9ksg" bpmnElement="credit-cpa-documents.UserTaskCollectDocuments" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="820" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1mrbvd4" bpmnElement="credit-cpa-documents.UserTaskRequestDocuments" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="870" y="589" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1t958u9_di" bpmnElement="Gateway_1t958u9" isMarkerVisible="true">
+        <dc:Bounds x="695" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1y1iqpv" bpmnElement="credit-cpa-documents.UserTaskCollectDocumentsClient" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="820" y="220" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1musv7i" bpmnElement="Activity_1g3ccwa" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="390" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1wephqn" bpmnElement="Gateway_1er0f5i" isMarkerVisible="true">
+        <dc:Bounds x="1505" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1lbbbho" bpmnElement="Activity_1fsnhpl" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="1790" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1cuxsoq" bpmnElement="Activity_1y4rpsx" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="1630" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1qv9sqh" bpmnElement="Activity_018ingm" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="2110" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0xa447u" bpmnElement="Activity_03x625d" bioc:stroke="#6b3c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#6b3c00">
+        <dc:Bounds x="2270" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0anofoe_di" bpmnElement="Gateway_0djrkhs">
+        <dc:Bounds x="2435" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1ngltow" bpmnElement="credit-cpa-documents.UserTaskBankSignAgreements" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="2540" y="300" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0jxqfea_di" bpmnElement="Event_11f7p4j" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="2702" y="322" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2692" y="263" width="61" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_17yyn0o" bpmnElement="credit-cpa-documents.UserTaskClientSignAgreements" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="2540" y="540" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_1cio70j_di" bpmnElement="Event_0wfto83" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="2702" y="562" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2690" y="605" width="61" height="53" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_0aikfog_di" bpmnElement="Event_0aikfog" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="2572" y="442" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1nr97af" bpmnElement="Activity_0u0u62x" bioc:stroke="#205022" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#205022">
+        <dc:Bounds x="1170" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_1x3rwjf_di" bpmnElement="Gateway_1x3rwjf" isMarkerVisible="true">
+        <dc:Bounds x="2775" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_033pkjc" bpmnElement="Gateway_1ywy358" isMarkerVisible="true">
+        <dc:Bounds x="2925" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_04nm2c3_di" bpmnElement="Event_0xenya5" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="2872" y="562" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2853" y="608" width="74" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0cnrjr6" bpmnElement="Event_0h6tx4q" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="3002" y="562" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2990" y="605" width="63" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_12qp395_di" bpmnElement="Gateway_12qp395" isMarkerVisible="true">
+        <dc:Bounds x="565" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_0wvfs99_di" bpmnElement="Activity_1h11rl5" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="1340" y="420" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_0ioaxf4_di" bpmnElement="Gateway_0ioaxf4" isMarkerVisible="true">
+        <dc:Bounds x="3055" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1tllo8c" bpmnElement="Event_1fsawbp" bioc:stroke="#43a047" bioc:fill="#c8e6c9" color:background-color="#c8e6c9" color:border-color="#43a047">
+        <dc:Bounds x="3802" y="442" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1i8oh7b" bpmnElement="Activity_0jsn2s2">
+        <dc:Bounds x="3640" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Activity_1avpmo6_di" bpmnElement="Activity_1tg09ts">
+        <dc:Bounds x="3480" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1bsusv2" bpmnElement="Event_02891e1" bioc:stroke="#e53935" bioc:fill="#ffcdd2" color:background-color="#ffcdd2" color:border-color="#e53935">
+        <dc:Bounds x="3352" y="562" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3340" y="605" width="63" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1hrsuz8" bpmnElement="Gateway_19lydil" isMarkerVisible="true">
+        <dc:Bounds x="3345" y="435" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0jf3ua2" bpmnElement="credit-cpa-documents.UserTaskSignAgreementsCheck" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="3180" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_14pjrxc" bpmnElement="Activity_05ks9ox" bioc:stroke="#5b176d" bioc:fill="#e1bee7" color:background-color="#e1bee7" color:border-color="#5b176d">
+        <dc:Bounds x="1950" y="420" width="100" height="80" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0avw34z" bpmnElement="Event_1etua5z" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="2572" y="522" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_09jeivm_di" bpmnElement="Event_0zaw1yl" bioc:stroke="#1e88e5" bioc:fill="#bbdefb" color:background-color="#bbdefb" color:border-color="#1e88e5">
+        <dc:Bounds x="2572" y="362" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_058jnju" bpmnElement="Event_0xy4x82" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="902" y="482" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_1xn5rqj" bpmnElement="Event_0w3fbkf" bioc:stroke="#fb8c00" bioc:fill="#ffe0b2" color:background-color="#ffe0b2" color:border-color="#fb8c00">
+        <dc:Bounds x="852" y="571" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Flow_0a7n1mi_di" bpmnElement="Flow_0a7n1mi" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="920" y="460" />
+        <di:waypoint x="1065" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_07qsd61_di" bpmnElement="Flow_07qsd61" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="920" y="260" />
+        <di:waypoint x="1090" y="260" />
+        <di:waypoint x="1090" y="435" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1vthba2_di" bpmnElement="Flow_1vthba2" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1115" y="460" />
+        <di:waypoint x="1170" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1ff75cm_di" bpmnElement="Flow_1ff75cm" bioc:stroke="#e53935" color:border-color="#e53935">
+        <di:waypoint x="1075" y="470" />
+        <di:waypoint x="1036" y="563" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_16183hr_di" bpmnElement="Flow_16183hr" bioc:stroke="#e53935" color:border-color="#e53935">
+        <di:waypoint x="1105" y="470" />
+        <di:waypoint x="1144" y="563" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0nfx74e_di" bpmnElement="Flow_0nfx74e" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1440" y="460" />
+        <di:waypoint x="1505" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1yx2q4e" bpmnElement="Flow_1gifwkh" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1555" y="460" />
+        <di:waypoint x="1630" y="460" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1234" y="289" width="58" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0dzzqz2" bpmnElement="Flow_1mfum71" bioc:stroke="#fb8c00" color:border-color="#fb8c00">
+        <di:waypoint x="1530" y="485" />
+        <di:waypoint x="1530" y="760" />
+        <di:waypoint x="720" y="760" />
+        <di:waypoint x="720" y="485" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1093" y="762" width="86" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_12dhpsd_di" bpmnElement="Flow_12dhpsd" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1730" y="460" />
+        <di:waypoint x="1790" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1qi3cah_di" bpmnElement="Flow_1qi3cah" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1890" y="460" />
+        <di:waypoint x="1950" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1akg4x9_di" bpmnElement="Flow_1akg4x9" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="2050" y="460" />
+        <di:waypoint x="2110" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0dx45ym" bpmnElement="Flow_1vaiqqn" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="2210" y="460" />
+        <di:waypoint x="2270" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0b6ptbu" bpmnElement="Flow_0pmf52h" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="2370" y="460" />
+        <di:waypoint x="2435" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0ijmk20_di" bpmnElement="Flow_0ijmk20" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="2460" y="485" />
+        <di:waypoint x="2460" y="580" />
+        <di:waypoint x="2540" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_08x9pod_di" bpmnElement="Flow_08x9pod" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="2460" y="435" />
+        <di:waypoint x="2460" y="340" />
+        <di:waypoint x="2540" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1et888d_di" bpmnElement="Flow_1et888d" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="2640" y="340" />
+        <di:waypoint x="2702" y="340" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0hf0l7r_di" bpmnElement="Flow_0hf0l7r" bioc:stroke="#1e88e5" color:border-color="#1e88e5">
+        <di:waypoint x="2590" y="398" />
+        <di:waypoint x="2590" y="442" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0e4wsyl_di" bpmnElement="Flow_0e4wsyl" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="2738" y="340" />
+        <di:waypoint x="2800" y="340" />
+        <di:waypoint x="2800" y="435" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0vrgcm5_di" bpmnElement="Flow_0vrgcm5" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="2640" y="580" />
+        <di:waypoint x="2702" y="580" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1h5c4wx_di" bpmnElement="Flow_1h5c4wx" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="2738" y="580" />
+        <di:waypoint x="2800" y="580" />
+        <di:waypoint x="2800" y="485" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0dabk2q_di" bpmnElement="Flow_0dabk2q" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="2825" y="460" />
+        <di:waypoint x="2925" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_099nsyx" bpmnElement="Flow_0g86you" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="318" y="460" />
+        <di:waypoint x="390" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0s5jmad_di" bpmnElement="Flow_0s5jmad" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="745" y="460" />
+        <di:waypoint x="820" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_01ei8uh" bpmnElement="Flow_0g8x02b" bioc:stroke="#fb8c00" color:border-color="#fb8c00">
+        <di:waypoint x="870" y="571" />
+        <di:waypoint x="870" y="500" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0zvxiel" bpmnElement="Flow_01bl5vv" bioc:stroke="#fb8c00" color:border-color="#fb8c00">
+        <di:waypoint x="920" y="518" />
+        <di:waypoint x="920" y="589" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1oz8g2d" bpmnElement="Flow_1mx2rnq" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="490" y="460" />
+        <di:waypoint x="565" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_11upqst_di" bpmnElement="Flow_11upqst" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="720" y="435" />
+        <di:waypoint x="720" y="260" />
+        <di:waypoint x="820" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0oju1wl_di" bpmnElement="Flow_0oju1wl" bioc:stroke="#1e88e5" color:border-color="#1e88e5">
+        <di:waypoint x="2590" y="522" />
+        <di:waypoint x="2590" y="478" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1hza579_di" bpmnElement="Flow_1hza579" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="1270" y="460" />
+        <di:waypoint x="1340" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0yasyau_di" bpmnElement="Flow_0yasyau" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="2975" y="460" />
+        <di:waypoint x="3055" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_06j3mfr_di" bpmnElement="Flow_06j3mfr" bioc:stroke="#e53935" color:border-color="#e53935">
+        <di:waypoint x="2958" y="477" />
+        <di:waypoint x="3009" y="566" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_0cli3zf" bpmnElement="Flow_0vtq6mb" bioc:stroke="#e53935" color:border-color="#e53935">
+        <di:waypoint x="2942" y="477" />
+        <di:waypoint x="2898" y="564" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1mgmj3n_di" bpmnElement="Flow_1mgmj3n" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="615" y="460" />
+        <di:waypoint x="695" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0709xk7_di" bpmnElement="Flow_0709xk7" bioc:stroke="#fb8c00" color:border-color="#fb8c00">
+        <di:waypoint x="2950" y="435" />
+        <di:waypoint x="2950" y="170" />
+        <di:waypoint x="590" y="170" />
+        <di:waypoint x="590" y="435" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="2863" y="176" width="73" height="27" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b9jjin_di" bpmnElement="Flow_1b9jjin" bioc:stroke="#1e88e5" color:border-color="#1e88e5">
+        <di:waypoint x="3105" y="460" />
+        <di:waypoint x="3180" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_18f85b7_di" bpmnElement="Flow_18f85b7" bioc:stroke="#1e88e5" color:border-color="#1e88e5">
+        <di:waypoint x="3280" y="460" />
+        <di:waypoint x="3345" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1weeadr_di" bpmnElement="Flow_1weeadr" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="3080" y="435" />
+        <di:waypoint x="3080" y="350" />
+        <di:waypoint x="3370" y="350" />
+        <di:waypoint x="3370" y="435" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="3088" y="360" width="63" height="40" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_10xcvgw_di" bpmnElement="Flow_10xcvgw" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="3740" y="460" />
+        <di:waypoint x="3802" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_188jh0z_di" bpmnElement="Flow_188jh0z" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="3580" y="460" />
+        <di:waypoint x="3640" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_15h4pf5" bpmnElement="Flow_0tej85t" bioc:stroke="#43a047" color:border-color="#43a047">
+        <di:waypoint x="3395" y="460" />
+        <di:waypoint x="3480" y="460" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_0mryc4q_di" bpmnElement="Flow_0mryc4q" bioc:stroke="#e53935" color:border-color="#e53935">
+        <di:waypoint x="3370" y="485" />
+        <di:waypoint x="3370" y="562" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BPMNShape_0fmjtnv" bpmnElement="TextAnnotation_0y1u5ci">
+        <dc:Bounds x="920" y="370" width="50" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_0ldjoai" bpmnElement="TextAnnotation_16tn4br">
+        <dc:Bounds x="350" y="340" width="100" height="55" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_11qbkaf" bpmnElement="TextAnnotation_03sfxe1">
+        <dc:Bounds x="890" y="688" width="60" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_00mxykx_di" bpmnElement="TextAnnotation_00mxykx">
+        <dc:Bounds x="260" y="610" width="460" height="421" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1ovzunj_di" bpmnElement="TextAnnotation_1ovzunj">
+        <dc:Bounds x="2480" y="630" width="70" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_0v1bomm_di" bpmnElement="TextAnnotation_0v1bomm">
+        <dc:Bounds x="2560" y="640" width="100" height="40" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_11ct38a_di" bpmnElement="TextAnnotation_11ct38a">
+        <dc:Bounds x="2015" y="338" width="100" height="56" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_13bfc3g_di" bpmnElement="TextAnnotation_13bfc3g">
+        <dc:Bounds x="3610" y="341" width="100" height="53" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_1bk6npj_di" bpmnElement="TextAnnotation_1bk6npj">
+        <dc:Bounds x="2500" y="260" width="50" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_07s0myi_di" bpmnElement="TextAnnotation_07s0myi">
+        <dc:Bounds x="770" y="310" width="100" height="30" />
+        <bpmndi:BPMNLabel />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="BPMNEdge_1o41bk5" bpmnElement="Association_05ogi3t">
+        <di:waypoint x="915" y="669" />
+        <di:waypoint x="913" y="688" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_08mjt9l_di" bpmnElement="Association_08mjt9l">
+        <di:waypoint x="826" y="499" />
+        <di:waypoint x="698" y="610" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0k5sncf_di" bpmnElement="Association_0k5sncf">
+        <di:waypoint x="839" y="300" />
+        <di:waypoint x="832" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1mib1du" bpmnElement="Association_1ony021">
+        <di:waypoint x="924" y="400" />
+        <di:waypoint x="908" y="420" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="BPMNEdge_1t1t2pk" bpmnElement="Association_14bux1u">
+        <di:waypoint x="422" y="420" />
+        <di:waypoint x="410" y="395" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_001o1v8_di" bpmnElement="Association_001o1v8">
+        <di:waypoint x="2554" y="620" />
+        <di:waypoint x="2545" y="630" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_020kjmd_di" bpmnElement="Association_020kjmd">
+        <di:waypoint x="2599" y="620" />
+        <di:waypoint x="2605" y="640" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0zswlrc_di" bpmnElement="Association_0zswlrc">
+        <di:waypoint x="2565" y="300" />
+        <di:waypoint x="2550" y="275" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_0vmekio_di" bpmnElement="Association_0vmekio">
+        <di:waypoint x="3679" y="420" />
+        <di:waypoint x="3671" y="394" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Association_1d1qkdh_di" bpmnElement="Association_1d1qkdh">
+        <di:waypoint x="2037" y="420" />
+        <di:waypoint x="2045" y="394" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
