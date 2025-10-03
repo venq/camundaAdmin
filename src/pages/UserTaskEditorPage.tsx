@@ -91,6 +91,7 @@ export function UserTaskEditorPage() {
   const [showTabGroupModal, setShowTabGroupModal] = useState(false);
   const [showComponentModal, setShowComponentModal] = useState(false);
   const [showLeftPanelComponentModal, setShowLeftPanelComponentModal] = useState(false);
+  const [componentSearchTerm, setComponentSearchTerm] = useState('');
   const [selectedTabForComponents, setSelectedTabForComponents] = useState<{ groupId: string; tabId: string } | null>(null);
   const [showRolePopup, setShowRolePopup] = useState<{ type: 'executor' | 'manager' | 'workgroup'; show: boolean }>({ type: 'executor', show: false });
   const [editingDecision, setEditingDecision] = useState<any | null>(null);
@@ -795,21 +796,10 @@ export function UserTaskEditorPage() {
 
           {activeTab === 'structure' && (
             <div className="editor-section">
-              <h2 className="section-title">Структура экранов</h2>
-
               <div className="structure-layout">
                 <div className="structure-panel">
                   <div className="panel-header">
                     <h3 className="panel-title">Левая панель</h3>
-                    {isEditAllowed && (
-                      <button
-                        className="btn btn-sm btn-secondary"
-                        onClick={() => setShowLeftPanelComponentModal(true)}
-                      >
-                        <Plus size={14} />
-                        Добавить компонент
-                      </button>
-                    )}
                   </div>
                   <DndContext
                     sensors={sensors}
@@ -832,20 +822,22 @@ export function UserTaskEditorPage() {
                       </div>
                     </SortableContext>
                   </DndContext>
+                  {isEditAllowed && (
+                    <div style={{ marginTop: '12px' }}>
+                      <button
+                        className="btn btn-sm btn-secondary"
+                        onClick={() => setShowLeftPanelComponentModal(true)}
+                      >
+                        <Plus size={14} />
+                        Добавить компонент
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 <div className="structure-panel">
                   <div className="panel-header">
-                    <h3 className="panel-title">Правая панель (TabGroups)</h3>
-                    {isEditAllowed && (
-                      <button
-                        className="btn btn-sm btn-secondary"
-                        onClick={() => setShowTabGroupModal(true)}
-                      >
-                        <Plus size={14} />
-                        Добавить TabGroup
-                      </button>
-                    )}
+                    <h3 className="panel-title">Правая панель</h3>
                   </div>
 
                   <div className="tabgroups-list">
@@ -864,16 +856,6 @@ export function UserTaskEditorPage() {
                           {isEditAllowed && (
                             <div className="tabgroup-actions">
                               <button
-                                className="btn-icon"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  addNewTab(group.tabGroupId);
-                                }}
-                                title="Добавить таб"
-                              >
-                                <Plus size={14} />
-                              </button>
-                              <button
                                 className="btn-icon btn-danger"
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -887,6 +869,18 @@ export function UserTaskEditorPage() {
                           )}
                         </div>
                       ))}
+                      {isEditAllowed && (
+                        <div
+                          className="tabgroup-header"
+                          style={{ cursor: 'pointer' }}
+                          onClick={() => setShowTabGroupModal(true)}
+                        >
+                          <div className="tabgroup-header-left">
+                            <Plus size={14} />
+                            <span className="tabgroup-title">Добавить TabGroup</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* 2-й уровень: Табы активной TabGroup */}
@@ -905,17 +899,6 @@ export function UserTaskEditorPage() {
                               {isEditAllowed && (
                                 <div className="tab-actions">
                                   <button
-                                    className="btn-icon"
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setSelectedTabForComponents({ groupId: activeTabGroupId, tabId: tab.tabId });
-                                      setShowComponentModal(true);
-                                    }}
-                                    title="Добавить компонент"
-                                  >
-                                    <Plus size={14} />
-                                  </button>
-                                  <button
                                     className="btn-icon btn-danger"
                                     onClick={(e) => {
                                       e.stopPropagation();
@@ -929,6 +912,12 @@ export function UserTaskEditorPage() {
                               )}
                             </div>
                           ))}
+                        {isEditAllowed && (
+                          <div className="tab-item" style={{ cursor: 'pointer' }} onClick={() => addNewTab(activeTabGroupId)}>
+                            <Plus size={14} />
+                            <span className="tab-title">Добавить таб</span>
+                          </div>
+                        )}
                       </div>
                     )}
 
@@ -962,6 +951,20 @@ export function UserTaskEditorPage() {
                             </div>
                           </SortableContext>
                         </DndContext>
+                        {isEditAllowed && (
+                          <div style={{ marginTop: '12px' }}>
+                            <button
+                              className="btn btn-sm btn-secondary"
+                              onClick={() => {
+                                setSelectedTabForComponents({ groupId: activeTabGroupId, tabId: activeTabId });
+                                setShowComponentModal(true);
+                              }}
+                            >
+                              <Plus size={14} />
+                              Добавить компонент
+                            </button>
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -1073,15 +1076,24 @@ export function UserTaskEditorPage() {
 
       {/* Модальное окно для выбора Component пресета для левой панели */}
       {showLeftPanelComponentModal && (
-        <div className="modal-overlay" onClick={() => setShowLeftPanelComponentModal(false)}>
+        <div className="modal-overlay" onClick={() => { setShowLeftPanelComponentModal(false); setComponentSearchTerm(''); }}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>Выберите компонент для левой панели</h2>
-              <button className="btn-icon" onClick={() => setShowLeftPanelComponentModal(false)}>
+              <button className="btn-icon" onClick={() => { setShowLeftPanelComponentModal(false); setComponentSearchTerm(''); }}>
                 ✕
               </button>
             </div>
             <div className="modal-body">
+              <div className="form-field" style={{ marginBottom: '16px' }}>
+                <input
+                  type="text"
+                  className="input"
+                  placeholder="Поиск по названию компонента..."
+                  value={componentSearchTerm}
+                  onChange={(e) => setComponentSearchTerm(e.target.value)}
+                />
+              </div>
               <div className="modal-presets-grid">
                 {presets
                   .filter(p => p.type === 'component' && p.tenantId === tenantId)
@@ -1089,6 +1101,14 @@ export function UserTaskEditorPage() {
                     // Проверяем, нет ли уже компонента с таким типом в левой панели
                     const componentType = preset.content.type;
                     return !config.leftPanel.some(c => c.type === componentType);
+                  })
+                  .filter(preset => {
+                    // Фильтр по поисковому запросу
+                    if (!componentSearchTerm) return true;
+                    const searchLower = componentSearchTerm.toLowerCase();
+                    return preset.name.toLowerCase().includes(searchLower) ||
+                           preset.content.label?.toLowerCase().includes(searchLower) ||
+                           preset.description?.toLowerCase().includes(searchLower);
                   })
                   .map(preset => (
                     <div key={preset.id} onClick={() => addComponentToLeftPanel(preset.id)}>
