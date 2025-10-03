@@ -89,6 +89,8 @@ export function UserTaskEditorPage() {
   const [activeTabGroupId, setActiveTabGroupId] = useState<string | null>(null);
   const [activeTabId, setActiveTabId] = useState<string | null>(null);
   const [showTabGroupModal, setShowTabGroupModal] = useState(false);
+  const [editingTabGroup, setEditingTabGroup] = useState<any | null>(null);
+  const [editingTab, setEditingTab] = useState<{ groupId: string; tab: any } | null>(null);
   const [showComponentModal, setShowComponentModal] = useState(false);
   const [showLeftPanelComponentModal, setShowLeftPanelComponentModal] = useState(false);
   const [componentSearchTerm, setComponentSearchTerm] = useState('');
@@ -314,6 +316,45 @@ export function UserTaskEditorPage() {
       ...config,
       tabGroups: config.tabGroups.filter(g => g.tabGroupId !== groupId)
     });
+  };
+
+  const saveTabGroup = () => {
+    if (!editingTabGroup || !config) return;
+
+    const updatedTabGroups = config.tabGroups.map(group =>
+      group.tabGroupId === editingTabGroup.tabGroupId ? editingTabGroup : group
+    );
+
+    setConfig({
+      ...config,
+      tabGroups: updatedTabGroups
+    });
+
+    setEditingTabGroup(null);
+    setShowTabGroupModal(false);
+  };
+
+  const saveTab = () => {
+    if (!editingTab || !config) return;
+
+    const updatedTabGroups = config.tabGroups.map(group => {
+      if (group.tabGroupId === editingTab.groupId) {
+        return {
+          ...group,
+          tabs: group.tabs.map(tab =>
+            tab.tabId === editingTab.tab.tabId ? editingTab.tab : tab
+          )
+        };
+      }
+      return group;
+    });
+
+    setConfig({
+      ...config,
+      tabGroups: updatedTabGroups
+    });
+
+    setEditingTab(null);
   };
 
   const removeComponent = (groupId: string, tabId: string, componentId: string) => {
@@ -856,6 +897,17 @@ export function UserTaskEditorPage() {
                           {isEditAllowed && (
                             <div className="tabgroup-actions">
                               <button
+                                className="btn-icon"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setEditingTabGroup({ ...group });
+                                  setShowTabGroupModal(true);
+                                }}
+                                title="Редактировать TabGroup"
+                              >
+                                <Edit size={14} />
+                              </button>
+                              <button
                                 className="btn-icon btn-danger"
                                 onClick={(e) => {
                                   e.stopPropagation();
@@ -898,6 +950,16 @@ export function UserTaskEditorPage() {
                               <span className="badge badge-success">{tab.components.length}</span>
                               {isEditAllowed && (
                                 <div className="tab-actions">
+                                  <button
+                                    className="btn-icon"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setEditingTab({ groupId: activeTabGroupId, tab: { ...tab } });
+                                    }}
+                                    title="Редактировать таб"
+                                  >
+                                    <Edit size={14} />
+                                  </button>
                                   <button
                                     className="btn-icon btn-danger"
                                     onClick={(e) => {
@@ -1003,7 +1065,7 @@ export function UserTaskEditorPage() {
       )}
 
       {/* Модальное окно для выбора TabGroup пресета */}
-      {showTabGroupModal && (
+      {showTabGroupModal && !editingTabGroup && (
         <div className="modal-overlay" onClick={() => setShowTabGroupModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
@@ -1035,30 +1097,130 @@ export function UserTaskEditorPage() {
         </div>
       )}
 
+      {/* Модальное окно редактирования TabGroup */}
+      {editingTabGroup && (
+        <div className="modal-overlay" onClick={() => { setEditingTabGroup(null); setShowTabGroupModal(false); }}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Редактировать TabGroup</h3>
+              <button className="btn-icon" onClick={() => { setEditingTabGroup(null); setShowTabGroupModal(false); }}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="form-field">
+                <label>ID *</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={editingTabGroup._component || ''}
+                  onChange={(e) => setEditingTabGroup({ ...editingTabGroup, _component: e.target.value })}
+                  placeholder="presetId"
+                />
+              </div>
+              <div className="form-field">
+                <label>Название *</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={editingTabGroup.title}
+                  onChange={(e) => setEditingTabGroup({ ...editingTabGroup, title: e.target.value })}
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => { setEditingTabGroup(null); setShowTabGroupModal(false); }}>
+                Отмена
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={saveTabGroup}
+                disabled={!editingTabGroup.title}
+              >
+                Сохранить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Модальное окно редактирования Tab */}
+      {editingTab && (
+        <div className="modal-overlay" onClick={() => setEditingTab(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Редактировать таб</h3>
+              <button className="btn-icon" onClick={() => setEditingTab(null)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="form-field">
+                <label>ID таба *</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={editingTab.tab.tabId}
+                  onChange={(e) => setEditingTab({ ...editingTab, tab: { ...editingTab.tab, tabId: e.target.value } })}
+                  disabled
+                />
+              </div>
+              <div className="form-field">
+                <label>Название *</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={editingTab.tab.title}
+                  onChange={(e) => setEditingTab({ ...editingTab, tab: { ...editingTab.tab, title: e.target.value } })}
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setEditingTab(null)}>
+                Отмена
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={saveTab}
+                disabled={!editingTab.tab.title}
+              >
+                Сохранить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Модальное окно для выбора Component пресета */}
       {showComponentModal && (
-        <div className="modal-overlay" onClick={() => setShowComponentModal(false)}>
+        <div className="modal-overlay" onClick={() => { setShowComponentModal(false); setComponentSearchTerm(''); }}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h2>Выберите компонент</h2>
-              <button className="btn-icon" onClick={() => setShowComponentModal(false)}>
+              <button className="btn-icon" onClick={() => { setShowComponentModal(false); setComponentSearchTerm(''); }}>
                 ✕
               </button>
             </div>
             <div className="modal-body">
+              <div className="form-field" style={{ marginBottom: '16px' }}>
+                <input
+                  type="text"
+                  className="input"
+                  placeholder="Поиск по названию компонента..."
+                  value={componentSearchTerm}
+                  onChange={(e) => setComponentSearchTerm(e.target.value)}
+                />
+              </div>
               <div className="modal-presets-grid">
                 {presets
                   .filter(p => p.type === 'component' && p.tenantId === tenantId)
                   .filter(preset => {
-                    // Проверяем, нет ли уже компонента с таким типом в активном табе
-                    if (!activeTabGroupId || !activeTabId) return true;
-                    const activeTab = config.tabGroups
-                      .find(g => g.tabGroupId === activeTabGroupId)
-                      ?.tabs.find(t => t.tabId === activeTabId);
-                    if (!activeTab) return true;
-
-                    const componentType = preset.content.type;
-                    return !activeTab.components.some(c => c.type === componentType);
+                    // Фильтр по поисковому запросу
+                    if (!componentSearchTerm) return true;
+                    const searchLower = componentSearchTerm.toLowerCase();
+                    return preset.name.toLowerCase().includes(searchLower) ||
+                           preset.content.label?.toLowerCase().includes(searchLower) ||
+                           preset.description?.toLowerCase().includes(searchLower);
                   })
                   .map(preset => (
                     <div key={preset.id} onClick={() => addComponentToTab(preset.id)}>
@@ -1097,11 +1259,6 @@ export function UserTaskEditorPage() {
               <div className="modal-presets-grid">
                 {presets
                   .filter(p => p.type === 'component' && p.tenantId === tenantId)
-                  .filter(preset => {
-                    // Проверяем, нет ли уже компонента с таким типом в левой панели
-                    const componentType = preset.content.type;
-                    return !config.leftPanel.some(c => c.type === componentType);
-                  })
                   .filter(preset => {
                     // Фильтр по поисковому запросу
                     if (!componentSearchTerm) return true;

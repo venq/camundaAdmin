@@ -225,7 +225,7 @@
 
 .structure-layout {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 4fr;
   gap: 20px;
   align-items: start;
 }
