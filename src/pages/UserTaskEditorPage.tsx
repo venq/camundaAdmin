@@ -26,10 +26,11 @@ import './UserTaskEditorPage.css';
 interface SortableComponentItemProps {
   comp: any;
   onDelete: () => void;
+  onEdit: () => void;
   isEditAllowed: boolean;
 }
 
-function SortableComponentItem({ comp, onDelete, isEditAllowed }: SortableComponentItemProps) {
+function SortableComponentItem({ comp, onDelete, onEdit, isEditAllowed }: SortableComponentItemProps) {
   const {
     attributes,
     listeners,
@@ -54,19 +55,28 @@ function SortableComponentItem({ comp, onDelete, isEditAllowed }: SortableCompon
       )}
       <div className="component-info">
         <span className="component-label">{comp.label}</span>
-        <span className="component-type">Type: {comp.type}</span>
+        <span className="component-type">{comp.type}</span>
         {comp._component && (
           <span className="component-preset">ID: {comp._component}</span>
         )}
       </div>
       {isEditAllowed && (
-        <button
-          className="btn-icon btn-danger component-delete"
-          onClick={onDelete}
-          title="Удалить компонент"
-        >
-          <Trash2 size={14} />
-        </button>
+        <div className="component-actions">
+          <button
+            className="btn-icon"
+            onClick={onEdit}
+            title="Редактировать компонент"
+          >
+            <Edit size={14} />
+          </button>
+          <button
+            className="btn-icon btn-danger"
+            onClick={onDelete}
+            title="Удалить компонент"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
       )}
     </div>
   );
@@ -91,6 +101,7 @@ export function UserTaskEditorPage() {
   const [showTabGroupModal, setShowTabGroupModal] = useState(false);
   const [editingTabGroup, setEditingTabGroup] = useState<any | null>(null);
   const [editingTab, setEditingTab] = useState<{ groupId: string; tab: any } | null>(null);
+  const [editingComponent, setEditingComponent] = useState<{ location: 'leftPanel' | 'tab'; groupId?: string; tabId?: string; component: any } | null>(null);
   const [showComponentModal, setShowComponentModal] = useState(false);
   const [showLeftPanelComponentModal, setShowLeftPanelComponentModal] = useState(false);
   const [componentSearchTerm, setComponentSearchTerm] = useState('');
@@ -355,6 +366,48 @@ export function UserTaskEditorPage() {
     });
 
     setEditingTab(null);
+  };
+
+  const saveComponent = () => {
+    if (!editingComponent || !config) return;
+
+    if (editingComponent.location === 'leftPanel') {
+      const updatedLeftPanel = config.leftPanel.map(comp =>
+        comp.componentId === editingComponent.component.componentId ? editingComponent.component : comp
+      );
+
+      setConfig({
+        ...config,
+        leftPanel: updatedLeftPanel
+      });
+    } else {
+      const updatedTabGroups = config.tabGroups.map(group => {
+        if (group.tabGroupId === editingComponent.groupId) {
+          return {
+            ...group,
+            tabs: group.tabs.map(tab => {
+              if (tab.tabId === editingComponent.tabId) {
+                return {
+                  ...tab,
+                  components: tab.components.map(comp =>
+                    comp.componentId === editingComponent.component.componentId ? editingComponent.component : comp
+                  )
+                };
+              }
+              return tab;
+            })
+          };
+        }
+        return group;
+      });
+
+      setConfig({
+        ...config,
+        tabGroups: updatedTabGroups
+      });
+    }
+
+    setEditingComponent(null);
   };
 
   const removeComponent = (groupId: string, tabId: string, componentId: string) => {
@@ -857,6 +910,7 @@ export function UserTaskEditorPage() {
                             key={comp.componentId}
                             comp={comp}
                             onDelete={() => removeLeftPanelComponent(comp.componentId)}
+                            onEdit={() => setEditingComponent({ location: 'leftPanel', component: { ...comp } })}
                             isEditAllowed={isEditAllowed}
                           />
                         ))}
@@ -1007,6 +1061,7 @@ export function UserTaskEditorPage() {
                                     key={comp.componentId}
                                     comp={comp}
                                     onDelete={() => removeComponent(activeTabGroupId, activeTabId, comp.componentId)}
+                                    onEdit={() => setEditingComponent({ location: 'tab', groupId: activeTabGroupId, tabId: activeTabId, component: { ...comp } })}
                                     isEditAllowed={isEditAllowed}
                                   />
                                 ))}
@@ -1183,6 +1238,62 @@ export function UserTaskEditorPage() {
                 className="btn btn-primary"
                 onClick={saveTab}
                 disabled={!editingTab.tab.title}
+              >
+                Сохранить
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Модальное окно редактирования Component */}
+      {editingComponent && (
+        <div className="modal-overlay" onClick={() => setEditingComponent(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Редактировать компонент</h3>
+              <button className="btn-icon" onClick={() => setEditingComponent(null)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="modal-body">
+              <div className="form-field">
+                <label>Preset ID</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={editingComponent.component._component || ''}
+                  onChange={(e) => setEditingComponent({ ...editingComponent, component: { ...editingComponent.component, _component: e.target.value } })}
+                  placeholder="presetId"
+                />
+              </div>
+              <div className="form-field">
+                <label>Type *</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={editingComponent.component.type}
+                  onChange={(e) => setEditingComponent({ ...editingComponent, component: { ...editingComponent.component, type: e.target.value } })}
+                />
+              </div>
+              <div className="form-field">
+                <label>Label *</label>
+                <input
+                  type="text"
+                  className="input"
+                  value={editingComponent.component.label}
+                  onChange={(e) => setEditingComponent({ ...editingComponent, component: { ...editingComponent.component, label: e.target.value } })}
+                />
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setEditingComponent(null)}>
+                Отмена
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={saveComponent}
+                disabled={!editingComponent.component.type || !editingComponent.component.label}
               >
                 Сохранить
               </button>

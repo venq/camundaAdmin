@@ -277,6 +277,7 @@
   flex-direction: column;
   gap: 4px;
   flex: 1;
+  align-items: flex-start;
 }
 
 .drag-handle {
@@ -296,13 +297,15 @@
   cursor: grabbing;
 }
 
-.component-item .component-delete {
+.component-actions {
+  display: flex;
+  gap: 4px;
   margin-left: auto;
   opacity: 0;
   transition: opacity 0.2s ease;
 }
 
-.component-item:hover .component-delete {
+.component-item:hover .component-actions {
   opacity: 1;
 }
 
@@ -317,14 +320,19 @@
 }
 
 .component-type {
-  font-size: 11px;
-  color: var(--text-secondary);
+  font-size: 12px;
+  color: var(--text-primary);
+  font-family: 'Courier New', monospace;
+  background-color: #f3f4f6;
+  padding: 2px 8px;
+  border-radius: 4px;
+  display: inline-block;
 }
 
 .component-label {
   color: var(--text-primary);
   font-weight: 500;
-  font-size: 13px;
+  font-size: 14px;
 }
 
 .tabgroups-list {
