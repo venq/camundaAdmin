@@ -52,13 +52,13 @@ function SortableComponentItem({ comp, onDelete, isEditAllowed }: SortableCompon
           <GripVertical size={16} />
         </div>
       )}
-      <span className="component-type badge badge-info">{comp.type}</span>
-      <span className="component-label">{comp.label}</span>
-      {comp._component && (
-        <span className="component-preset" title="Использует пресет">
-          📦 {comp._component}
-        </span>
-      )}
+      <div className="component-info">
+        <span className="component-label">{comp.label}</span>
+        <span className="component-type">Type: {comp.type}</span>
+        {comp._component && (
+          <span className="component-preset">ID: {comp._component}</span>
+        )}
+      </div>
       {isEditAllowed && (
         <button
           className="btn-icon btn-danger component-delete"
