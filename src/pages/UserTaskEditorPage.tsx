@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/store';
-import { Save, Plus, Trash2, EyeOff, GripVertical, X } from 'lucide-react';
+import { Save, Plus, Trash2, EyeOff, GripVertical, X, Edit } from 'lucide-react';
 import type { UserTaskConfig } from '@/types';
 import { PresetCard } from '@/components/PresetCard';
 import {
@@ -725,7 +725,7 @@ export function UserTaskEditorPage() {
                               onClick={() => openDecisionModal(decision)}
                               title="Редактировать решение"
                             >
-                              <Save size={16} />
+                              <Edit size={16} />
                             </button>
                             <button
                               className="btn-icon btn-danger"
@@ -1221,6 +1221,24 @@ export function UserTaskEditorPage() {
                 </div>
 
                 <div className="form-section full-width" style={{ marginTop: '16px' }}>
+                  <h4>Свойства</h4>
+                  <div className="form-field">
+                    <label>
+                      <input
+                        type="checkbox"
+                        checked={editingDecision.properties?.transient ?? false}
+                        onChange={(e) => setEditingDecision({
+                          ...editingDecision,
+                          properties: { ...(editingDecision.properties || {}), transient: e.target.checked }
+                        })}
+                        style={{ marginRight: '8px' }}
+                      />
+                      Временное решение
+                    </label>
+                  </div>
+                </div>
+
+                <div className="form-section full-width" style={{ marginTop: '16px' }}>
                   <h4>Настройки комментария</h4>
                   <div className="form-field">
                     <label>
@@ -1281,24 +1299,6 @@ export function UserTaskEditorPage() {
                         style={{ marginRight: '8px' }}
                       />
                       Валидация формы
-                    </label>
-                  </div>
-                </div>
-
-                <div className="form-section full-width" style={{ marginTop: '16px' }}>
-                  <h4>Свойства</h4>
-                  <div className="form-field">
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={editingDecision.properties?.transient ?? false}
-                        onChange={(e) => setEditingDecision({
-                          ...editingDecision,
-                          properties: { ...(editingDecision.properties || {}), transient: e.target.checked }
-                        })}
-                        style={{ marginRight: '8px' }}
-                      />
-                      Временное решение
                     </label>
                   </div>
                 </div>

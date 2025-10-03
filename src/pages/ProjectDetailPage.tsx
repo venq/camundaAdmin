@@ -129,9 +129,6 @@ export function ProjectDetailPage() {
                         <button className="btn-icon btn-icon-white" title="Редактировать">
                           <Edit size={16} />
                         </button>
-                        <button className="btn-icon btn-icon-white" title="Скачать">
-                          <Download size={16} />
-                        </button>
                         <button className="btn-icon btn-icon-white btn-danger" title="Удалить">
                           <Trash2 size={16} />
                         </button>

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAppStore } from '@/store';
-import { Plus, FileText, Settings, Trash2, Database, Layers, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Plus, FileText, Edit, Trash2, Database, Layers, CheckCircle2, AlertCircle } from 'lucide-react';
 import { pluralizeBpmnProcesses, pluralizeTasks } from '@/utils/pluralize';
 import './ProjectsPage.css';
 
@@ -152,7 +152,7 @@ export function ProjectsPage() {
                       title="Редактировать"
                       onClick={() => handleEditProject(project)}
                     >
-                      <Settings size={16} />
+                      <Edit size={16} />
                     </button>
                     {user?.role === 'Admin' && (
                       <button
