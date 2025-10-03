@@ -697,26 +697,6 @@ export function UserTaskEditorPage() {
               <div className="decisions-list">
                 {config.decisions.map((decision) => (
                   <div key={decision.decisionId} className="decision-card card">
-                    <div className="decision-card-header">
-                      {isEditAllowed && (
-                        <div className="decision-actions">
-                          <button
-                            className="btn-icon"
-                            onClick={() => openDecisionModal(decision)}
-                            title="Редактировать решение"
-                          >
-                            <Save size={16} />
-                          </button>
-                          <button
-                            className="btn-icon btn-danger"
-                            onClick={() => setDeleteConfirmation({ show: true, decisionId: decision.decisionId, decisionTitle: decision.title })}
-                            title="Удалить решение"
-                          >
-                            <Trash2 size={16} />
-                          </button>
-                        </div>
-                      )}
-                    </div>
                     <div className="decision-content">
                       <div className="decision-main">
                         <div className="decision-info">
@@ -729,8 +709,33 @@ export function UserTaskEditorPage() {
                             {decision.type}
                           </span>
                         </div>
+                        <div className="settings-section">
+                          <h5 className="settings-title">Свойства</h5>
+                          <div className="setting-item">
+                            <input type="checkbox" checked={decision.properties?.transient ?? false} disabled readOnly />
+                            <span>Временное решение</span>
+                          </div>
+                        </div>
                       </div>
                       <div className="decision-settings">
+                        {isEditAllowed && (
+                          <div className="decision-actions">
+                            <button
+                              className="btn-icon"
+                              onClick={() => openDecisionModal(decision)}
+                              title="Редактировать решение"
+                            >
+                              <Save size={16} />
+                            </button>
+                            <button
+                              className="btn-icon btn-danger"
+                              onClick={() => setDeleteConfirmation({ show: true, decisionId: decision.decisionId, decisionTitle: decision.title })}
+                              title="Удалить решение"
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </div>
+                        )}
                         <div className="settings-section">
                           <h5 className="settings-title">Настройки комментария</h5>
                           <div className="setting-item">
@@ -755,13 +760,6 @@ export function UserTaskEditorPage() {
                               <span>{decision.comment.permissions.map(p => p.readRole).join(', ')}</span>
                             </div>
                           )}
-                        </div>
-                        <div className="settings-section">
-                          <h5 className="settings-title">Свойства</h5>
-                          <div className="setting-item">
-                            <input type="checkbox" checked={decision.properties?.transient ?? false} disabled readOnly />
-                            <span>Временное решение</span>
-                          </div>
                         </div>
                       </div>
                     </div>
